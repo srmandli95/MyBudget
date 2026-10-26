@@ -1,0 +1,14 @@
+# Python-generated files and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local secrets and machine-specific files
+.env
+.env.*
+!.env.example
+.DS_Store
