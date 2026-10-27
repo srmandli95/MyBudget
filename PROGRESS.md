@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; transaction class exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; exception-handling lesson complete.
 
 ## Verified
 
@@ -27,9 +27,26 @@ Milestone 1: Python budget calculation engine. Phase 1; transaction class exerci
 
 ## Next task
 
-Compare the explicit Transaction class with a dataclass, then introduce validation.
-The learner's class exercise ran successfully with a total of `70.88` from
-amounts `59.89` and `10.99`. No automated tests or input validation yet.
+Current stopping point (2026-10-27): learner reports success handling validation
+errors with `try`/`except`. Covered dataclass representation, equality, identity,
+aliasing, copying, `id()`, imports, and validation with `__post_init__`.
+
+Mentor ran the saved exception-handling script with valid input: output
+`Continues`, exit 0. Learner shared an earlier handled blank-merchant error.
+The saved script contains only one valid attempt, not the full three-case exercise.
+No automated tests yet. Details are in learnings/2026-10-27-exception-handling.md.
+
+Next: lists and loops to process multiple fictional inputs, handle individual
+validation failures, and total spending. Preserve valid, empty, and whitespace-only
+merchant cases in the next exercise. Let the learner write the implementation.
+
+## Session recovery
+
+Read LEARNING_MASTER_PROMPT.md for the learning agreement, ROADMAP.md for the
+milestones, this file for the current checkpoint, and LEARNING_NOTES.md plus
+learnings/ for concepts and misunderstandings. Inspect actual exercise files
+before assuming they match earlier notes. Mentor first: let the learner implement;
+skip familiar material on request and pause at unfamiliar concepts.
 
 ## Open questions
 

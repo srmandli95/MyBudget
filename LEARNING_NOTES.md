@@ -51,3 +51,47 @@ Learner distinguished instance attributes from local parameters.
 See [review notes](learnings/2026-10-26-transaction-class.md).
 
 Next: compare explicit initialization with a dataclass, then introduce validation.
+
+## Dataclass checkpoint: 2026-10-27
+
+Learner understands that `@dataclass` generates `__init__` assignments from
+declared fields. Clarified the decorator by comparing it to
+`Transaction = dataclass(Transaction)`.
+
+Learner initially passed a string amount despite its Decimal annotation, then
+corrected it to `Decimal("59.99")`. Revisited that annotations do not convert values.
+
+Explained `__repr__` as an inspectable text representation of an object and
+`repr(t1)` as an explicit request for it. `print(t1)` uses string conversion,
+which falls back to the representation when no custom `__str__` is supplied.
+Learner restated the representation concept correctly.
+
+Latest file includes `print(repr(t1))`; read but not yet run by the mentor.
+Next lesson: equality versus identity, then validation.
+
+## Identity and validation checkpoint: 2026-10-27
+
+See [daily notes](learnings/2026-10-27-dataclasses-and-validation.md) for dataclass
+methods, imports, equality versus identity, assignment, copying, and `id()`.
+Learner correctly reasoned that aliased names observe changes to the same object.
+
+Introduced validation through `__post_init__`, `ValueError`, and blank merchant
+checks. Explained why whitespace-only text requires `.strip()` before testing
+emptiness. Diagnosed a missing decorator and an attribute typo. Latest source
+inspection confirms both are fixed; revised validation cases have not been run
+by the mentor. Next: verify all three merchant cases, then exception handling.
+
+## Exception handling checkpoint: 2026-10-27
+
+Covered `try`, `except ValueError as error`, propagation, and continuation after
+handled errors. Corrected `.strip()` on a Decimal amount; blank merchant validation
+had raised first and hidden that AttributeError. Amount check removed.
+
+Learner reported the exercise works. Current saved script contains one valid
+transaction attempt; mentor ran it successfully, observing `Continues` and exit 0.
+The learner previously shared a handled blank-merchant error. The three-case
+experiment is not preserved in the file; no automated tests yet.
+See [exception-handling notes](learnings/2026-10-27-exception-handling.md).
+
+Next: lists and loops for processing several fictional transaction inputs,
+preserving validation cases, and totaling valid spending.

@@ -8,6 +8,8 @@ Use fictional financial data in examples.
 
 ## Entries
 
+- [2026-10-27: Exception handling — complete](2026-10-27-exception-handling.md)
+- [2026-10-27: Dataclasses, identity, and validation](2026-10-27-dataclasses-and-validation.md)
 - [2026-10-26: Transaction classes and instances — complete](2026-10-26-transaction-class.md)
 
 - [2026-10-26: How Python executes a program](2026-10-26-python-execution.md)
