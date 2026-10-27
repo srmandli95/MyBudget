@@ -1,5 +1,15 @@
 # Learning notes
 
+## Category totals: complete
+
+Learner extended the totals loop with `if trans.category == category`, and renamed
+it `calculate_category_total`. Verified Food `118.98`, Gas `59.49`, unmatched
+Subscriptions `0.00`, and empty-list `0.00`, all Decimal results. Mentor ran the
+saved file and four direct assertion checks successfully. No saved test suite yet.
+The category function replaces the earlier overall-total function in the file.
+Details: [loops and category totals](learnings/2026-10-27-loops-and-category-totals.md).
+Next: dictionaries for configurable budgets and remaining category amounts.
+
 ## Lists and loops: transaction totals exercise complete
 
 Learner implemented `calculate_total` in `exercises/transaction_totals.py`.
