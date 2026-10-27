@@ -9,8 +9,8 @@ Introduced for practice, not yet demonstrated by the learner:
 - In CPython, source is compiled into bytecode, then executed by the interpreter.
 - A program file persists on disk; its running process uses memory and CPU time.
 
-Exercise pending: create a script that prints the project name and one fictional expense.
-Next: names, values, and functions, followed by Decimal currency arithmetic and transaction modeling.
+The initial greeting exercise was superseded by the learner's error demos and
+Decimal calculation exercise.
 
 ## Python execution discussion
 
@@ -24,3 +24,22 @@ Both stages happen through one `python3 filename.py` command.
 Learner ran both error experiments and shared output. Mentor reproduced both:
 syntax error prevents the first print; undefined-name execution error occurs
 after the first print. Both exit with status 1 as intended. No application tests yet.
+
+## Names, values, and assignment: familiar
+
+Introducing: a name refers to an object; assignment evaluates the right-hand
+expression and binds the left-hand name. A computed integer result does not
+automatically update when an input name is reassigned.
+
+Learner reported familiarity and requested skipping this exercise. It was not
+implemented or tested. Move quickly through known concepts; stop at unfamiliar ones.
+
+## Decimal, functions, and type hints: complete
+
+See [lesson notes](learnings/2026-10-26-decimal-and-type-hints.md).
+Learner implemented `calculate_remaining` with Decimal inputs and output hints,
+corrected float arguments to Decimal constructors, and clarified module/class
+imports, references, and operator behavior. Mentor verified output `424.75`.
+Additional edge-case runs have not been demonstrated.
+
+Next: model a transaction with a class and introduce constructors and attributes.

@@ -2,33 +2,36 @@
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Starting Phase 0 fundamentals.
+Milestone 1: Python budget calculation engine. Phase 1; Decimal calculation lesson complete.
 
 ## Verified
 
 - Project directory was empty.
 - Python 3.14.6 and Git 2.55.0 execute successfully.
 - VS Code command is available at /opt/homebrew/bin/code.
-- Directory is not yet a Git repository. Sandbox blocked `git init`, and the
-  requested escalation was declined; no commit or GitHub upload was made.
+- Git is initialized on `main` with commit `bd04556`. GitHub remote `origin`
+  is configured, and local tracking information shows `main` at `origin/main`.
 
 ## Completed
 
 - Saved learning agreement and initial project documentation.
 - Added `learnings/` with a daily journal format and Python execution fundamentals.
 - Discussed CPython, executables, processes, bytecode, and syntax versus runtime errors.
-- No application code written; no application tests run.
+- First calculation exercise implemented; no automated application tests yet.
 - Learner wrote both error demos in `exercises/` and ran them. Mentor reproduced
   the expected SyntaxError and NameError; both exit with status 1.
 - Prepared `.gitignore` and exercise documentation for the first commit.
+- Variables exercise skipped at learner's request due to familiarity.
+- Completed Decimal, functions, type hints, module/class imports, and object
+  reference lesson. Learner's calculation ran successfully with output `424.75`.
 
 ## Next task
 
-Learner creates `hello_budget.py`, prints the project name and a fictional expense,
-and runs it using `python3 hello_budget.py`. Review code, output, and reasoning
-before introducing the next concept.
+Introduce a transaction class, its constructor, attributes, and instances.
+Give a small implementation exercise when the learner reaches unfamiliar material.
 
 ## Open questions
 
 - Which editor does the learner prefer?
-- Error experiments completed; next practice is a working script and name bindings.
+- Equal-budget and over-budget calculation checks have not been demonstrated;
+  the learner requested marking the current lesson complete.

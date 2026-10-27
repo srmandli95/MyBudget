@@ -9,6 +9,7 @@ Use fictional financial data in examples.
 ## Entries
 
 - [2026-10-26: How Python executes a program](2026-10-26-python-execution.md)
+- [2026-10-26: Decimal, functions, and type hints — complete](2026-10-26-decimal-and-type-hints.md)
 
 ## Suggested daily entry
 
@@ -34,14 +35,8 @@ Record anything still unclear.
 
 ## Git workflow
 
-This folder lives inside Mybudget and can be tracked with the project.
-This folder is intended to be tracked together with the project. The project is
-not yet a Git repository, and no GitHub remote is configured. Initialize once
-from the Mybudget directory before using the daily workflow:
-
-```sh
-git init -b main
-```
+This folder is tracked with the Mybudget project. Git is initialized and the
+GitHub remote `origin` is configured.
 
 After writing or reviewing a daily entry, inspect and commit the journal changes:
 
@@ -53,6 +48,7 @@ git commit -m "Document Python execution fundamentals"
 ```
 
 Staging selects changes for a commit. A commit saves a local snapshot; it does
-not upload anything to GitHub. Pushing requires a GitHub repository and a remote,
-which we will configure separately. The commands above are the workflow for future
-daily entries; check `git status` before staging.
+not upload anything to GitHub. Use `git push` after committing when ready to
+upload. The commands above are the workflow for future daily entries; check
+`git status` before staging. Stage exercise code separately when it belongs in
+the same commit.
