@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; category totals exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; configurable-budget exercise complete.
 
 ## Verified
 
@@ -26,6 +26,18 @@ Milestone 1: Python budget calculation engine. Phase 1; category totals exercise
   reference lesson. Learner's calculation ran successfully with output `424.75`.
 
 ## Next task
+
+Latest checkpoint: configurable budgets complete. Mentor ran
+`exercises/monthly_budgets.py`: total limits `1100.00`; remaining Groceries
+`-25.00`, Restaurants `100.00`, Gas `50.00`, miscellaneous `150.00`.
+Learner checked multiple purchases, no purchases, and overspending incrementally.
+See learnings/2026-10-27-configurable-budgets.md.
+
+Next: automated tests, starting with assertions before pytest setup as needed.
+No saved test suite yet. Keep tasks small; use one change and one check at a time
+when the learner is confused. Milestone 1 is still in progress, not complete.
+
+## Previous category-totals checkpoint
 
 Latest checkpoint (2026-10-27): category filtering with a condition inside a loop
 is complete. Mentor verified four Decimal results: Food `118.98`, Gas `59.49`,

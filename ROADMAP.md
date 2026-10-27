@@ -6,7 +6,8 @@ Introduce fundamentals progressively; pause after exercises for review.
 Current checkpoint: milestone 1 in progress. Decimal arithmetic, transaction
 models, validation, exception handling, lists, loops, and category filtering have
 been covered. Category totals were verified for matching, unmatched, and empty
-inputs. Next: dictionary-based configurable budgets. Milestone 1 is not complete;
+inputs. Dictionary-based budgets and remaining amounts are now implemented and
+the final script verified. Next: automated tests. Milestone 1 is not complete;
 an integrated engine and saved tests still remain.
 
 | Milestone | Completion criterion |

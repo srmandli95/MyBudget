@@ -8,6 +8,7 @@ Use fictional financial data in examples.
 
 ## Entries
 
+- [2026-10-27: Configurable monthly budgets — complete](2026-10-27-configurable-budgets.md)
 - [2026-10-27: Lists, loops, and category totals — complete](2026-10-27-loops-and-category-totals.md)
 - [2026-10-27: Exception handling — complete](2026-10-27-exception-handling.md)
 - [2026-10-27: Dataclasses, identity, and validation](2026-10-27-dataclasses-and-validation.md)

@@ -1,5 +1,19 @@
 # Learning notes
 
+## Configurable budgets: complete
+
+Learner implemented dictionary-based Decimal limits, `.items()` iteration, and
+category spending aggregation to calculate remaining budgets. Covered dictionary
+membership, exact string matching, `.values()`, and `sum`. Debugged incorrect
+fallbacks, overwritten results, and early returns. Reduced the task to one change
+and one check at a time when the learner became confused.
+
+Mentor ran the final script successfully: total limits `1100.00`; remaining
+Groceries `-25.00`, Restaurants `100.00`, Gas `50.00`, miscellaneous `150.00`.
+Learner also reported `75.00` grocery remaining with the smaller extra purchase.
+See [lesson notes](learnings/2026-10-27-configurable-budgets.md).
+Next: automated tests; no saved test suite yet.
+
 ## Category totals: complete
 
 Learner extended the totals loop with `if trans.category == category`, and renamed
