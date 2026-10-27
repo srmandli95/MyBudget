@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; exception-handling lesson complete.
+Milestone 1: Python budget calculation engine. Phase 1; transaction totals loop exercise complete.
 
 ## Verified
 
@@ -26,6 +26,14 @@ Milestone 1: Python budget calculation engine. Phase 1; exception-handling lesso
   reference lesson. Learner's calculation ran successfully with output `424.75`.
 
 ## Next task
+
+Latest checkpoint: learner implemented transaction totals with a list and loop.
+Mentor verified `178.47` for three `59.49` amounts and Decimal `0.00` for an empty
+list. The empty-list case was verified separately, not saved in the exercise.
+Next: explain accumulator placement and return placement if needed, then extend
+the function to calculate spending for a selected category using a condition.
+
+## Prior checkpoint
 
 Current stopping point (2026-10-27): learner reports success handling validation
 errors with `try`/`except`. Covered dataclass representation, equality, identity,

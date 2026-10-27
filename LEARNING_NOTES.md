@@ -1,5 +1,38 @@
 # Learning notes
 
+## Lists and loops: transaction totals exercise complete
+
+Learner implemented `calculate_total` in `exercises/transaction_totals.py`.
+The accumulator starts at Decimal zero before the loop, adds each transaction's
+amount, and returns after iteration. Corrected adding an entire Transaction
+object to a Decimal by accessing `trans.amount`.
+
+Mentor ran the saved script: three amounts of `59.49` total `178.47`.
+Separately verified an empty list returns a Decimal equal to `0.00`.
+The empty-list check is not yet saved in the learner's exercise file.
+Optional cleanup: use consistent plural `transactions` naming instead of
+`transaction` and the misspelled `trancsaction`.
+
+## When to use classes and functions
+
+Learner's definition: **A class keeps related data and operations on that data together.**
+
+- Data is held in instance attributes, such as a transaction's merchant, amount,
+  and category.
+- Behavior means operations expressed through methods, such as validating the
+  merchant or changing the category. Validation is one kind of behavior.
+- A standalone function is often enough for an operation on supplied inputs,
+  such as `calculate_remaining(budget, spent)` or `calculate_total(transactions)`.
+- Business logic can live in functions or methods; choose where the responsibility
+  fits. Classes are not required for all code and may also simply model data.
+- A dictionary can group values too. A Transaction class gives that information
+  a specific type and a place for its construction rules. Those rules require
+  explicit validation; annotations alone do not enforce them.
+
+Learner confirmed understanding after comparing a transaction instance with a
+standalone remaining-budget calculation. Next planned implementation: lists and
+loops for transaction totals.
+
 ## First session: running source code
 
 Introduced for practice, not yet demonstrated by the learner:
