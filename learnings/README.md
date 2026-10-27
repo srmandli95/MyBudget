@@ -8,6 +8,8 @@ Use fictional financial data in examples.
 
 ## Entries
 
+- [2026-10-26: Transaction classes and instances — complete](2026-10-26-transaction-class.md)
+
 - [2026-10-26: How Python executes a program](2026-10-26-python-execution.md)
 - [2026-10-26: Decimal, functions, and type hints — complete](2026-10-26-decimal-and-type-hints.md)
 

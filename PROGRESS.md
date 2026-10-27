@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; Decimal calculation lesson complete.
+Milestone 1: Python budget calculation engine. Phase 1; transaction class exercise complete.
 
 ## Verified
 
@@ -27,8 +27,9 @@ Milestone 1: Python budget calculation engine. Phase 1; Decimal calculation less
 
 ## Next task
 
-Introduce a transaction class, its constructor, attributes, and instances.
-Give a small implementation exercise when the learner reaches unfamiliar material.
+Compare the explicit Transaction class with a dataclass, then introduce validation.
+The learner's class exercise ran successfully with a total of `70.88` from
+amounts `59.89` and `10.99`. No automated tests or input validation yet.
 
 ## Open questions
 

@@ -42,4 +42,12 @@ corrected float arguments to Decimal constructors, and clarified module/class
 imports, references, and operator behavior. Mentor verified output `424.75`.
 Additional edge-case runs have not been demonstrated.
 
-Next: model a transaction with a class and introduce constructors and attributes.
+## Transaction class: complete
+
+Learner implemented merchant, Decimal amount, and category instance attributes,
+created two transactions, and printed their amounts and total. Mentor ran the
+exercise successfully: `59.89 + 10.99 = 70.88`.
+Learner distinguished instance attributes from local parameters.
+See [review notes](learnings/2026-10-26-transaction-class.md).
+
+Next: compare explicit initialization with a dataclass, then introduce validation.
