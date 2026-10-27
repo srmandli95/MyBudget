@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; configurable-budget exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; first saved assertion checks complete.
 
 ## Verified
 
@@ -26,6 +26,17 @@ Milestone 1: Python budget calculation engine. Phase 1; configurable-budget exer
   reference lesson. Learner's calculation ran successfully with output `424.75`.
 
 ## Next task
+
+Latest checkpoint: two assertions are saved in `exercises/monthly_budgets.py`:
+grocery spending `525.00` and empty-input total `0.00`. Learner demonstrated an
+intentional failure with expected `524.00`, then restored passing checks. Mentor
+ran the current script successfully and observed `Both checks passed`, exit 0.
+
+Next: walk through a project virtual environment, then pytest setup and separate
+test functions. Learner knows virtual environments but wants to proceed with the
+setup. Let the learner execute commands and review results. No pytest suite yet.
+
+## Previous configurable-budget checkpoint
 
 Latest checkpoint: configurable budgets complete. Mentor ran
 `exercises/monthly_budgets.py`: total limits `1100.00`; remaining Groceries

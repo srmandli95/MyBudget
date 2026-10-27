@@ -38,5 +38,6 @@ for category, limit in budgets.items():
     print(f"category: {category}, limit: {limit}, remaining: {budget_limit[category]}")
 
 
-
-    
+assert calculate_category_total(transactions, "Groceries") == Decimal("525.00")
+assert calculate_category_total([], "Groceries") == Decimal("0.00")
+print("Both checks passed")

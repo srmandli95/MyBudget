@@ -1,5 +1,16 @@
 # Learning notes
 
+## Assertions: complete
+
+Learner saved checks for grocery spending `525.00` and Decimal zero for empty
+input. Intentionally expecting `524.00` raised AssertionError (learner output).
+Restored checks ran successfully for learner and mentor: `Both checks passed`.
+Assertions can be disabled by optimization, so they do not replace input validation.
+See [assertion notes](learnings/2026-10-27-assertions.md).
+
+Next: virtual-environment setup, then pytest. Learner knows virtual environments
+but agrees to walk through setup. No separate pytest suite introduced yet.
+
 ## Configurable budgets: complete
 
 Learner implemented dictionary-based Decimal limits, `.items()` iteration, and
