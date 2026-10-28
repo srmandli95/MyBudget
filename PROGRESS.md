@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; validation-testing lesson complete.
+Milestone 1: Python budget calculation engine. Phase 1; pytest parametrization complete.
 
 ## Verified
 
@@ -17,7 +17,7 @@ Milestone 1: Python budget calculation engine. Phase 1; validation-testing lesso
 - Saved learning agreement and initial project documentation.
 - Added `learnings/` with a daily journal format and Python execution fundamentals.
 - Discussed CPython, executables, processes, bytecode, and syntax versus runtime errors.
-- Calculation and merchant-validation exercises implemented; seven pytest tests pass.
+- Calculation and merchant-validation exercises implemented; nine pytest cases pass.
 - Learner wrote both error demos in `exercises/` and ran them. Mentor reproduced
   the expected SyntaxError and NameError; both exit with status 1.
 - Prepared `.gitignore` and exercise documentation for the first commit.
@@ -26,6 +26,18 @@ Milestone 1: Python budget calculation engine. Phase 1; validation-testing lesso
   reference lesson. Learner's calculation ran successfully with output `424.75`.
 
 ## Next task
+
+Latest checkpoint (2026-10-28): parametrization complete. Learner uses four blank
+merchant inputs in one test function and retains the valid-merchant test.
+Corrected a collection error caused by a missing function parameter.
+Mentor ran all three test files: **9 passed**, exit 0.
+See learnings/2026-10-28-pytest-parametrization.md.
+
+Next: pytest fixtures to reuse sample transaction setup, starting with default
+function scope and fresh mutable data per test. Explain before implementation.
+General decorator internals, dependency recording, and shared models remain pending.
+
+## Previous validation checkpoint
 
 Latest checkpoint (2026-10-28): learner completed empty, whitespace-only, and valid
 merchant tests. Covered pytest.raises, with/context managers, variable scope,

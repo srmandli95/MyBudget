@@ -1,5 +1,15 @@
 # Learning notes
 
+## Pytest parametrization: complete
+
+Learner consolidated invalid-merchant checks into one parametrized function with
+empty text, one space, three spaces, and a tab. Corrected a collection error by
+adding the decorator's named parameter to the function signature. The valid
+case remains separate. Mentor ran all three test files: **9 passed**, exit 0.
+See [lesson notes](learnings/2026-10-28-pytest-parametrization.md).
+Next: pytest fixtures for reusable sample transaction setup. General decorator
+internals remain a future lesson.
+
 ## Context managers and validation tests: complete
 
 Covered statements versus expressions, scope, and with/context-manager roles.
