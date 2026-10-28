@@ -11,5 +11,6 @@ class Transaction:
     def __post_init__(self) -> None:
         if not self.merchant.strip():
             raise ValueError("marchant should not be blank")
-    
-t1 = Transaction(" ", Decimal("29.49"), "food")
+
+if __name__ == "__main__":
+    t1 = Transaction(" ", Decimal("29.49"), "food")

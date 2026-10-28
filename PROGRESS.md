@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; first pytest lesson complete.
+Milestone 1: Python budget calculation engine. Phase 1; validation-testing lesson complete.
 
 ## Verified
 
@@ -17,7 +17,7 @@ Milestone 1: Python budget calculation engine. Phase 1; first pytest lesson comp
 - Saved learning agreement and initial project documentation.
 - Added `learnings/` with a daily journal format and Python execution fundamentals.
 - Discussed CPython, executables, processes, bytecode, and syntax versus runtime errors.
-- Calculation exercises implemented; first four pytest tests now pass.
+- Calculation and merchant-validation exercises implemented; seven pytest tests pass.
 - Learner wrote both error demos in `exercises/` and ran them. Mentor reproduced
   the expected SyntaxError and NameError; both exit with status 1.
 - Prepared `.gitignore` and exercise documentation for the first commit.
@@ -26,6 +26,18 @@ Milestone 1: Python budget calculation engine. Phase 1; first pytest lesson comp
   reference lesson. Learner's calculation ran successfully with output `424.75`.
 
 ## Next task
+
+Latest checkpoint (2026-10-28): learner completed empty, whitespace-only, and valid
+merchant tests. Covered pytest.raises, with/context managers, variable scope,
+statements/expressions, and main guards for invalid construction demonstrations.
+Mentor ran all three current test files: 7 passed, exit 0.
+See learnings/2026-10-28-context-managers-and-validation-tests.md.
+
+Next: introduce pytest parametrization for multiple invalid merchant inputs,
+explaining the decorator before asking the learner to implement. Keep the valid
+case separate. Dependency recording and a shared transaction model remain pending.
+
+## Previous pytest checkpoint
 
 Latest checkpoint (2026-10-28): learner created a virtual environment, installed
 pytest, moved monthly-budget demos behind `if __name__ == "__main__"`, and wrote

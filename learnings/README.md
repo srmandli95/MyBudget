@@ -8,6 +8,7 @@ Use fictional financial data in examples.
 
 ## Entries
 
+- [2026-10-28: Context managers and validation tests — complete](2026-10-28-context-managers-and-validation-tests.md)
 - [2026-10-28: First pytest tests and imports — complete](2026-10-28-pytest-and-imports.md)
 - [2026-10-27: Automated checks with assert — complete](2026-10-27-assertions.md)
 - [2026-10-27: Configurable monthly budgets — complete](2026-10-27-configurable-budgets.md)

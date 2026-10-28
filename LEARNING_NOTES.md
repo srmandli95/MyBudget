@@ -1,5 +1,20 @@
 # Learning notes
 
+## Context managers and validation tests: complete
+
+Covered statements versus expressions, scope, and with/context-manager roles.
+Learner clarified that with uses an object's entry/exit behavior; it does not
+create a new variable scope. Compared pytest.raises with manual try/except:
+expected validation errors mean success, while missing errors must fail the test.
+Handling an exception skips the rest of the interrupted block.
+
+Moved the invalid construction demo behind a main guard to permit safe import.
+Learner wrote tests rejecting empty and whitespace merchants and accepting Costco.
+Mentor inspected and ran all three test files: **7 passed**, exit 0.
+See [detailed notes](learnings/2026-10-28-context-managers-and-validation-tests.md).
+Next: small pytest parametrization exercise; introduce its decorator before use.
+General generators/decorators and GIL remain future lessons, not completed topics.
+
 ## Pytest and imports: complete
 
 Learner set up `.venv` and pytest and wrote four passing tests: setup subtraction,
