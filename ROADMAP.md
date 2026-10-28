@@ -10,6 +10,10 @@ inputs. Dictionary-based budgets and remaining amounts are now implemented and
 the final script verified. Next: automated tests. Milestone 1 is not complete;
 an integrated engine and saved tests still remain.
 
+Testing checkpoint: four saved pytest tests now pass (setup subtraction and three
+category-total behaviors). Next: expected validation exceptions with pytest.raises.
+An integrated engine and broader tests remain before milestone 1 is complete.
+
 | Milestone | Completion criterion |
 | --- | --- |
 | 1. Python engine | In-memory fictional transactions, configurable budgets, tested category totals and remaining amounts |

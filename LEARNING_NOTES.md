@@ -1,5 +1,22 @@
 # Learning notes
 
+## Pytest and imports: complete
+
+Learner set up `.venv` and pytest and wrote four passing tests: setup subtraction,
+matching-category sum, empty input, and nonmatching input. Mentor independently
+ran the two test files through `.venv/bin/python`: 4 passed, exit 0.
+
+Clarified virtual environments versus pip, interpreter selection, test discovery,
+and Arrange–Act–Assert. Spent additional time on module initialization: importing
+even one name executes the module's top-level code, while function bodies wait
+for calls. Learner moved demo code under the `__main__` guard and understood its
+purpose. Explained the dotted import path from the project root.
+
+See [pytest and import notes](learnings/2026-10-28-pytest-and-imports.md).
+Next: `pytest.raises` for validation, inspecting which Transaction model is used
+and guarding demonstration code before import. Do not conflate the simple budget
+model with the earlier merchant-validating model.
+
 ## Assertions: complete
 
 Learner saved checks for grocery spending `525.00` and Decimal zero for empty

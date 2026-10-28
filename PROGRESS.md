@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; first saved assertion checks complete.
+Milestone 1: Python budget calculation engine. Phase 1; first pytest lesson complete.
 
 ## Verified
 
@@ -17,7 +17,7 @@ Milestone 1: Python budget calculation engine. Phase 1; first saved assertion ch
 - Saved learning agreement and initial project documentation.
 - Added `learnings/` with a daily journal format and Python execution fundamentals.
 - Discussed CPython, executables, processes, bytecode, and syntax versus runtime errors.
-- First calculation exercise implemented; no automated application tests yet.
+- Calculation exercises implemented; first four pytest tests now pass.
 - Learner wrote both error demos in `exercises/` and ran them. Mentor reproduced
   the expected SyntaxError and NameError; both exit with status 1.
 - Prepared `.gitignore` and exercise documentation for the first commit.
@@ -26,6 +26,18 @@ Milestone 1: Python budget calculation engine. Phase 1; first saved assertion ch
   reference lesson. Learner's calculation ran successfully with output `424.75`.
 
 ## Next task
+
+Latest checkpoint (2026-10-28): learner created a virtual environment, installed
+pytest, moved monthly-budget demos behind `if __name__ == "__main__"`, and wrote
+four tests. Mentor independently ran the two test files: 4 passed, exit 0.
+See learnings/2026-10-28-pytest-and-imports.md.
+
+Next: teach `pytest.raises` to test blank-merchant validation. Inspect the earlier
+validated Transaction exercise before importing and guard its top-level demo if
+needed. The monthly-budget Transaction has no merchant field or validation hook.
+Do not implement the learner's test in advance. Dependency recording remains pending.
+
+## Previous assertion checkpoint
 
 Latest checkpoint: two assertions are saved in `exercises/monthly_budgets.py`:
 grocery spending `525.00` and empty-input total `0.00`. Learner demonstrated an
