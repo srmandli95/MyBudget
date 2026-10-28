@@ -10,9 +10,10 @@ inputs. Dictionary-based budgets and remaining amounts are now implemented and
 the final script verified. Next: automated tests. Milestone 1 is not complete;
 an integrated engine and saved tests still remain.
 
-Testing checkpoint: nine pytest cases now pass (setup subtraction, three
+Testing checkpoint: ten pytest cases now pass (setup subtraction, four
 category-total behaviors, and five merchant-validation cases). Covered expected
-exceptions, context managers, and parametrization. Next: pytest fixtures.
+exceptions, context managers, parametrization, and local fixtures. Sharing through
+conftest.py is discussed; an optional move exercise is next.
 An integrated engine and broader tests remain before milestone 1 is complete.
 
 | Milestone | Completion criterion |

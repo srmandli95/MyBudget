@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; pytest parametrization complete.
+Milestone 1: Python budget calculation engine. Phase 1; local pytest fixture exercise complete.
 
 ## Verified
 
@@ -17,7 +17,7 @@ Milestone 1: Python budget calculation engine. Phase 1; pytest parametrization c
 - Saved learning agreement and initial project documentation.
 - Added `learnings/` with a daily journal format and Python execution fundamentals.
 - Discussed CPython, executables, processes, bytecode, and syntax versus runtime errors.
-- Calculation and merchant-validation exercises implemented; nine pytest cases pass.
+- Calculation and merchant-validation exercises implemented; ten pytest cases pass.
 - Learner wrote both error demos in `exercises/` and ran them. Mentor reproduced
   the expected SyntaxError and NameError; both exit with status 1.
 - Prepared `.gitignore` and exercise documentation for the first commit.
@@ -26,6 +26,20 @@ Milestone 1: Python budget calculation engine. Phase 1; pytest parametrization c
   reference lesson. Learner's calculation ran successfully with output `424.75`.
 
 ## Next task
+
+Latest checkpoint (2026-10-28): fixture exercise complete. Local sample_transaction
+fixture supplies the grocery and gas tests; four category tests pass. Covered
+default fixture lifetime, name matching, same-name definitions, and conftest.py.
+Mentor ran all three test files: **10 passed**, exit 0.
+See learnings/2026-10-28-pytest-fixtures.md.
+
+Next optional exercise: move the existing fixture to exercises/conftest.py,
+preserving its name and three transactions, remove the local definition, and
+rerun tests. Sharing is discussed but not implemented; one module currently uses
+the fixture. Let the learner make the edit. General decorator internals,
+dependency recording, and shared application models remain pending.
+
+## Previous parametrization checkpoint
 
 Latest checkpoint (2026-10-28): parametrization complete. Learner uses four blank
 merchant inputs in one test function and retains the valid-merchant test.

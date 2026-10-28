@@ -1,5 +1,17 @@
 # Learning notes
 
+## Pytest fixtures: local exercise complete
+
+Learner wrote a fixture returning sample transactions and requested it by name
+in grocery and gas tests. Covered fixture return values, default function scope,
+fresh mutable data, and the distinction from parametrization. Explained duplicate
+fixture names and sharing through conftest.py without explicit test imports.
+conftest.py has been discussed but not created; the fixture remains local.
+Mentor ran all three test files: **10 passed**, exit 0.
+See [fixture notes](learnings/2026-10-28-pytest-fixtures.md).
+Next optional exercise: move the existing fixture to exercises/conftest.py,
+preserving its name/data, then rerun tests. Only one module currently needs it.
+
 ## Pytest parametrization: complete
 
 Learner consolidated invalid-merchant checks into one parametrized function with

@@ -8,6 +8,7 @@ Use fictional financial data in examples.
 
 ## Entries
 
+- [2026-10-28: Pytest fixtures — complete; conftest.py discussed](2026-10-28-pytest-fixtures.md)
 - [2026-10-28: Pytest parametrization — complete](2026-10-28-pytest-parametrization.md)
 - [2026-10-28: Context managers and validation tests — complete](2026-10-28-context-managers-and-validation-tests.md)
 - [2026-10-28: First pytest tests and imports — complete](2026-10-28-pytest-and-imports.md)
