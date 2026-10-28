@@ -1,14 +1,5 @@
 from decimal import Decimal
 from exercises.monthly_budgets import Transaction, calculate_category_total
-import pytest
-
-@pytest.fixture
-def sample_transaction():
-    return [
-        Transaction("Groceries", Decimal("40.00")),
-        Transaction("Gas", Decimal("20.00")),
-        Transaction("Groceries", Decimal("10.00"))
-    ]
 
 def test_category_total_sums_only_matching_transactions(sample_transaction):
     

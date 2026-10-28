@@ -1,5 +1,12 @@
 # Learning notes
 
+## conftest.py sharing exercise: complete
+
+Learner moved sample_transaction into exercises/conftest.py and removed its local
+definition. Tests request the same fixture name without importing it. Mentor
+inspected the move and ran `.venv/bin/python -m pytest exercises -v`: **10 passed**.
+The unused pytest import in test_monthly_budgets.py is optional cleanup.
+
 ## Pytest fixtures: local exercise complete
 
 Learner wrote a fixture returning sample transactions and requested it by name

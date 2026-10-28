@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; local pytest fixture exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; shared pytest fixture exercise complete.
 
 ## Verified
 
@@ -26,6 +26,16 @@ Milestone 1: Python budget calculation engine. Phase 1; local pytest fixture exe
   reference lesson. Learner's calculation ran successfully with output `424.75`.
 
 ## Next task
+
+Latest checkpoint: conftest.py move verified. sample_transaction now lives in
+exercises/conftest.py, with the same data and no direct fixture imports in tests.
+Mentor ran `.venv/bin/python -m pytest exercises -v`: **10 passed**, exit 0.
+Optional cleanup: remove unused pytest import from test_monthly_budgets.py.
+Next recommended lesson: record development dependencies for a reproducible test
+environment before consolidating repeated application models. Explain each change
+and let the learner implement.
+
+## Previous local-fixture checkpoint
 
 Latest checkpoint (2026-10-28): fixture exercise complete. Local sample_transaction
 fixture supplies the grocery and gas tests; four category tests pass. Covered

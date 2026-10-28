@@ -1,6 +1,25 @@
 # 2026-10-28: Pytest fixtures and sharing setup
 
-Status: local fixture exercise complete; conftest.py discussed, not implemented.
+Status: local fixture and conftest.py sharing exercises complete.
+
+## Learner's distinction: fixtures versus parametrization
+
+- **Fixtures: one setup definition → reused by many tests.**
+- **Parametrization: one test definition → run with many input values.**
+
+Reusing setup does not necessarily share one object: this default function-scoped
+fixture constructs fresh sample objects for each requesting test. Providing a
+list through a fixture does not automatically run a separate test for each item.
+Both mechanisms can be used together. Parametrized fixtures remain a later topic.
+
+## Latest verification: shared fixture
+
+Learner moved sample_transaction into exercises/conftest.py, preserving its name
+and three transactions. Mentor inspected both files: the local definition was
+removed and tests request the fixture without importing it. Ran
+`.venv/bin/python -m pytest exercises -v`: **10 passed in 0.01s**, exit 0.
+Optional cleanup: remove the unused pytest import from test_monthly_budgets.py.
+The earlier sections below describe the local-fixture stage before this move.
 
 ## Fixtures
 
