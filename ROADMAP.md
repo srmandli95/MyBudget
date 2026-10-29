@@ -14,6 +14,10 @@ Testing checkpoint: ten pytest cases now pass (setup subtraction, four
 category-total behaviors, and five merchant-validation cases). Covered expected
 exceptions, context managers, parametrization, and local fixtures. Sharing through
 conftest.py is discussed; an optional move exercise is next.
+
+Latest checkpoint: shared conftest.py fixture and uv dependency setup are complete;
+the locked uv test run passes all 10 cases. Next: progressively consolidate shared
+models and calculations. LEARNING_NOTES.md is the single appended revision journal.
 An integrated engine and broader tests remain before milestone 1 is complete.
 
 | Milestone | Completion criterion |
