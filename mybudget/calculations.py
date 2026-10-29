@@ -19,6 +19,8 @@ def calculate_monthly_category_total(
     year: int,
     month: int,
 ) -> Decimal:
+    if month < 1 or month > 12:
+        raise ValueError("Month must be between 1 and 12")
     expense = Decimal("0.00")
     for transaction in transactions:
         if transaction.transaction_date.year == year and transaction.transaction_date.month == month and transaction.category == category:

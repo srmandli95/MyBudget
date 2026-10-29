@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: monthly matching and empty-input checks verified; 15 tests pass. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: invalid-month validation implemented; 17 tests pass. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -35,6 +35,9 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 21: 2026-10-29: Adding dates while preserving test coverage](#lesson-21)
 - [Lesson 22: 2026-10-29: Monthly filtering and meaningful test inputs](#lesson-22)
 - [Lesson 23: 2026-10-29: Empty inputs and checking result types](#lesson-23)
+- [Lesson 24: 2026-10-29: Nonempty input with no matching month](#lesson-24)
+- [Lesson 25: 2026-10-29: Monthly report integration](#lesson-25)
+- [Lesson 26: 2026-10-29: Invalid months and debugging test expectations](#lesson-26)
 
 <a id="lesson-01"></a>
 
@@ -1376,3 +1379,78 @@ Test a nonempty list with no matching category/month/year and expect Decimal
 zero. Unlike empty input, this executes the loop but never adds an amount.
 After that, integrate monthly filtering into the report and verify month-specific
 results. Those steps are still pending; the report currently uses all-dates totals.
+
+<a id="lesson-24"></a>
+
+## Lesson 24: 2026-10-29: Nonempty input with no matching month
+
+Status: complete.
+
+Learner added test_monthly_total_returns_zero_when_no_dates_match, requesting
+December 2026 groceries from the mixed-input fixture. No purchases match that
+month. The test asserts Decimal zero and checks isinstance(actual, Decimal).
+Unlike empty input, this exercises iteration where every purchase is excluded.
+
+Mentor inspected the saved test and ran
+`uv run --locked python -m pytest exercises/test_calculate_monthly_budgets.py -v`:
+**3 passed in 0.01s**, exit 0. The full suite was not rerun in this check.
+Next: select report year/month explicitly and call the monthly function in the
+budget demonstration. Verify populated and empty-month output.
+
+<a id="lesson-25"></a>
+
+## Lesson 25: 2026-10-29: Monthly report integration
+
+Status: October integration verified; period display and November run pending.
+
+Learner configured report_year = 2026 and report_month = 10 in the demonstration,
+then used calculate_monthly_category_total for spending and calculate_remaining
+for each category's remaining limit. The reusable functions now drive the report.
+
+Mentor inspected the source and ran the report and full test suite through uv.
+Both exited 0; **16 tests passed in 0.01s**. October report: limits total 1100.00;
+remaining Groceries -25.00, Restaurants 100.00, Gas 50.00, miscellaneous 150.00.
+
+The report does not yet display its selected period. Add a year/month heading
+so output can be interpreted correctly. A separate November demonstration was
+requested but has not been observed by the mentor; with current October-only
+sample purchases, November should retain every full category limit.
+
+<a id="lesson-26"></a>
+
+## Lesson 26: 2026-10-29: Invalid months and debugging test expectations
+
+Status: month-13 validation test complete; broader boundary tests pending.
+
+Learner reported a November report with full remaining limits, as expected for
+a valid month without purchases. Month 13 previously behaved the same way, but
+invalid periods should be rejected rather than presented as zero spending.
+
+Learner wrote a pytest.raises(ValueError) test and shared its initial DID NOT RAISE
+failure, then added validation before iteration. This also makes validation run
+with empty input. The correct condition is:
+
+```python
+if month < 1 or month > 12:
+    raise ValueError("Month must be between 1 and 12")
+```
+
+The original `not month >= 1 and month <= 12` negated only the first comparison;
+for 13 it was false and did not raise. Alternatively, negate the entire valid
+range with `not (1 <= month <= 12)`.
+
+After correcting the implementation, the test still failed. Mentor inspected
+the saved test and reproduced the failure: it passed valid month 12 while
+expecting an error. Learner corrected that argument to 13. Keep December in the
+no-match test because that case checks a valid month without purchases.
+
+Testing lesson: failures can reveal mistakes in the test itself. Inspect inputs,
+the expected outcome, and the implementation rather than assuming either is right.
+
+Mentor verified the corrected input and ran
+`uv run --locked python -m pytest exercises -v`: **17 passed in 0.01s**, exit 0.
+The test currently uses nonempty fixture input. It does not yet explicitly verify
+month 0, valid boundary months 1/12, or invalid-month rejection on an empty list.
+
+Next: extend the invalid-month test with parametrization for 0 and 13 and verify
+the rule with empty transactions. Then check valid boundaries remain accepted.

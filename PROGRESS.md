@@ -27,7 +27,7 @@ The project consists of working standalone exercises, not yet an integrated engi
 
 ## Latest verification
 
-Mentor ran `uv run --locked python -m pytest exercises -v`: **15 passed in 0.01s**,
+Mentor ran `uv run --locked python -m pytest exercises -v`: **17 passed in 0.01s**,
 exit 0, Python 3.14.6 and pytest 9.2.0. pyproject.toml and uv.lock record the
 project and dependencies; .venv remains ignored. Use Python's module invocation
 from the project root to make exercises imports work.
@@ -43,13 +43,19 @@ and a Decimal accumulator. Learner's expanded fixture includes other-month,
 other-category, and other-year purchases; target October groceries remain 70.00.
 Empty-list test now checks zero value and Decimal type. Mentor inspected it and
 ran the full suite after fixture expansion: 15 passed, exit 0.
-Next: nonempty-input test with no monthly/category matches, expecting Decimal
-zero. Monthly report integration remains pending. Let the learner implement.
+Monthly filtering is now integrated in the demonstration with year 2026/month 10.
+Mentor inspected and ran the report: expected October results, exit 0. Full suite
+rerun after integration: 16 passed. Empty and nonempty no-month-match tests pass.
+Learner reported full remaining limits for November. Added month-range validation
+before iteration; corrected boolean grouping and a test accidentally passing 12
+instead of invalid 13. Mentor reproduced the failure, then verified the corrected
+test and full suite: 17 passed. Next: invalid months 0/13 via parametrization,
+including empty transactions; verify valid months 1/12 remain accepted.
 
 Current model requires transaction_date; fixtures and demonstration supply dates.
 sample_no_groceries preserves the no-category-match scenario. Latest verification
-includes all date-field fixes and new monthly tests: 15 tests pass. The demonstration
-last exited 0 after the date fixes; it still uses all-dates category totals.
+includes all date-field fixes and monthly tests: 16 tests pass. The demonstration
+now uses monthly category totals and exits 0 for October 2026.
 Decimal return annotation on calculate_remaining remains optional cleanup pending.
 Initial failing test-first run was suggested but not observed; do not claim it ran.
 calculate_category_total now lives in mybudget/calculations.py; demonstration
@@ -62,7 +68,7 @@ Broader financial rules, integration, and milestone completion checks remain.
 ## Learning-record convention
 
 User requests **one revision file, appended after each lesson**: LEARNING_NOTES.md.
-It now contains 23 lessons in learning order, including empty-input result-type checks.
+It now contains 26 lessons in learning order, including invalid-month validation.
 Append future lessons at the bottom, update contents, and refresh this checkpoint.
 The dated learnings/ files are retained as a historical archive, not the primary
 place for new entries. Do not keep prepending duplicate checkpoints to the journal.

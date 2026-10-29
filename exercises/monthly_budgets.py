@@ -1,8 +1,13 @@
 from decimal import Decimal
 from mybudget.models import Transaction
-from mybudget.calculations import calculate_category_total, calculate_remaining
+from mybudget.calculations import calculate_category_total, calculate_remaining, calculate_monthly_category_total
 from datetime import date
 if __name__ == "__main__":
+
+    report_year = 2026
+    report_month = 12
+
+    print(f"Budget report: {report_year}-{report_month:02d}")
 
     budgets = {
         "Groceries": Decimal("500.00"),
@@ -24,7 +29,7 @@ if __name__ == "__main__":
 
 
     for category, limit in budgets.items():
-        spend = calculate_category_total(transactions,category)
+        spend = calculate_monthly_category_total(transactions, category, report_year, report_month)
         budget_limit[category] = calculate_remaining(limit, spend)
 
     for category, limit in budgets.items():
