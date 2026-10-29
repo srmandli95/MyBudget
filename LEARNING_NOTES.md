@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: uv setup complete; 10 tests pass. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: shared budget model extracted; 10 tests pass. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -26,6 +26,7 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 12: 2026-10-28: Pytest parametrization](#lesson-12)
 - [Lesson 13: 2026-10-28: Pytest fixtures and sharing setup](#lesson-13)
 - [Lesson 14: 2026-10-28: uv, dependency resolution, and lockfiles](#lesson-14)
+- [Lesson 15: 2026-10-28: Models, packages, and a small refactor](#lesson-15)
 
 <a id="lesson-01"></a>
 
@@ -1006,3 +1007,82 @@ in learnings/ are a historical archive; this is the primary revision document.
 Introduce a shared application module and consolidate the repeated Transaction
 models progressively. Explain responsibilities and agree on the small model
 change before editing; do not generate the solution for the learner.
+
+<a id="lesson-15"></a>
+
+## Lesson 15: 2026-10-28: Models, packages, and a small refactor
+
+Status: model-extraction exercise complete.
+
+### What a model means
+
+A model represents something the application works with. Transaction represents
+the information about a purchase needed by the current calculation. Model is a
+description of its role, not a Python keyword. models.py is an ordinary module.
+Database and API models will later represent data for their specific purposes.
+
+### Why move the class?
+
+Reusable application code should have a home outside demonstration scripts.
+A refactor changes organization while preserving behavior. Moving rather than
+copying the class gives active callers one definition to maintain.
+
+The learner created:
+
+```text
+mybudget/
+├── __init__.py
+└── models.py
+```
+
+An empty __init__.py makes this a regular Python package. models.py contains the
+existing two-field dataclass:
+
+```python
+@dataclass
+class Transaction:
+    category: str
+    amount: Decimal
+```
+
+It imports Decimal and dataclass itself. monthly_budgets.py and conftest.py now use:
+
+```python
+from mybudget.models import Transaction
+```
+
+The original budget-model definition and its dataclass import were removed from
+monthly_budgets.py. Its calculation function and guarded demonstration remain.
+This change relocates the model; it does not add validation or alter its fields.
+
+### One change at a time
+
+The earlier validation exercise has a different Transaction with merchant,
+amount, category, and a merchant check. It remains separate. Consolidating that
+model would require a deliberate field/validation change and caller/test updates.
+Passing these tests does not mean the two models have already been unified.
+
+### Verification
+
+The learner reported passing tests and unchanged demonstration output. Mentor
+inspected the saved model and imports and independently ran both commands:
+
+```sh
+uv run --locked python -m pytest exercises -v
+uv run --locked python -m exercises.monthly_budgets
+```
+
+Both exited 0. Tests: **10 passed in 0.01s**. Demonstration: total limits 1100.00;
+remaining Groceries -25.00, Restaurants 100.00, Gas 50.00, miscellaneous 150.00;
+final output `Both checks passed`.
+
+Run modules from the project root with -m so imports can find the sibling
+mybudget package. The earlier test imports through exercises.monthly_budgets
+still work because that module imports Transaction; updating them to its direct
+application home can be part of the next small refactor.
+
+### Next task
+
+Move calculate_category_total into mybudget/calculations.py. Update the
+demonstration and tests to import reusable code from its application home,
+preserve behavior, and rerun the same checks. Let the learner make the move.

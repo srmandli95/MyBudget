@@ -2,7 +2,7 @@ from decimal import Decimal
 
 import pytest 
 
-from exercises.monthly_budgets import Transaction
+from mybudget.models import Transaction
 
 @pytest.fixture
 def sample_transaction():

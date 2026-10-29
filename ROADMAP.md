@@ -18,6 +18,9 @@ conftest.py is discussed; an optional move exercise is next.
 Latest checkpoint: shared conftest.py fixture and uv dependency setup are complete;
 the locked uv test run passes all 10 cases. Next: progressively consolidate shared
 models and calculations. LEARNING_NOTES.md is the single appended revision journal.
+
+Model extraction checkpoint: budget Transaction moved into mybudget/models.py;
+10 tests and the demonstration still pass. Next: extract the category calculation.
 An integrated engine and broader tests remain before milestone 1 is complete.
 
 | Milestone | Completion criterion |
