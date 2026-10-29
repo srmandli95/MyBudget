@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: valid/invalid month boundaries verified; 20 tests pass. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: Budget model and first validation tests implemented; 22 tests pass. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -40,6 +40,7 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 26: 2026-10-29: Invalid months and debugging test expectations](#lesson-26)
 - [Lesson 27: 2026-10-29: Boundary validation independent of transaction data](#lesson-27)
 - [Lesson 28: 2026-10-29: Accepting valid range boundaries](#lesson-28)
+- [Lesson 29: 2026-10-29: Budget validation and fixture setup errors](#lesson-29)
 
 <a id="lesson-01"></a>
 
@@ -1500,3 +1501,67 @@ validation; year/type policies remain future work.
 
 Next recommended topic: model configurable budgets with a Budget dataclass and
 explicit monthly-limit validation, starting with the rules before implementation.
+
+<a id="lesson-29"></a>
+
+## Lesson 29: 2026-10-29: Budget validation and fixture setup errors
+
+Status: model implemented; valid construction and negative-limit rejection verified.
+Additional rule tests and report integration remain pending.
+
+### Model and rules
+
+Learner added Budget to mybudget/models.py with category: str and limit: Decimal.
+The suggested name was monthly_limit; the implemented attribute is limit. Use
+the actual name consistently in callers and tests.
+
+__post_init__ rejects blank/whitespace categories and limits below Decimal zero.
+Zero is allowed: it represents no planned spending. A negative transaction may
+eventually represent a refund; a negative budget limit is invalid configuration.
+These are distinct business rules. Type annotations alone do not enforce them.
+
+### Fixture setup versus the operation under test
+
+Learner correctly anticipated that constructing an invalid Budget in a fixture
+would raise before the test could catch it. The mentor's initial answer was too
+broad: fixtures can supply invalid input values, but this fixture constructed the
+invalid object itself. The observed result was a setup ERROR, not the intended
+successful expected-exception check.
+
+```python
+def test_invalid_category():
+    with pytest.raises(ValueError):
+        actual = Budget("Groceries", Decimal("-1.00"))
+```
+
+The corrected test constructs the Budget inside pytest.raises. Merely assigning
+an already-created fixture object inside the block would not rerun construction
+or validation. A checker must be active before the failing operation happens.
+
+The invalid fixture is defined but not requested now. Defining a fixture does
+not execute its body; pytest calls it when a test requests it. This explains why
+the remaining invalid fixture does not currently break the suite.
+
+### Verified result and coverage limits
+
+Mentor inspected models.py, conftest.py, and test_budget_model.py, then ran:
+
+```sh
+uv run --locked python -m pytest exercises -v
+```
+
+Result: **22 passed in 0.01s**, exit 0. The valid Budget fixture has category
+Groceries and limit 50.00. Its test currently checks only the category. The other
+test rejects a negative limit; despite its name test_invalid_category, it supplies
+a valid category and does not test category rejection.
+
+### Resume here next session
+
+1. Rename the negative-limit test to test_budget_rejects_negative_limit.
+2. Add an assertion for the valid fixture's limit (50.00).
+3. Test blank/whitespace category rejection and acceptance of a zero limit.
+4. Remove the unused invalid-construction fixture when the learner is ready.
+5. Once model rules are tested, integrate Budget into the report in a separate step.
+
+Keep these as small learner exercises. The dictionary report is unchanged and
+the earlier merchant-validating Transaction remains separate from the shared model.

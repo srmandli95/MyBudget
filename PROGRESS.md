@@ -4,7 +4,7 @@ Last updated: 2026-10-29.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; monthly-filtering boundary tests complete.
+Milestone 1: Python budget calculation engine. Phase 1; Budget model validation in progress.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -24,10 +24,12 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Fixed the demonstration's missing date import and restored the no-match test.
 - Monthly category filtering with mixed-date/category fixture and Decimal accumulator.
 - Empty-input monthly test checks both zero value and Decimal result type.
+- Budget dataclass with category/limit fields; valid construction and negative-limit rejection tested.
+- Fixture setup errors versus expected exceptions inside a test clarified by experiment.
 
 ## Latest verification
 
-Mentor ran `uv run --locked python -m pytest exercises -v`: **20 passed in 0.01s**,
+Mentor ran `uv run --locked python -m pytest exercises -v`: **22 passed in 0.01s**,
 exit 0, Python 3.14.6 and pytest 9.2.0. pyproject.toml and uv.lock record the
 project and dependencies; .venv remains ignored. Use Python's module invocation
 from the project root to make exercises imports work.
@@ -37,6 +39,20 @@ restaurants 100.00, gas 50.00, miscellaneous 150.00. Data is fictional.
 Mentor reran the module demonstration after the date-field changes; same results, exit 0.
 
 ## Next recommended task
+
+Session stopping point (2026-10-29): learner requested recording and continuation
+later. Budget now has category and limit (not monthly_limit), with blank-category
+and negative-limit validation. Two saved tests pass, but coverage is incomplete.
+
+Resume with small exercises: rename test_invalid_category to reflect its actual
+negative-limit check; assert the valid fixture's limit is 50.00; test blank and
+whitespace categories and zero-limit acceptance. The unused invalid-construction
+fixture remains in conftest.py; it can be removed. It no longer raises because no
+test requests it. Budget has not been integrated into the dictionary report yet.
+Mentor verified full suite: 22 passed. See journal lesson 29 for the fixture error
+and the learner's correct prediction. No application/test code changed during recording.
+
+## Previous monthly-boundary checkpoint
 
 Latest checkpoint: month validation boundary exercise complete. Learner tests
 invalid 0/13 with empty input and valid 1/12 returning zero. Mentor inspected the
@@ -81,7 +97,7 @@ Broader financial rules, integration, and milestone completion checks remain.
 ## Learning-record convention
 
 User requests **one revision file, appended after each lesson**: LEARNING_NOTES.md.
-It now contains 28 lessons in learning order, including valid month boundary checks.
+It now contains 29 lessons in learning order, including Budget validation and fixture errors.
 Append future lessons at the bottom, update contents, and refresh this checkpoint.
 The dated learnings/ files are retained as a historical archive, not the primary
 place for new entries. Do not keep prepending duplicate checkpoints to the journal.

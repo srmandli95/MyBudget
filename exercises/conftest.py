@@ -2,7 +2,7 @@ from decimal import Decimal
 from datetime import date
 import pytest 
 
-from mybudget.models import Transaction
+from mybudget.models import Transaction, Budget
 
 @pytest.fixture
 def sample_transaction():
@@ -29,3 +29,14 @@ def calculate_category_budgets():
         Transaction("Gas", Decimal("20.00"), date(2026,10,1)),
         Transaction("Groceries", Decimal("10.00"), date(2025,10,8))
     ]
+
+@pytest.fixture
+def budget_valid_configurations():
+
+    return Budget("Groceries", Decimal("50.00"))
+
+@pytest.fixture
+def budget_invalid_configurations():
+
+    return Budget("Groceries", Decimal("-1.00"))
+

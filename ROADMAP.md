@@ -31,6 +31,11 @@ remaining-budget boundary tests and report integration are complete. Monthly
 filtering has mixed-input and empty-list tests; 15 total tests pass. Next: a
 nonempty no-match monthly test, then monthly report integration. Milestone 1
 remains in progress.
+
+Budget-model checkpoint: Budget(category, limit) now validates blank category and
+negative limits. Valid construction and negative-limit tests pass; full suite is
+22 passing cases. Next: cover blank categories and zero limit, then integrate the
+model into the report. Milestone 1 remains in progress.
 An integrated engine and broader tests remain before milestone 1 is complete.
 
 | Milestone | Completion criterion |
