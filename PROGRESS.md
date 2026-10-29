@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; shared budget-model extraction complete.
+Milestone 1: Python budget calculation engine. Phase 1; shared calculation extraction complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -15,6 +15,7 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Shared fixture in exercises/conftest.py, discovered without explicit imports.
 - uv project setup, development dependencies, lockfiles, and optional activation.
 - Models, regular packages, and a behavior-preserving refactor into mybudget/models.py.
+- Category calculation moved into mybudget/calculations.py; demo and tests import it there.
 
 ## Latest verification
 
@@ -25,13 +26,15 @@ from the project root to make exercises imports work.
 
 Category budget example: limits total 1100.00; groceries remaining -25.00,
 restaurants 100.00, gas 50.00, miscellaneous 150.00. Data is fictional.
-Mentor reran the module demonstration after model extraction; same results, exit 0.
+Mentor reran the module demonstration after calculation extraction; same results, exit 0.
 
 ## Next recommended task
 
-Move calculate_category_total from exercises/monthly_budgets.py into
-mybudget/calculations.py. Explain the move, let the learner implement, update
-demonstration/test imports, and verify unchanged tests and sample output.
+Extract remaining-budget calculation into a function in mybudget/calculations.py
+and test spending below, at, and above the limit. Let the learner implement it,
+then update the demonstration to call it and verify unchanged sample output.
+calculate_category_total now lives in mybudget/calculations.py; demonstration
+and category tests import it there.
 The budget Transaction now lives in mybudget/models.py; conftest imports it there.
 The earlier validated Transaction still has merchant and remains separate. Do not
 swap models without a deliberate field/validation change and caller/test updates.
@@ -40,7 +43,7 @@ Broader financial rules, integration, and milestone completion checks remain.
 ## Learning-record convention
 
 User requests **one revision file, appended after each lesson**: LEARNING_NOTES.md.
-It now contains 15 lessons in learning order with a contents list, including model extraction.
+It now contains 16 lessons in learning order with a contents list, including calculation extraction.
 Append future lessons at the bottom, update contents, and refresh this checkpoint.
 The dated learnings/ files are retained as a historical archive, not the primary
 place for new entries. Do not keep prepending duplicate checkpoints to the journal.

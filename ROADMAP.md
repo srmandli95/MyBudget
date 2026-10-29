@@ -21,6 +21,10 @@ models and calculations. LEARNING_NOTES.md is the single appended revision journ
 
 Model extraction checkpoint: budget Transaction moved into mybudget/models.py;
 10 tests and the demonstration still pass. Next: extract the category calculation.
+
+Calculation extraction checkpoint: category calculation now lives in
+mybudget/calculations.py; tests and demonstration pass unchanged. Next: extract
+and test remaining-budget behavior below, at, and above the configured limit.
 An integrated engine and broader tests remain before milestone 1 is complete.
 
 | Milestone | Completion criterion |

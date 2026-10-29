@@ -1,5 +1,6 @@
 from decimal import Decimal
-from exercises.monthly_budgets import Transaction, calculate_category_total
+from mybudget.models import Transaction
+from mybudget.calculations import calculate_category_total
 
 def test_category_total_sums_only_matching_transactions(sample_transaction):
     

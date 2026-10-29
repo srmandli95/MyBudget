@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: shared budget model extracted; 10 tests pass. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: shared model and calculation modules extracted; 10 tests pass. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -27,6 +27,7 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 13: 2026-10-28: Pytest fixtures and sharing setup](#lesson-13)
 - [Lesson 14: 2026-10-28: uv, dependency resolution, and lockfiles](#lesson-14)
 - [Lesson 15: 2026-10-28: Models, packages, and a small refactor](#lesson-15)
+- [Lesson 16: 2026-10-28: Separating calculations from demonstrations](#lesson-16)
 
 <a id="lesson-01"></a>
 
@@ -1086,3 +1087,48 @@ application home can be part of the next small refactor.
 Move calculate_category_total into mybudget/calculations.py. Update the
 demonstration and tests to import reusable code from its application home,
 preserve behavior, and rerun the same checks. Let the learner make the move.
+
+<a id="lesson-16"></a>
+
+## Lesson 16: 2026-10-28: Separating calculations from demonstrations
+
+Status: calculation-extraction exercise complete.
+
+### Responsibilities
+
+- mybudget/models.py represents transaction data.
+- mybudget/calculations.py contains reusable spending calculations.
+- exercises/monthly_budgets.py supplies fictional data and prints a demonstration.
+
+The learner moved calculate_category_total into mybudget/calculations.py, with
+imports for Decimal and the shared Transaction. The demonstration and category
+tests now import the function from that application module. Tests import
+Transaction directly from mybudget.models as well.
+
+This is a refactor: the calculation and its behavior were preserved, rather than
+introducing a new business rule. One definition avoids independent copies drifting
+apart. Future interfaces can call the calculation without depending on an exercise.
+
+### Verification
+
+Learner reported unchanged results. Mentor inspected the implementation and
+independently ran:
+
+```sh
+uv run --locked python -m pytest exercises -v
+uv run --locked python -m exercises.monthly_budgets
+```
+
+Tests: **10 passed in 0.01s**, exit 0. Demonstration also exited 0: total budget
+1100.00; remaining Groceries -25.00, Restaurants 100.00, Gas 50.00, miscellaneous
+150.00; final output `Both checks passed`.
+
+The earlier merchant-validating exercise model remains separate. This refactor
+does not add financial validation or demonstrate new concurrency/scaling behavior.
+
+### Next task
+
+Extract remaining-budget calculation into a function in mybudget/calculations.py.
+Test spending below the limit, exactly at the limit, and above the limit. Start
+with a small test exercise and let the learner implement the function. Then use
+it in the demonstration and confirm unchanged output.
