@@ -4,7 +4,7 @@ Last updated: 2026-10-29.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; monthly-filtering tests in progress.
+Milestone 1: Python budget calculation engine. Phase 1; monthly-filtering boundary tests complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -27,7 +27,7 @@ The project consists of working standalone exercises, not yet an integrated engi
 
 ## Latest verification
 
-Mentor ran `uv run --locked python -m pytest exercises -v`: **17 passed in 0.01s**,
+Mentor ran `uv run --locked python -m pytest exercises -v`: **20 passed in 0.01s**,
 exit 0, Python 3.14.6 and pytest 9.2.0. pyproject.toml and uv.lock record the
 project and dependencies; .venv remains ignored. Use Python's module invocation
 from the project root to make exercises imports work.
@@ -37,6 +37,17 @@ restaurants 100.00, gas 50.00, miscellaneous 150.00. Data is fictional.
 Mentor reran the module demonstration after the date-field changes; same results, exit 0.
 
 ## Next recommended task
+
+Latest checkpoint: month validation boundary exercise complete. Learner tests
+invalid 0/13 with empty input and valid 1/12 returning zero. Mentor inspected the
+saved tests and ran the full suite: **20 passed**, exit 0. The new valid-boundary
+test checks equality only; Decimal type is verified by the earlier empty-input test.
+
+Next: introduce a Budget dataclass and explicit monthly-limit validation. Agree
+on rules and explain responsibilities before the learner implements. Keep existing
+dictionary configuration initially; don't rewrite the report and model together.
+
+## Monthly-filtering checkpoint history
 
 calculate_monthly_category_total is implemented with category/year/month matching
 and a Decimal accumulator. Learner's expanded fixture includes other-month,
@@ -49,8 +60,10 @@ rerun after integration: 16 passed. Empty and nonempty no-month-match tests pass
 Learner reported full remaining limits for November. Added month-range validation
 before iteration; corrected boolean grouping and a test accidentally passing 12
 instead of invalid 13. Mentor reproduced the failure, then verified the corrected
-test and full suite: 17 passed. Next: invalid months 0/13 via parametrization,
-including empty transactions; verify valid months 1/12 remain accepted.
+test and full suite: 17 passed at that checkpoint. Invalid months 0/13 are now
+parametrized with empty input; mentor ran the monthly file: 5 passed, exit 0.
+Full suite not rerun since parametrization. Next: valid boundary months 1/12
+with empty input, asserting Decimal zero and successful completion.
 
 Current model requires transaction_date; fixtures and demonstration supply dates.
 sample_no_groceries preserves the no-category-match scenario. Latest verification
@@ -68,7 +81,7 @@ Broader financial rules, integration, and milestone completion checks remain.
 ## Learning-record convention
 
 User requests **one revision file, appended after each lesson**: LEARNING_NOTES.md.
-It now contains 26 lessons in learning order, including invalid-month validation.
+It now contains 28 lessons in learning order, including valid month boundary checks.
 Append future lessons at the bottom, update contents, and refresh this checkpoint.
 The dated learnings/ files are retained as a historical archive, not the primary
 place for new entries. Do not keep prepending duplicate checkpoints to the journal.

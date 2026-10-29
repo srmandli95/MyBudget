@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: invalid-month validation implemented; 17 tests pass. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: valid/invalid month boundaries verified; 20 tests pass. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -38,6 +38,8 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 24: 2026-10-29: Nonempty input with no matching month](#lesson-24)
 - [Lesson 25: 2026-10-29: Monthly report integration](#lesson-25)
 - [Lesson 26: 2026-10-29: Invalid months and debugging test expectations](#lesson-26)
+- [Lesson 27: 2026-10-29: Boundary validation independent of transaction data](#lesson-27)
+- [Lesson 28: 2026-10-29: Accepting valid range boundaries](#lesson-28)
 
 <a id="lesson-01"></a>
 
@@ -1454,3 +1456,47 @@ month 0, valid boundary months 1/12, or invalid-month rejection on an empty list
 
 Next: extend the invalid-month test with parametrization for 0 and 13 and verify
 the rule with empty transactions. Then check valid boundaries remain accepted.
+
+<a id="lesson-27"></a>
+
+## Lesson 27: 2026-10-29: Boundary validation independent of transaction data
+
+Status: invalid-boundary tests complete; valid-boundary checks next.
+
+Learner parametrized the invalid-month test with 0 and 13, then replaced its
+nonempty fixture input with an empty list and removed the unused fixture parameter.
+Both cases expect ValueError. This checks the rule before iteration: invalid
+periods must be rejected regardless of whether there are transactions.
+
+Mentor inspected the saved test and ran
+`uv run --locked python -m pytest exercises/test_calculate_monthly_budgets.py -v`:
+**5 passed in 0.01s**, exit 0, including separate month-0 and month-13 cases.
+The full suite was not rerun during this targeted check.
+
+Next: parametrize valid boundary months 1 and 12 with empty transactions. Expect
+Decimal zero without an exception. This checks that the validation accepts the
+endpoints rather than accidentally excluding them.
+
+<a id="lesson-28"></a>
+
+## Lesson 28: 2026-10-29: Accepting valid range boundaries
+
+Status: valid-month boundary tests complete.
+
+Learner added a parametrized test for months 1 and 12 with empty transactions,
+asserting Decimal zero. No pytest.raises block is used: successful completion is
+expected, and an unexpected exception would fail the test automatically.
+
+Combined with invalid months 0/13, these cases check acceptance and rejection
+immediately around both endpoints. They catch off-by-one validation mistakes.
+The requested isinstance assertion is not present in this new test; the earlier
+empty-list test already explicitly verifies the Decimal return type.
+
+Mentor inspected the saved test and ran
+`uv run --locked python -m pytest exercises -v`: **20 passed in 0.01s**, exit 0.
+Seven cases are in the monthly-filtering test file. This completes the current
+monthly-filtering and month-range validation exercise, not all application input
+validation; year/type policies remain future work.
+
+Next recommended topic: model configurable budgets with a Budget dataclass and
+explicit monthly-limit validation, starting with the rules before implementation.
