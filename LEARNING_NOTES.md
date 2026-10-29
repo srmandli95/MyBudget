@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: remaining-budget function and under-limit test implemented; 11 tests pass. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: monthly matching and empty-input checks verified; 15 tests pass. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -29,6 +29,12 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 15: 2026-10-28: Models, packages, and a small refactor](#lesson-15)
 - [Lesson 16: 2026-10-28: Separating calculations from demonstrations](#lesson-16)
 - [Lesson 17: 2026-10-28: Testing the remaining-budget rule](#lesson-17)
+- [Lesson 18: 2026-10-29: Boundary cases for remaining budgets](#lesson-18)
+- [Lesson 19: 2026-10-29: Using the tested calculation in the report](#lesson-19)
+- [Lesson 20: 2026-10-29: Date objects and calendar comparisons](#lesson-20)
+- [Lesson 21: 2026-10-29: Adding dates while preserving test coverage](#lesson-21)
+- [Lesson 22: 2026-10-29: Monthly filtering and meaningful test inputs](#lesson-22)
+- [Lesson 23: 2026-10-29: Empty inputs and checking result types](#lesson-23)
 
 <a id="lesson-01"></a>
 
@@ -1186,3 +1192,187 @@ The new under-limit test passes alongside all ten earlier cases.
    inline subtraction and verify unchanged report output.
 
 These two additional tests and demonstration integration are not completed yet.
+
+<a id="lesson-18"></a>
+
+## Lesson 18: 2026-10-29: Boundary cases for remaining budgets
+
+Status: remaining-budget test cases complete; demonstration integration pending.
+
+Learner added separate tests for spending exactly at the limit (500.00 minus
+500.00 equals 0.00) and over the limit (500.00 minus 525.00 equals -25.00).
+Together with the under-limit case, these cover both sides of the budget boundary
+and the boundary itself. Overspending remains a negative amount.
+
+Mentor inspected the saved tests and independently ran
+`uv run --locked python -m pytest exercises -v`: **13 passed in 0.01s**, exit 0.
+The proposed Decimal return annotation is still missing from calculate_remaining;
+this does not prevent runtime execution but should be added for consistency.
+
+Next: import calculate_remaining in the budget demonstration, replace inline
+subtraction with the function call, and verify unchanged output. Passing function
+tests alone does not establish that the report actually uses the function.
+
+<a id="lesson-19"></a>
+
+## Lesson 19: 2026-10-29: Using the tested calculation in the report
+
+Status: complete.
+
+Learner imported calculate_remaining in exercises/monthly_budgets.py and replaced
+inline subtraction with `calculate_remaining(limit, spend)`. Reusable calculations
+now supply the demonstration's behavior instead of leaving tested code unused.
+
+Mentor inspected the call and ran
+`uv run --locked python -m exercises.monthly_budgets`: exit 0, unchanged output.
+Total budget 1100.00; remaining Groceries -25.00, Restaurants 100.00, Gas 50.00,
+miscellaneous 150.00; `Both checks passed`. The full suite last passed 13 cases
+before this integration; it was not rerun during this demonstration check.
+
+Next: introduce date objects, then add transaction dates and monthly filtering
+in small steps. Current category totals include transactions regardless of month.
+
+<a id="lesson-20"></a>
+
+## Lesson 20: 2026-10-29: Date objects and calendar comparisons
+
+Status: date exercise complete.
+
+`from datetime import date` imports the date class. `date(year, month, day)`
+creates a calendar date, validating calendar rules. Instance attributes year,
+month, and day are integers. They are not conversion functions such as
+`date.day("10")`; compare `purchase_date.month == 10` directly.
+
+Learner used `range(9, 11)` to create September 1 and October 1, 2026. The upper
+range bound is excluded. An `and` condition checks both year and month, preventing
+October of another year from matching. Mentor inspected and ran
+`uv run --locked python -m exercises.transaction_dates`, exit 0:
+
+```text
+year: 2026, month: 9, day: 1
+year: 2026, month: 10, day: 1
+This date belongs to october 2026
+```
+
+Next: add an explicit transaction_date field to the shared Transaction model,
+update its existing callers and tests with fictional dates, and preserve existing
+category-total behavior before introducing a monthly-filtering function.
+
+<a id="lesson-21"></a>
+
+## Lesson 21: 2026-10-29: Adding dates while preserving test coverage
+
+Status: dated-model update complete.
+
+Learner added required transaction_date: date to mybudget.models.Transaction
+and updated the budget demonstration and fixtures with fictional dates. Existing
+category totals still include all dates; monthly filtering is the next change.
+
+Initial tests passed, but review found two gaps: the demonstration used date
+without importing it, and the no-match test had been changed to assert a matching
+total. Tests do not execute the guarded demo, and passing tests only establish
+what their actual inputs and assertions check.
+
+Learner fixed the date import and added sample_no_groceries, a separate fixture
+containing only party and Gas transactions. The no-match test now requests
+Groceries and expects Decimal zero. Decimal("00.00") is valid but Decimal("0.00")
+would match the notation used elsewhere.
+
+Imports belong to each module's namespace: importing Transaction does not make
+the date name from its defining module available to callers. Each file constructing
+dates must import date itself.
+
+Mentor inspected the fixes and independently ran:
+
+```sh
+uv run --locked python -m pytest exercises -v
+uv run --locked python -m exercises.monthly_budgets
+```
+
+Results: **13 passed in 0.01s**, both commands exit 0. Report unchanged: total
+limits 1100.00; remaining Groceries -25.00, Restaurants 100.00, Gas 50.00,
+miscellaneous 150.00; `Both checks passed`.
+
+Next: add a separate function filtering by category, year, and month. Preserve
+the existing all-dates category function and test exclusions for another month
+and the same month in another year.
+
+<a id="lesson-22"></a>
+
+## Lesson 22: 2026-10-29: Monthly filtering and meaningful test inputs
+
+Status: matching/exclusion test complete; zero-result cases pending.
+
+Learner wrote a monthly-total test first and shared the expected ImportError:
+calculate_monthly_category_total did not exist yet. This demonstrated the missing
+function failure during collection before implementing the behavior.
+
+The new function in mybudget/calculations.py accumulates amounts only when
+category, year, and month all match. The original accumulator `int()` would return
+integer zero with no matches; learner changed it to Decimal("0.00") so the result
+has the intended type even without additions. Type hints do not enforce this.
+
+Initial fixture inputs all matched, so even unfiltered summation would pass.
+Testing habit: ask whether an incorrect implementation could still pass.
+Learner added purchases that should be excluded. The current fixture contains:
+
+| Category | Amount | Date | Included for October 2026 groceries? |
+| --- | --- | --- | --- |
+| Groceries | 40.00 | 2026-10-05 | Yes |
+| Groceries | 20.00 | 2026-10-01 | Yes |
+| Groceries | 10.00 | 2026-10-08 | Yes |
+| Groceries | 40.00 | 2026-11-05 | No: other month |
+| Gas | 20.00 | 2026-10-01 | No: other category |
+| Groceries | 10.00 | 2025-10-08 | No: other year |
+
+Mentor inspected the expanded fixture and Decimal accumulator, then ran
+`uv run --locked python -m pytest exercises/test_calculate_monthly_budgets.py -v`:
+**1 passed in 0.01s**, exit 0, expected total 70.00. The full suite previously
+passed 14 cases before the fixture expansion; it was not rerun in this check.
+
+For one test use `path/to/test_file.py::test_function_name`. Using just the path
+runs that file's tests. `-v` means verbose output: displays individual test names
+and results; it does not change test selection.
+
+Next: test empty input and nonempty input with no matching category/month/year.
+Check Decimal result type as well as zero equality, because integer zero compares
+equal to Decimal zero. Monthly report integration remains pending.
+
+<a id="lesson-23"></a>
+
+## Lesson 23: 2026-10-29: Empty inputs and checking result types
+
+Status: empty-input monthly-total test complete.
+
+Learner added test_no_montly_transction in
+exercises/test_calculate_monthly_budgets.py:
+
+```python
+actual = calculate_monthly_category_total([], "Groceries", 2026, 10)
+assert actual == Decimal("0.00")
+assert isinstance(actual, Decimal)
+```
+
+The first assertion checks the numeric value. The second checks that the result
+is an instance of Decimal (including subclasses). Integer zero compares equal
+to Decimal zero, so equality alone would not detect returning the wrong numeric
+type. With empty input the loop never executes; initializing the accumulator
+as Decimal ensures a consistent result without a special caller fallback.
+
+Mentor inspected the saved test and ran the full current suite:
+
+```sh
+uv run --locked python -m pytest exercises -v
+```
+
+Result: **15 passed in 0.01s**, exit 0. This verifies both monthly tests, including
+the expanded mixed-input fixture, and all earlier tests. No learner code was
+modified during this review. Optional naming cleanup:
+test_monthly_category_total_returns_decimal_zero_for_empty_list.
+
+### Next task
+
+Test a nonempty list with no matching category/month/year and expect Decimal
+zero. Unlike empty input, this executes the loop but never adds an amount.
+After that, integrate monthly filtering into the report and verify month-specific
+results. Those steps are still pending; the report currently uses all-dates totals.

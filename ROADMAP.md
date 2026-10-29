@@ -25,6 +25,12 @@ Model extraction checkpoint: budget Transaction moved into mybudget/models.py;
 Calculation extraction checkpoint: category calculation now lives in
 mybudget/calculations.py; tests and demonstration pass unchanged. Next: extract
 and test remaining-budget behavior below, at, and above the configured limit.
+
+Latest date/testing checkpoint: shared Transaction has transaction_date;
+remaining-budget boundary tests and report integration are complete. Monthly
+filtering has mixed-input and empty-list tests; 15 total tests pass. Next: a
+nonempty no-match monthly test, then monthly report integration. Milestone 1
+remains in progress.
 An integrated engine and broader tests remain before milestone 1 is complete.
 
 | Milestone | Completion criterion |

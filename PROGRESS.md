@@ -1,8 +1,10 @@
 # Progress
 
+Last updated: 2026-10-29.
+
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; remaining-budget tests in progress.
+Milestone 1: Python budget calculation engine. Phase 1; monthly-filtering tests in progress.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -16,25 +18,39 @@ The project consists of working standalone exercises, not yet an integrated engi
 - uv project setup, development dependencies, lockfiles, and optional activation.
 - Models, regular packages, and a behavior-preserving refactor into mybudget/models.py.
 - Category calculation moved into mybudget/calculations.py; demo and tests import it there.
-- calculate_remaining implemented; under-limit test verified. Test-first workflow introduced.
+- calculate_remaining implemented; under-, at-, and over-limit tests verified.
+- Tested remaining-budget function integrated into the demonstration.
+- Date objects, month/year comparisons, and required transaction_date field introduced.
+- Fixed the demonstration's missing date import and restored the no-match test.
+- Monthly category filtering with mixed-date/category fixture and Decimal accumulator.
+- Empty-input monthly test checks both zero value and Decimal result type.
 
 ## Latest verification
 
-Mentor ran `uv run --locked python -m pytest exercises -v`: **11 passed in 0.01s**,
+Mentor ran `uv run --locked python -m pytest exercises -v`: **15 passed in 0.01s**,
 exit 0, Python 3.14.6 and pytest 9.2.0. pyproject.toml and uv.lock record the
 project and dependencies; .venv remains ignored. Use Python's module invocation
 from the project root to make exercises imports work.
 
 Category budget example: limits total 1100.00; groceries remaining -25.00,
 restaurants 100.00, gas 50.00, miscellaneous 150.00. Data is fictional.
-Mentor reran the module demonstration after calculation extraction; same results, exit 0.
+Mentor reran the module demonstration after the date-field changes; same results, exit 0.
 
 ## Next recommended task
 
-calculate_remaining now returns budget minus spent; under-limit test passes.
-Next: learner adds the missing Decimal return annotation, then separate tests
-for spending exactly at the limit (zero) and above it (negative). After verification,
-update the demonstration to call the function and confirm unchanged output.
+calculate_monthly_category_total is implemented with category/year/month matching
+and a Decimal accumulator. Learner's expanded fixture includes other-month,
+other-category, and other-year purchases; target October groceries remain 70.00.
+Empty-list test now checks zero value and Decimal type. Mentor inspected it and
+ran the full suite after fixture expansion: 15 passed, exit 0.
+Next: nonempty-input test with no monthly/category matches, expecting Decimal
+zero. Monthly report integration remains pending. Let the learner implement.
+
+Current model requires transaction_date; fixtures and demonstration supply dates.
+sample_no_groceries preserves the no-category-match scenario. Latest verification
+includes all date-field fixes and new monthly tests: 15 tests pass. The demonstration
+last exited 0 after the date fixes; it still uses all-dates category totals.
+Decimal return annotation on calculate_remaining remains optional cleanup pending.
 Initial failing test-first run was suggested but not observed; do not claim it ran.
 calculate_category_total now lives in mybudget/calculations.py; demonstration
 and category tests import it there.
@@ -46,7 +62,7 @@ Broader financial rules, integration, and milestone completion checks remain.
 ## Learning-record convention
 
 User requests **one revision file, appended after each lesson**: LEARNING_NOTES.md.
-It now contains 17 lessons in learning order, including the remaining-budget test checkpoint.
+It now contains 23 lessons in learning order, including empty-input result-type checks.
 Append future lessons at the bottom, update contents, and refresh this checkpoint.
 The dated learnings/ files are retained as a historical archive, not the primary
 place for new entries. Do not keep prepending duplicate checkpoints to the journal.

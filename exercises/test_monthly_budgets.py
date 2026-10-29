@@ -12,6 +12,22 @@ def test_remaining_budget_when_under_limit():
 
     assert actual == Decimal("75.00")
 
+def test_remaining_budget_when_at_limit():
+    actual = calculate_remaining(
+        Decimal("500.00"),
+        Decimal("500.00")
+    )
+
+    assert actual == Decimal("0.00")
+
+def test_remaining_budget_when_over_limit():
+    actual = calculate_remaining(
+        Decimal("500.00"),
+        Decimal("525.00")
+    )
+
+    assert actual == Decimal("-25.00")
+
 def test_category_total_sums_only_matching_transactions(sample_transaction):
     
 
@@ -30,10 +46,8 @@ def test_category_total_returns_zero_for_empty_list():
 
     assert actual == Decimal("0.00")
 
-def test_category_total_returns_when_no_category_match():
-    transctions = [
-        Transaction("Gas", Decimal("20.00"))
-    ]
+def test_category_total_returns_when_no_category_match(sample_no_groceries):
+    
 
-    actual = calculate_category_total(transctions, "Groceries")
-    assert actual == Decimal("0.00")
+    actual = calculate_category_total(sample_no_groceries, "Groceries")
+    assert actual == Decimal("00.00")

@@ -1,7 +1,7 @@
 from decimal import Decimal
 from mybudget.models import Transaction
-from mybudget.calculations import calculate_category_total
-
+from mybudget.calculations import calculate_category_total, calculate_remaining
+from datetime import date
 if __name__ == "__main__":
 
     budgets = {
@@ -14,10 +14,10 @@ if __name__ == "__main__":
 
     budget_limit = dict()
 
-    t1 = Transaction("Groceries", Decimal("400.00"))
-    t2 = Transaction("Restaurants", Decimal("100.00"))
-    t3 = Transaction("Gas", Decimal("200.00"))   
-    t4 = Transaction("Groceries", Decimal("125.00"))
+    t1 = Transaction("Groceries", Decimal("400.00"), date(2026, 10, 5))
+    t2 = Transaction("Restaurants", Decimal("100.00"), date(2026, 10, 5))
+    t3 = Transaction("Gas", Decimal("200.00"), date(2026, 10, 5))   
+    t4 = Transaction("Groceries", Decimal("125.00"), date(2026, 10, 5))
 
     transactions = [t1, t2, t3, t4]
 
@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
     for category, limit in budgets.items():
         spend = calculate_category_total(transactions,category)
-        budget_limit[category] = limit - spend
+        budget_limit[category] = calculate_remaining(limit, spend)
 
     for category, limit in budgets.items():
         print(f"category: {category}, limit: {limit}, remaining: {budget_limit[category]}")
