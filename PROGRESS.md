@@ -2,7 +2,7 @@
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; shared calculation extraction complete.
+Milestone 1: Python budget calculation engine. Phase 1; remaining-budget tests in progress.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -16,10 +16,11 @@ The project consists of working standalone exercises, not yet an integrated engi
 - uv project setup, development dependencies, lockfiles, and optional activation.
 - Models, regular packages, and a behavior-preserving refactor into mybudget/models.py.
 - Category calculation moved into mybudget/calculations.py; demo and tests import it there.
+- calculate_remaining implemented; under-limit test verified. Test-first workflow introduced.
 
 ## Latest verification
 
-Mentor ran `uv run --locked python -m pytest exercises -v`: **10 passed in 0.01s**,
+Mentor ran `uv run --locked python -m pytest exercises -v`: **11 passed in 0.01s**,
 exit 0, Python 3.14.6 and pytest 9.2.0. pyproject.toml and uv.lock record the
 project and dependencies; .venv remains ignored. Use Python's module invocation
 from the project root to make exercises imports work.
@@ -30,9 +31,11 @@ Mentor reran the module demonstration after calculation extraction; same results
 
 ## Next recommended task
 
-Extract remaining-budget calculation into a function in mybudget/calculations.py
-and test spending below, at, and above the limit. Let the learner implement it,
-then update the demonstration to call it and verify unchanged sample output.
+calculate_remaining now returns budget minus spent; under-limit test passes.
+Next: learner adds the missing Decimal return annotation, then separate tests
+for spending exactly at the limit (zero) and above it (negative). After verification,
+update the demonstration to call the function and confirm unchanged output.
+Initial failing test-first run was suggested but not observed; do not claim it ran.
 calculate_category_total now lives in mybudget/calculations.py; demonstration
 and category tests import it there.
 The budget Transaction now lives in mybudget/models.py; conftest imports it there.
@@ -43,7 +46,7 @@ Broader financial rules, integration, and milestone completion checks remain.
 ## Learning-record convention
 
 User requests **one revision file, appended after each lesson**: LEARNING_NOTES.md.
-It now contains 16 lessons in learning order with a contents list, including calculation extraction.
+It now contains 17 lessons in learning order, including the remaining-budget test checkpoint.
 Append future lessons at the bottom, update contents, and refresh this checkpoint.
 The dated learnings/ files are retained as a historical archive, not the primary
 place for new entries. Do not keep prepending duplicate checkpoints to the journal.

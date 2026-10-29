@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: shared model and calculation modules extracted; 10 tests pass. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: remaining-budget function and under-limit test implemented; 11 tests pass. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -28,6 +28,7 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 14: 2026-10-28: uv, dependency resolution, and lockfiles](#lesson-14)
 - [Lesson 15: 2026-10-28: Models, packages, and a small refactor](#lesson-15)
 - [Lesson 16: 2026-10-28: Separating calculations from demonstrations](#lesson-16)
+- [Lesson 17: 2026-10-28: Testing the remaining-budget rule](#lesson-17)
 
 <a id="lesson-01"></a>
 
@@ -1132,3 +1133,56 @@ Extract remaining-budget calculation into a function in mybudget/calculations.py
 Test spending below the limit, exactly at the limit, and above the limit. Start
 with a small test exercise and let the learner implement the function. Then use
 it in the demonstration and confirm unchanged output.
+
+<a id="lesson-17"></a>
+
+## Lesson 17: 2026-10-28: Testing the remaining-budget rule
+
+Status: function and under-limit test verified; remaining cases pending.
+
+### Concept and motivation
+
+A business rule describes expected application behavior. Our rule is:
+remaining budget equals limit minus spending. Negative results indicate
+overspending and must not be clamped to zero.
+
+Extracting this operation into a standalone function makes it reusable and
+directly testable without executing report printing or sample-data setup.
+
+### Implementation and test
+
+Learner added calculate_remaining to mybudget/calculations.py with Decimal
+parameter hints and a body returning `budget - spent`. The return annotation
+`-> Decimal` was suggested for consistency but is not in the inspected source yet.
+
+The learner added this test in exercises/test_monthly_budgets.py:
+
+```python
+def test_remaining_budget_when_under_limit():
+    actual = calculate_remaining(Decimal("500.00"), Decimal("425.00"))
+
+    assert actual == Decimal("75.00")
+```
+
+### Test-first workflow introduced
+
+The suggested sequence was to write the test, run it before creating the function,
+then implement the function and rerun. This introduces test-driven development:
+observe a failure for the expected reason, implement the behavior, then improve
+organization while preserving passing tests. Here a missing import would fail
+during collection; later behavior failures occur when assertions execute.
+
+The learner did not share the initial failing run, so test-first ordering has
+not been verified. Mentor inspected the implementation and independently ran
+`uv run --locked python -m pytest exercises -v`: **11 passed in 0.01s**, exit 0.
+The new under-limit test passes alongside all ten earlier cases.
+
+### Next steps
+
+1. Add the Decimal return hint.
+2. Write a separate exactly-at-limit test: 500.00 minus 500.00 returns 0.00.
+3. Write a separate overspending test: 500.00 minus 525.00 returns -25.00.
+4. After these pass, use calculate_remaining in the demonstration instead of
+   inline subtraction and verify unchanged report output.
+
+These two additional tests and demonstration integration are not completed yet.

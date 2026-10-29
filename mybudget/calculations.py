@@ -7,3 +7,7 @@ def calculate_category_total(transactions: list[Transaction], category: str) -> 
         if transaction.category == category:
             total += transaction.amount
     return total
+
+def calculate_remaining(budget: Decimal, spent: Decimal):
+    
+    return budget - spent

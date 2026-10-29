@@ -1,6 +1,16 @@
 from decimal import Decimal
 from mybudget.models import Transaction
 from mybudget.calculations import calculate_category_total
+from mybudget.calculations import calculate_remaining
+
+
+def test_remaining_budget_when_under_limit():
+    actual = calculate_remaining(
+        Decimal("500.00"),
+        Decimal("425.00")
+    )
+
+    assert actual == Decimal("75.00")
 
 def test_category_total_sums_only_matching_transactions(sample_transaction):
     
