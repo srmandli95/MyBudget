@@ -1,5 +1,5 @@
 from decimal import Decimal
-from mybudget.models import Transaction
+from mybudget.models import Transaction, Budget
 from datetime import date
 
 def calculate_category_total(transactions: list[Transaction], category: str) -> Decimal:
@@ -28,4 +28,23 @@ def calculate_monthly_category_total(
     
     return expense
 
+
+def calculate_monthly_remaining(
+    budgets: list[Budget],
+    transaction: list[Transaction],
+    year: int,
+    month: int, 
+) -> dict[str, Decimal]:
+
+    remaining_budgets = {}
+
+    for budget in budgets:
+        
+        expense = calculate_monthly_category_total(transaction, budget.category, year, month)
+        remaining_budgets[budget.category] = calculate_remaining(
+            budget.limit, expense
+        )
+    
+    return remaining_budgets
+    
 

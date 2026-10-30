@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: Budget objects integrated into report; 26 tests pass. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: reusable monthly-remaining calculation verified; 28 tests pass. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -44,6 +44,7 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 30: 2026-10-30: Testing blank budget categories](#lesson-30)
 - [Lesson 31: 2026-10-30: Accepting zero budget limits](#lesson-31)
 - [Lesson 32: 2026-10-30: Budget objects in the monthly report](#lesson-32)
+- [Lesson 33: 2026-10-30: Composing functions and returning report data](#lesson-33)
 
 <a id="lesson-01"></a>
 
@@ -1646,3 +1647,68 @@ separate. This is not a claim of complete financial validation or milestone comp
 
 Next recommended step: extract report calculation from printing into a reusable
 function and test its returned summary, preserving the existing model and rules.
+
+<a id="lesson-33"></a>
+
+## Lesson 33: 2026-10-30: Composing functions and returning report data
+
+Status: monthly-remaining calculation exercise complete for current scenarios.
+
+### Function composition and separation of concerns
+
+Learner implemented calculate_monthly_remaining in mybudget/calculations.py. It
+takes budgets, transactions, year, and month and returns a dictionary mapping
+category names to Decimal remaining amounts. Its return hint dict[str, Decimal]
+describes that structure. It calls calculate_monthly_category_total for spending
+and calculate_remaining for subtraction rather than duplicating those rules.
+
+The calculation returns data without printing. The demonstration remains
+responsible for presentation, allowing future tests and interfaces to reuse the
+same result. repr(budget) is useful for temporary inspection; a dataclass's
+generated representation displays its fields.
+
+### Dictionary assignment versus accumulation
+
+The first version used defaultdict(int) and +=. A defaultdict supplies a default
+value for a missing key, while an ordinary dictionary raises KeyError when that
+missing value is read. Switching to {} but keeping += raised KeyError: Groceries.
+
+Here we compute one complete result per budget, so assignment is appropriate:
+
+```python
+remaining_budgets[budget.category] = calculate_remaining(budget.limit, expense)
+```
+
+This creates the entry without first reading it. A normal dictionary is enough;
+automatic defaults and repeated accumulation are unnecessary for this operation.
+
+### Review corrections
+
+- Removed temporary result printing from the reusable function.
+- Imported Budget for its annotation and corrected fixture list[Budgets] to
+  list[Budget]. Runtime tests alone did not catch those annotation-name mistakes.
+- Reused calculate_remaining instead of inline subtraction.
+- Added Vacation assertions to cover every category in the sample budget fixture.
+- Verified saved source rather than assuming an editor change had reached disk.
+
+### Verified results
+
+Tests live in exercises/test_calculate_monthly_remaining.py. The expanded
+transaction fixture includes October 2026 Vacation spending of 400.00.
+
+| Period | Groceries remaining | Gas remaining | Vacation remaining |
+| --- | --- | --- | --- |
+| October 2026 | 430.00 | 230.00 | 200.00 |
+| October 2027 | 500.00 | 250.00 | 600.00 |
+
+Mentor inspected the final saved changes and ran
+`uv run --locked python -m pytest exercises -v`: **28 passed in 0.02s**, exit 0.
+No learner implementation was modified during review.
+
+### Next step and limits
+
+Use calculate_monthly_remaining in the demonstration instead of its per-budget
+calculation loop, keeping printing outside. Verify unchanged report output.
+The function currently assumes distinct budget categories; duplicate handling,
+empty-budget behavior, and invalid-period behavior with no budgets have not
+been explicitly specified or tested. Do not claim those contracts are settled.

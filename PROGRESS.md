@@ -4,7 +4,7 @@ Last updated: 2026-10-30.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; Budget report integration complete.
+Milestone 1: Python budget calculation engine. Phase 1; reusable monthly-remaining function complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -29,7 +29,7 @@ The project consists of working standalone exercises, not yet an integrated engi
 
 ## Latest verification
 
-Mentor ran `uv run --locked python -m pytest exercises -v`: **26 passed in 0.02s**,
+Mentor ran `uv run --locked python -m pytest exercises -v`: **28 passed in 0.02s**,
 exit 0, Python 3.14.6 and pytest 9.2.0. pyproject.toml and uv.lock record the
 project and dependencies; .venv remains ignored. Use Python's module invocation
 from the project root to make exercises imports work.
@@ -39,6 +39,19 @@ restaurants 100.00, gas 50.00, miscellaneous 150.00. Data is fictional.
 Mentor reran the module demonstration after the date-field changes; same results, exit 0.
 
 ## Next recommended task
+
+Latest checkpoint (2026-10-30): calculate_monthly_remaining now composes monthly
+category spending and remaining calculations and returns a plain dictionary.
+Budget import, fixture annotation, = versus +=, printing removal, and helper
+reuse verified in saved files. October 2026 and 2027 tests cover all three sample
+budgets, including Vacation. Mentor ran full suite: **28 passed**, exit 0.
+
+Next: use this function in exercises/monthly_budgets.py instead of the per-budget
+calculation loop; preserve printing and period configuration. Let the learner
+implement and verify unchanged output. Empty budgets and duplicate categories
+remain unspecified/test gaps; avoid treating the engine as complete yet.
+
+## Previous report checkpoint
 
 Latest checkpoint (2026-10-30): Budget objects integrated into the report. List
 iteration uses category/limit attributes; Decimal accumulator totals limits.
@@ -130,7 +143,7 @@ Broader financial rules, integration, and milestone completion checks remain.
 ## Learning-record convention
 
 User requests **one revision file, appended after each lesson**: LEARNING_NOTES.md.
-It now contains 32 lessons in learning order, including Budget report integration.
+It now contains 33 lessons in learning order, including function composition and dictionary assignment.
 Append future lessons at the bottom, update contents, and refresh this checkpoint.
 The dated learnings/ files are retained as a historical archive, not the primary
 place for new entries. Do not keep prepending duplicate checkpoints to the journal.
