@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: Budget model and first validation tests implemented; 22 tests pass. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: all 6 Budget model test cases pass; report integration is next. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -41,6 +41,8 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 27: 2026-10-29: Boundary validation independent of transaction data](#lesson-27)
 - [Lesson 28: 2026-10-29: Accepting valid range boundaries](#lesson-28)
 - [Lesson 29: 2026-10-29: Budget validation and fixture setup errors](#lesson-29)
+- [Lesson 30: 2026-10-30: Testing blank budget categories](#lesson-30)
+- [Lesson 31: 2026-10-30: Accepting zero budget limits](#lesson-31)
 
 <a id="lesson-01"></a>
 
@@ -1565,3 +1567,46 @@ a valid category and does not test category rejection.
 
 Keep these as small learner exercises. The dictionary report is unchanged and
 the earlier merchant-validating Transaction remains separate from the shared model.
+
+<a id="lesson-30"></a>
+
+## Lesson 30: 2026-10-30: Testing blank budget categories
+
+Status: blank-category tests complete.
+
+Learner added a parametrized Budget test for empty text, a space, and a tab.
+Each construction is inside pytest.raises(ValueError) and uses a positive 100.00
+limit, isolating category validation from negative-limit rejection. Renamed the
+negative-limit test to describe its actual behavior.
+
+Mentor inspected and ran
+`uv run --locked python -m pytest exercises/test_budget_model.py -v`:
+**5 passed in 0.01s**, exit 0. Full suite was not rerun for this focused check.
+Optional typo fix: test_budget_rejects_black_category should say blank_category.
+
+Next: test acceptance of a zero limit and assert the valid fixture's 50.00 limit.
+Then consider integrating Budget objects into the report. Learning demonstrations
+remain in exercises/; reusable code lives in mybudget/. Application tests currently
+also live in exercises/ and will move into tests/ as a separate organizing step.
+
+<a id="lesson-31"></a>
+
+## Lesson 31: 2026-10-30: Accepting zero budget limits
+
+Status: current Budget validation exercise complete.
+
+Learner tested Budget("Groceries", Decimal("0.00")) and asserted its limit is
+Decimal zero. Zero is a valid spending limit; negative values are rejected.
+The valid-configuration test now also checks its fixture's 50.00 limit, not just
+the category. The blank-category test's naming typo was corrected.
+
+Mentor inspected and ran
+`uv run --locked python -m pytest exercises/test_budget_model.py -v`:
+**6 passed in 0.01s**, exit 0. Cases cover valid field retention, negative-limit
+rejection, three blank-category inputs, and zero-limit acceptance. The full suite
+was not rerun during this focused check. Broader numeric/type validation is not
+implied by these cases.
+
+Next: integrate Budget objects into the monthly report without changing sample
+results. Explain how iterating a list of objects differs from dictionary.items(),
+and let the learner change the configuration and attribute access in small steps.

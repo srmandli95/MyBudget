@@ -1,10 +1,10 @@
 # Progress
 
-Last updated: 2026-10-29.
+Last updated: 2026-10-30.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; Budget model validation in progress.
+Milestone 1: Python budget calculation engine. Phase 1; current Budget validation exercise complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -39,6 +39,26 @@ restaurants 100.00, gas 50.00, miscellaneous 150.00. Data is fictional.
 Mentor reran the module demonstration after the date-field changes; same results, exit 0.
 
 ## Next recommended task
+
+Latest checkpoint (2026-10-30): zero-limit test passes; valid Budget test now
+asserts limit 50.00; blank-category naming typo fixed. Mentor ran Budget test file:
+6 passed, exit 0. Full suite not rerun since these focused model checks.
+Next: integrate Budget objects into the monthly report, preserving configuration
+values and output. Explain list-of-objects iteration versus dictionary.items()
+before changes. Let the learner implement in small steps. Broader numeric/type
+validation, unused fixture cleanup, and test-directory organization remain pending.
+
+## Previous blank-category checkpoint
+
+Latest checkpoint (2026-10-30): learner completed blank-category parametrization
+for empty text, a space, and a tab, using a valid positive limit. Negative-limit
+test renamed correctly. Mentor ran the Budget test file: 5 passed, exit 0; no full
+suite rerun in this focused check. Minor typo: black_category should be blank_category.
+Next: zero-limit acceptance test and valid fixture limit assertion (50.00).
+Then integrate Budget in the report as a separate step. Unused invalid fixture
+cleanup and moving app tests to tests/ remain pending.
+
+## Previous Budget-model checkpoint
 
 Session stopping point (2026-10-29): learner requested recording and continuation
 later. Budget now has category and limit (not monthly_limit), with blank-category
@@ -97,7 +117,7 @@ Broader financial rules, integration, and milestone completion checks remain.
 ## Learning-record convention
 
 User requests **one revision file, appended after each lesson**: LEARNING_NOTES.md.
-It now contains 29 lessons in learning order, including Budget validation and fixture errors.
+It now contains 31 lessons in learning order, including zero-budget-limit acceptance.
 Append future lessons at the bottom, update contents, and refresh this checkpoint.
 The dated learnings/ files are retained as a historical archive, not the primary
 place for new entries. Do not keep prepending duplicate checkpoints to the journal.
