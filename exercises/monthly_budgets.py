@@ -1,7 +1,8 @@
 from decimal import Decimal
-from mybudget.models import Transaction
+from mybudget.models import Transaction, Budget
 from mybudget.calculations import calculate_category_total, calculate_remaining, calculate_monthly_category_total
 from datetime import date
+
 if __name__ == "__main__":
 
     report_year = 2026
@@ -9,13 +10,17 @@ if __name__ == "__main__":
 
     print(f"Budget report: {report_year}-{report_month:02d}")
 
-    budgets = {
-        "Groceries": Decimal("500.00"),
-        "Restaurants": Decimal("200.00"),
-        "Gas": Decimal("250.00"),
-        "miscellaneous": Decimal("150.00"),
-    }
-    print("Total budget:", sum(budgets.values(), Decimal("0.00")))
+    budgets = [
+        Budget("Groceries", Decimal("500.00")),
+        Budget("Restaurants", Decimal("200.00")),
+        Budget("Gas", Decimal("250.00")),
+        Budget("miscellaneous", Decimal("150.00")),
+    ]
+    total_budget = Decimal("0.00")
+    for budget in budgets:
+        total_budget += budget.limit
+
+    print("Total budget:", total_budget)
 
     budget_limit = dict()
 
@@ -28,12 +33,12 @@ if __name__ == "__main__":
 
 
 
-    for category, limit in budgets.items():
-        spend = calculate_monthly_category_total(transactions, category, report_year, report_month)
-        budget_limit[category] = calculate_remaining(limit, spend)
+    for budget in budgets:
+        spend = calculate_monthly_category_total(transactions, budget.category, report_year, report_month)
+        budget_limit[budget.category] = calculate_remaining(budget.limit, spend)
 
-    for category, limit in budgets.items():
-        print(f"category: {category}, limit: {limit}, remaining: {budget_limit[category]}")
+    for budget in budgets:
+        print(f"category: {budget.category}, limit: {budget.limit}, remaining: {budget_limit[budget.category]}")
 
 
     assert calculate_category_total(transactions, "Groceries") == Decimal("525.00")

@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: all 6 Budget model test cases pass; report integration is next. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: Budget objects integrated into report; 26 tests pass. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -43,6 +43,7 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 29: 2026-10-29: Budget validation and fixture setup errors](#lesson-29)
 - [Lesson 30: 2026-10-30: Testing blank budget categories](#lesson-30)
 - [Lesson 31: 2026-10-30: Accepting zero budget limits](#lesson-31)
+- [Lesson 32: 2026-10-30: Budget objects in the monthly report](#lesson-32)
 
 <a id="lesson-01"></a>
 
@@ -1610,3 +1611,38 @@ implied by these cases.
 Next: integrate Budget objects into the monthly report without changing sample
 results. Explain how iterating a list of objects differs from dictionary.items(),
 and let the learner change the configuration and attribute access in small steps.
+
+<a id="lesson-32"></a>
+
+## Lesson 32: 2026-10-30: Budget objects in the monthly report
+
+Status: Budget integration exercise complete.
+
+Learner replaced the category-to-limit dictionary with a list of Budget objects.
+Creating them invokes model validation. Iteration now supplies one budget object
+at a time, with category and limit accessed as attributes, instead of unpacking
+dictionary.items() pairs.
+
+The total limit starts at Decimal zero and accumulates budget.limit. The report
+calls monthly spending with budget.category and calculates remaining amounts
+from budget.limit. A separate dictionary still stores remaining values by category.
+
+Mentor inspected exercises/monthly_budgets.py and independently ran:
+
+```sh
+uv run --locked python -m exercises.monthly_budgets
+uv run --locked python -m pytest exercises -v
+```
+
+Both exited 0. **26 tests passed in 0.02s**. The December 2026 report displays
+total limits 1100.00 and full remaining limits 500.00, 200.00, 250.00, and 150.00,
+because all sample purchases are in October. The report displays its year/month.
+No implementation changes were made during review.
+
+Optional formatting cleanup: `total_budget += budget.limit` with spaces.
+The list representation permits duplicate categories; no uniqueness policy has
+been introduced or tested yet. The earlier validation-only Transaction remains
+separate. This is not a claim of complete financial validation or milestone completion.
+
+Next recommended step: extract report calculation from printing into a reusable
+function and test its returned summary, preserving the existing model and rules.

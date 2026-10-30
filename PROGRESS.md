@@ -4,7 +4,7 @@ Last updated: 2026-10-30.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; current Budget validation exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; Budget report integration complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -29,7 +29,7 @@ The project consists of working standalone exercises, not yet an integrated engi
 
 ## Latest verification
 
-Mentor ran `uv run --locked python -m pytest exercises -v`: **22 passed in 0.01s**,
+Mentor ran `uv run --locked python -m pytest exercises -v`: **26 passed in 0.02s**,
 exit 0, Python 3.14.6 and pytest 9.2.0. pyproject.toml and uv.lock record the
 project and dependencies; .venv remains ignored. Use Python's module invocation
 from the project root to make exercises imports work.
@@ -39,6 +39,19 @@ restaurants 100.00, gas 50.00, miscellaneous 150.00. Data is fictional.
 Mentor reran the module demonstration after the date-field changes; same results, exit 0.
 
 ## Next recommended task
+
+Latest checkpoint (2026-10-30): Budget objects integrated into the report. List
+iteration uses category/limit attributes; Decimal accumulator totals limits.
+Mentor ran full suite (26 passed) and December report (1100.00 total, all full
+limits remaining), both exit 0. Report period is displayed.
+
+Next: extract report calculation into a reusable function returning a summary,
+keeping printing in the demonstration. Explain the return structure and give a
+small test-first exercise. Do not generate the implementation for the learner.
+Duplicate budget-category policy, broader numeric validation, shared transaction
+validation, unused fixture cleanup, and test-directory organization remain pending.
+
+## Previous zero-limit checkpoint
 
 Latest checkpoint (2026-10-30): zero-limit test passes; valid Budget test now
 asserts limit 50.00; blank-category naming typo fixed. Mentor ran Budget test file:
@@ -117,7 +130,7 @@ Broader financial rules, integration, and milestone completion checks remain.
 ## Learning-record convention
 
 User requests **one revision file, appended after each lesson**: LEARNING_NOTES.md.
-It now contains 31 lessons in learning order, including zero-budget-limit acceptance.
+It now contains 32 lessons in learning order, including Budget report integration.
 Append future lessons at the bottom, update contents, and refresh this checkpoint.
 The dated learnings/ files are retained as a historical archive, not the primary
 place for new entries. Do not keep prepending duplicate checkpoints to the journal.
