@@ -1,10 +1,10 @@
 # Progress
 
-Last updated: 2026-10-30.
+Last updated: 2026-10-31.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; reusable monthly-remaining function complete.
+Milestone 1: Python budget calculation engine. Phase 1; monthly-remaining report integration complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -39,6 +39,19 @@ restaurants 100.00, gas 50.00, miscellaneous 150.00. Data is fictional.
 Mentor reran the module demonstration after the date-field changes; same results, exit 0.
 
 ## Next recommended task
+
+Latest checkpoint (2026-10-31): report now calls calculate_monthly_remaining once
+outside the printing loop. Learner resolved repeated calculation and restored
+per-category printing. Mentor inspected final saved source and ran the report:
+correct December 2026 output, exit 0. Full suite previously passed 28 cases during
+integration review; not rerun for the final demonstration-only indentation edit.
+
+Next: define/test empty-budget and duplicate-category contracts for the summary
+function in small learner exercises. Organizing application tests into tests/
+separately from historical exercises remains pending. Do not generate solutions
+or treat the financial engine as production-complete.
+
+## Previous summary-function checkpoint
 
 Latest checkpoint (2026-10-30): calculate_monthly_remaining now composes monthly
 category spending and remaining calculations and returns a plain dictionary.
@@ -143,7 +156,7 @@ Broader financial rules, integration, and milestone completion checks remain.
 ## Learning-record convention
 
 User requests **one revision file, appended after each lesson**: LEARNING_NOTES.md.
-It now contains 33 lessons in learning order, including function composition and dictionary assignment.
+It now contains 34 lessons in learning order, including calculation/presentation iteration.
 Append future lessons at the bottom, update contents, and refresh this checkpoint.
 The dated learnings/ files are retained as a historical archive, not the primary
 place for new entries. Do not keep prepending duplicate checkpoints to the journal.

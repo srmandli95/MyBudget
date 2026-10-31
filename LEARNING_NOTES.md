@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: reusable monthly-remaining calculation verified; 28 tests pass. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: report calculates once and prints separately; integration verified. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -45,6 +45,7 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 31: 2026-10-30: Accepting zero budget limits](#lesson-31)
 - [Lesson 32: 2026-10-30: Budget objects in the monthly report](#lesson-32)
 - [Lesson 33: 2026-10-30: Composing functions and returning report data](#lesson-33)
+- [Lesson 34: 2026-10-31: Calculate once, then iterate for presentation](#lesson-34)
 
 <a id="lesson-01"></a>
 
@@ -1712,3 +1713,45 @@ calculation loop, keeping printing outside. Verify unchanged report output.
 The function currently assumes distinct budget categories; duplicate handling,
 empty-budget behavior, and invalid-period behavior with no budgets have not
 been explicitly specified or tested. Do not claim those contracts are settled.
+
+<a id="lesson-34"></a>
+
+## Lesson 34: 2026-10-31: Calculate once, then iterate for presentation
+
+Status: shared monthly-remaining function integrated into demonstration.
+
+Learner replaced the report's per-category calculation with one call to
+calculate_monthly_remaining. That function receives all budgets and internally
+loops through them, returning the complete category-to-remaining dictionary.
+
+Initially the call was inside the report's loop, recalculating all categories
+once per printed category. Output could still be numerically correct while doing
+unnecessary repeated work. Separately, removing the printing loop made the report
+lose its category lines even though calculation tests continued to pass.
+
+The final structure is:
+
+```python
+budget_limit = calculate_monthly_remaining(
+    budgets, transactions, report_year, report_month
+)
+
+for budget in budgets:
+    print(budget.category, budget_limit[budget.category])
+```
+
+The calculation call runs once; the printing body runs once per budget. Python
+indentation determines this execution structure. A continuation line inside
+parentheses is not a new execution block. Calculation and presentation have
+different iteration needs, even though they work with the same budgets.
+
+Mentor inspected the saved indentation and ran
+`uv run --locked python -m exercises.monthly_budgets`: exit 0. December 2026
+report shows total 1100.00 and full remaining limits 500.00, 200.00, 250.00,
+150.00, followed by `Both checks passed`. Full suite previously passed 28 cases
+during integration review; it was not rerun for this final demonstration-only edit.
+
+Next: specify and test remaining-summary edge cases such as no budgets and
+duplicate categories before treating the summary contract as complete. A separate
+test-directory organizing step is also pending, per the learner's preference to
+keep application work and learning experiments distinct.
