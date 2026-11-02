@@ -4,7 +4,7 @@ Last updated: 2026-11-02.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; duplicate budget-category check complete.
+Milestone 1: Python budget calculation engine. Phase 1; same-month refund behavior verified.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -29,7 +29,7 @@ The project consists of working standalone exercises, not yet an integrated engi
 
 ## Latest verification
 
-Mentor ran `uv run --locked python -m pytest exercises -v`: **31 passed in 0.01s**,
+Mentor ran `uv run --locked python -m pytest tests exercises -v`: **32 passed in 0.03s**,
 exit 0, Python 3.14.6 and pytest 9.2.0. pyproject.toml and uv.lock record the
 project and dependencies; .venv remains ignored. Use Python's module invocation
 from the project root to make exercises imports work.
@@ -39,6 +39,29 @@ restaurants 100.00, gas 50.00, miscellaneous 150.00. Data is fictional.
 Mentor reran the module demonstration after the date-field changes; same results, exit 0.
 
 ## Next recommended task
+
+Latest checkpoint (2026-11-02): signed amount rule introduced: expenses positive,
+refunds negative. Learner's new refund test verifies 100.00 purchase plus -25.00
+refund leaves 425.00 of a 500.00 grocery budget. Mentor inspected fixture/test and
+ran refund file: 1 passed, exit 0. Full suite not rerun since this new test.
+Fix refund fixture annotation from list(Transaction) to list[Transaction].
+Next: a refund in the following month, using transaction-date attribution policy.
+Let the learner write the tests; existing calculation may already satisfy them.
+
+## Previous test-directory checkpoint
+
+Latest checkpoint (2026-11-02): application tests and conftest.py moved into tests/;
+two learning test files remain in exercises/. Mentor checked layout/imports and
+ran both groups: **32 passed**, exit 0 (26 app cases, 6 learning cases).
+Use `uv run --locked python -m pytest tests exercises -v` for all tests, or tests
+alone for application cases. AGENTS.md updated; old exercises-only commands omit
+the application suite now. Journal lesson 38 records the refactor.
+
+Next: define signed expense/refund behavior and write a focused test before
+changing financial logic. The shared Transaction still lacks the validation of
+the earlier exercise model. Confirm milestone 1's remaining criteria before SQLite.
+
+## Previous duplicate-category checkpoint
 
 Latest checkpoint (2026-11-02): summary rejects duplicate category names using
 seen_categories set; matching is exact/case sensitive. Mentor inspected and ran
@@ -193,7 +216,7 @@ Broader financial rules, integration, and milestone completion checks remain.
 ## Learning-record convention
 
 User requests **one revision file, appended after each lesson**: LEARNING_NOTES.md.
-It now contains 37 lessons in learning order, including sets and duplicate budget categories.
+It now contains 39 lessons in learning order, including signed expense/refund amounts.
 Append future lessons at the bottom, update contents, and refresh this checkpoint.
 The dated learnings/ files are retained as a historical archive, not the primary
 place for new entries. Do not keep prepending duplicate checkpoints to the journal.

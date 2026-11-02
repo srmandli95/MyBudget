@@ -23,10 +23,12 @@ With uv installed and Python 3.14 or newer available, run from the project root:
 
 ```sh
 uv sync --locked
-uv run --locked python -m pytest exercises -v
+uv run --locked python -m pytest tests exercises -v
 ```
 
-The current suite has 10 passing cases. uv manages `.venv`; manual activation is
+The current suite has 32 passing cases: 26 application cases in `tests/` and
+6 learning cases in `exercises/`. Shared app fixtures live in `tests/conftest.py`.
+uv manages `.venv`; manual activation is
 optional. Commit `pyproject.toml` and `uv.lock`, not `.venv/`.
 Use `python -m pytest` through uv so project-root imports resolve correctly.
 

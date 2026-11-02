@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: duplicate budget categories rejected; all 6 summary tests pass. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: same-month refund behavior verified in a focused test. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -49,6 +49,8 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 35: 2026-11-02: Defining the empty-budget result](#lesson-35)
 - [Lesson 36: 2026-11-02: Shared validation independent of data presence](#lesson-36)
 - [Lesson 37: 2026-11-02: Sets and duplicate budget categories](#lesson-37)
+- [Lesson 38: 2026-11-02: Separating application tests from learning exercises](#lesson-38)
+- [Lesson 39: 2026-11-02: Refunds and signed expense amounts](#lesson-39)
 
 <a id="lesson-01"></a>
 
@@ -1866,3 +1868,73 @@ include the duplicate category in the error message.
 
 Next: tighten the duplicate test's exception scope, then separate application
 tests from learning exercises as a small behavior-preserving organizing step.
+
+<a id="lesson-38"></a>
+
+## Lesson 38: 2026-11-02: Separating application tests from learning exercises
+
+Status: test-directory refactor complete.
+
+Learner created tests/ beside mybudget/ and exercises/ and moved application
+test modules plus conftest.py there. Application imports still use mybudget.models
+and mybudget.calculations; changing test location does not change what they test.
+
+```text
+Mybudget/
+├── mybudget/       # Reusable application code
+├── tests/          # Application tests and shared conftest.py
+├── exercises/      # Learning programs and their practice tests
+├── pyproject.toml
+└── uv.lock
+```
+
+conftest.py moved with its requesting tests because fixtures there are available
+to tests in that directory and descendants, not a sibling directory. Tests
+continue requesting fixtures by name without importing conftest.py manually.
+The basic subtraction and earlier exercise-only Transaction validation tests
+remain in exercises/; they do not test the shared application's Transaction model.
+
+Mentor verified the file layout and imports and ran:
+
+```sh
+uv run --locked python -m pytest tests exercises -v
+```
+
+Result: **32 passed in 0.03s**, exit 0: 26 application cases and 6 learning cases.
+For application tests only, use `uv run --locked python -m pytest tests -v`.
+Earlier journal commands refer to the file locations at those historical lessons.
+The old exercises-only command now omits the application tests.
+
+Next: resume milestone 1's financial behavior and integration checks before
+SQLite. Refund/sign conventions and runtime validation on the shared Transaction
+model have not yet been covered; do not assume historical model validation applies.
+
+<a id="lesson-39"></a>
+
+## Lesson 39: 2026-11-02: Refunds and signed expense amounts
+
+Status: same-month refund rule specified and tested.
+
+For this expense engine, positive transaction amounts represent spending and
+negative amounts represent refunds that reduce spending. Rejecting all negative
+amounts would prevent representing this valid case. This is our domain convention,
+not an assumption about every future bank provider's amount-sign convention.
+
+Learner added refund_sample_transaction in tests/conftest.py: Groceries 100.00 on
+October 5, 2026 and -25.00 on October 6. test_refund_reduces_monthly_spending calls
+the summary for October and asserts 425.00 remains from a 500.00 budget. Net
+spending is 75.00. Existing addition already implements the selected rule;
+no calculation change was necessary.
+
+Mentor inspected the fixture and test and ran
+`uv run --locked python -m pytest tests/test_refunds.py -v`:
+**1 passed in 0.01s**, exit 0. Full suite last verified 32 cases before the new
+test; it was not rerun in this focused check.
+
+The fixture annotation is currently `list(Transaction)`, which is a call expression,
+not the intended generic annotation `list[Transaction]`. Correct the brackets;
+passing runtime tests does not establish annotation correctness.
+
+Next: test a refund dated in the following month. Our current policy assigns
+spending/refunds to their own transaction dates rather than rewriting the original
+purchase month. Explain and verify the implications before further validation work.

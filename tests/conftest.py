@@ -49,3 +49,9 @@ def sample_budget() -> list[Budget]:
             Budget("Vacation", Decimal("600")),
     ]
 
+@pytest.fixture
+def refund_sample_transaction() -> list(Transaction):
+    return [
+        Transaction("Groceries", Decimal("100.00"), date(2026,10,5)),
+        Transaction("Groceries", Decimal("-25.00"), date(2026,10,6))
+    ]

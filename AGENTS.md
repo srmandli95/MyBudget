@@ -13,5 +13,7 @@ PROGRESS.md. Include examples, corrected misunderstandings, and verification
 actually performed. The dated learnings/ files are an archive; do not create new
 daily files or prepend repeated checkpoints. Do not mark unverified work as tested.
 
-Run tests from the project root with `uv run --locked python -m pytest exercises -v`.
+Run all tests from the project root with `uv run --locked python -m pytest tests exercises -v`.
+Application tests and shared fixtures live in tests/; historical learning tests stay
+in exercises/. Use `uv run --locked python -m pytest tests -v` for application tests only.
 Commit pyproject.toml and uv.lock; keep .venv ignored. Commit/push only as authorized.
