@@ -13,14 +13,18 @@ def calculate_remaining(budget: Decimal, spent: Decimal):
     
     return budget - spent
 
+def validate_month(month: int) -> None:
+    if month < 1 or month > 12:
+        raise ValueError("Month must be between 1 and 12")
+
 def calculate_monthly_category_total(
     transactions: list[Transaction],
     category: str,
     year: int,
     month: int,
 ) -> Decimal:
-    if month < 1 or month > 12:
-        raise ValueError("Month must be between 1 and 12")
+    
+    validate_month(month)
     expense = Decimal("0.00")
     for transaction in transactions:
         if transaction.transaction_date.year == year and transaction.transaction_date.month == month and transaction.category == category:
@@ -37,6 +41,8 @@ def calculate_monthly_remaining(
 ) -> dict[str, Decimal]:
 
     remaining_budgets = {}
+
+    validate_month(month)
 
     for budget in budgets:
         

@@ -1,10 +1,10 @@
 # Progress
 
-Last updated: 2026-10-31.
+Last updated: 2026-11-02.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; monthly-remaining report integration complete.
+Milestone 1: Python budget calculation engine. Phase 1; shared month-range validation complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -29,7 +29,7 @@ The project consists of working standalone exercises, not yet an integrated engi
 
 ## Latest verification
 
-Mentor ran `uv run --locked python -m pytest exercises -v`: **28 passed in 0.02s**,
+Mentor ran `uv run --locked python -m pytest exercises -v`: **31 passed in 0.01s**,
 exit 0, Python 3.14.6 and pytest 9.2.0. pyproject.toml and uv.lock record the
 project and dependencies; .venv remains ignored. Use Python's module invocation
 from the project root to make exercises imports work.
@@ -39,6 +39,29 @@ restaurants 100.00, gas 50.00, miscellaneous 150.00. Data is fictional.
 Mentor reran the module demonstration after the date-field changes; same results, exit 0.
 
 ## Next recommended task
+
+Latest checkpoint (2026-11-02): validate_month defined in calculations.py and
+called by both monthly functions before iteration. Invalid 0/13 rejected even
+with no budgets/transactions; valid empty-budget result remains {}. Mentor
+inspected implementation and ran full suite: **31 passed**, exit 0.
+Discussed why Budget.__post_init__ does not own the separately supplied report
+month, possible future ReportPeriod model, and focused module placement.
+
+Next: agree on duplicate budget-category policy, write a test demonstrating
+current dictionary overwrite behavior, then implement the chosen rule. Let the
+learner code it. Organizing app tests separately from exercises remains pending.
+
+## Previous empty-budget checkpoint
+
+Latest checkpoint (2026-11-02): empty-budget rule tested: valid period plus no
+budgets returns {}, even with transactions. Mentor ran summary test file:
+3 passed, exit 0. Full suite not rerun during this check.
+Next: test invalid month rejection for calculate_monthly_remaining with no budgets;
+current per-category validation is skipped when its budget loop is empty.
+Let the learner first observe the failure, then fix validation placement.
+Duplicate-category policy and test-directory organizing remain pending.
+
+## Previous report-integration checkpoint
 
 Latest checkpoint (2026-10-31): report now calls calculate_monthly_remaining once
 outside the printing loop. Learner resolved repeated calculation and restored
@@ -156,7 +179,7 @@ Broader financial rules, integration, and milestone completion checks remain.
 ## Learning-record convention
 
 User requests **one revision file, appended after each lesson**: LEARNING_NOTES.md.
-It now contains 34 lessons in learning order, including calculation/presentation iteration.
+It now contains 36 lessons in learning order, including shared month validation.
 Append future lessons at the bottom, update contents, and refresh this checkpoint.
 The dated learnings/ files are retained as a historical archive, not the primary
 place for new entries. Do not keep prepending duplicate checkpoints to the journal.

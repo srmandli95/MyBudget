@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: report calculates once and prints separately; integration verified. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: shared month validation verified; 31 tests pass. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -46,6 +46,8 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 32: 2026-10-30: Budget objects in the monthly report](#lesson-32)
 - [Lesson 33: 2026-10-30: Composing functions and returning report data](#lesson-33)
 - [Lesson 34: 2026-10-31: Calculate once, then iterate for presentation](#lesson-34)
+- [Lesson 35: 2026-11-02: Defining the empty-budget result](#lesson-35)
+- [Lesson 36: 2026-11-02: Shared validation independent of data presence](#lesson-36)
 
 <a id="lesson-01"></a>
 
@@ -1755,3 +1757,69 @@ Next: specify and test remaining-summary edge cases such as no budgets and
 duplicate categories before treating the summary contract as complete. A separate
 test-directory organizing step is also pending, per the learner's preference to
 keep application work and learning experiments distinct.
+
+<a id="lesson-35"></a>
+
+## Lesson 35: 2026-11-02: Defining the empty-budget result
+
+Status: valid-period empty-budget behavior specified and tested.
+
+Rule: with no configured budgets and a valid report period, the summary returns
+an empty dictionary, even when transactions exist. There are no configured
+categories to report. Learner added a test passing [] for budgets, the nonempty
+transaction fixture, year 2026, and month 10, then asserted actual == {}.
+
+Mentor inspected the test and ran
+`uv run --locked python -m pytest exercises/test_calculate_monthly_remaining.py -v`:
+**3 passed in 0.01s**, exit 0. No implementation change was needed. A test can
+document existing intended behavior, not only drive new behavior. Full suite
+was not rerun in this targeted check.
+
+Next: test invalid months with no budgets. Validation currently happens in the
+per-category helper, which is never called if the budget loop does not run.
+Specify rejection independently of data presence before changing the implementation.
+
+<a id="lesson-36"></a>
+
+## Lesson 36: 2026-11-02: Shared validation independent of data presence
+
+Status: complete for the month-range rule.
+
+calculate_monthly_remaining previously relied on its per-category helper to
+validate months. With no budgets, the helper was never called, so invalid months
+were silently accepted. Validity of the request should not depend on data presence.
+
+Learner added parametrized tests expecting ValueError for months 0 and 13 with
+both budget and transaction lists empty, then extracted:
+
+```python
+def validate_month(month: int) -> None:
+    if month < 1 or month > 12:
+        raise ValueError("Month must be between 1 and 12")
+```
+
+Both public monthly calculation functions call it before their loops. The helper
+returns no useful value: normal completion means acceptance; invalid input raises.
+The rule has one definition even though callers invoke it independently.
+
+### Why not Budget.__post_init__?
+
+__post_init__ validates an object at construction. Budget holds category and limit,
+not the separately supplied report month. With no Budget instances created, no
+Budget initialization runs. A ReportPeriod class could own year/month validation,
+but it is not needed for this small shared rule yet.
+
+### Where shared logic belongs
+
+The helper lives in calculations.py beside its current callers. A focused
+validation.py module could be introduced if related rules grow. A generic helpers.py
+name does not communicate a clear responsibility and is unnecessary here.
+
+Mentor inspected the helper, both call sites, and saved empty-budget tests and ran
+`uv run --locked python -m pytest exercises -v`: **31 passed in 0.01s**, exit 0.
+The initial failing run for this new summary check was described by the learner
+but no terminal output was shared; do not claim it was independently observed.
+
+Next: define duplicate budget-category behavior. The summary dictionary currently
+overwrites an earlier category if the configuration contains two budgets with
+the same name. Agree on the rule before implementing a check.
