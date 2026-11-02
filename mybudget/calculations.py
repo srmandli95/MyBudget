@@ -44,7 +44,12 @@ def calculate_monthly_remaining(
 
     validate_month(month)
 
+    seen_categories = set()
+
     for budget in budgets:
+        if budget.category in seen_categories:
+            raise ValueError("duplicate budget")
+        seen_categories.add(budget.category)
         
         expense = calculate_monthly_category_total(transaction, budget.category, year, month)
         remaining_budgets[budget.category] = calculate_remaining(

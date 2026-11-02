@@ -4,7 +4,7 @@ Last updated: 2026-11-02.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; shared month-range validation complete.
+Milestone 1: Python budget calculation engine. Phase 1; duplicate budget-category check complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -39,6 +39,20 @@ restaurants 100.00, gas 50.00, miscellaneous 150.00. Data is fictional.
 Mentor reran the module demonstration after the date-field changes; same results, exit 0.
 
 ## Next recommended task
+
+Latest checkpoint (2026-11-02): summary rejects duplicate category names using
+seen_categories set; matching is exact/case sensitive. Mentor inspected and ran
+summary file: 6 passed, exit 0. Full suite last verified 31 cases before this added
+test; not rerun in this focused check. Duplicate test still creates its inputs
+inside pytest.raises; recommend moving setup outside to isolate the summary call.
+Optional error-message improvement: identify the duplicate category.
+
+Next: small test-scope cleanup, then organize application tests separately from
+learning experiments. Explain moves and fixture visibility before implementation.
+Duplicate transaction detection, numeric/type policy, year validation, and shared
+transaction validation remain future work; milestone 1 is not declared complete.
+
+## Previous shared-validation checkpoint
 
 Latest checkpoint (2026-11-02): validate_month defined in calculations.py and
 called by both monthly functions before iteration. Invalid 0/13 rejected even
@@ -179,7 +193,7 @@ Broader financial rules, integration, and milestone completion checks remain.
 ## Learning-record convention
 
 User requests **one revision file, appended after each lesson**: LEARNING_NOTES.md.
-It now contains 36 lessons in learning order, including shared month validation.
+It now contains 37 lessons in learning order, including sets and duplicate budget categories.
 Append future lessons at the bottom, update contents, and refresh this checkpoint.
 The dated learnings/ files are retained as a historical archive, not the primary
 place for new entries. Do not keep prepending duplicate checkpoints to the journal.

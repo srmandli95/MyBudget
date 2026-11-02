@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: shared month validation verified; 31 tests pass. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: duplicate budget categories rejected; all 6 summary tests pass. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -48,6 +48,7 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 34: 2026-10-31: Calculate once, then iterate for presentation](#lesson-34)
 - [Lesson 35: 2026-11-02: Defining the empty-budget result](#lesson-35)
 - [Lesson 36: 2026-11-02: Shared validation independent of data presence](#lesson-36)
+- [Lesson 37: 2026-11-02: Sets and duplicate budget categories](#lesson-37)
 
 <a id="lesson-01"></a>
 
@@ -1823,3 +1824,45 @@ but no terminal output was shared; do not claim it was independently observed.
 Next: define duplicate budget-category behavior. The summary dictionary currently
 overwrites an earlier category if the configuration contains two budgets with
 the same name. Agree on the rule before implementing a check.
+
+<a id="lesson-37"></a>
+
+## Lesson 37: 2026-11-02: Sets and duplicate budget categories
+
+Status: duplicate-category rejection implemented and verified.
+
+Rule: each category may appear in at most one budget in a report. Exact category
+names remain case sensitive. Reject duplicates rather than silently replacing a
+dictionary entry or combining limits and potentially hiding a configuration error.
+This is different from duplicate transaction detection, which remains future work.
+
+Learner used a set, a collection of unique values supporting membership checks:
+
+```python
+seen_categories = set()
+for budget in budgets:
+    if budget.category in seen_categories:
+        raise ValueError("duplicate budget")
+    seen_categories.add(budget.category)
+    # Continue the existing calculation.
+```
+
+The set records previously encountered category names. Check before adding the
+current name so the first occurrence is accepted and the second is rejected.
+For string keys, membership and insertion take average constant time; the set
+uses storage proportional to distinct categories. This does not change the
+summary's existing repeated scans of transactions for each budget.
+
+Learner's test supplies two valid Groceries budgets with limits 500.00 and 300.00,
+expecting ValueError from calculate_monthly_remaining. The saved test still
+constructs its inputs inside pytest.raises. Moving setup before the block is
+recommended so only the summary call is under the exception checker.
+
+Mentor inspected the implementation and ran
+`uv run --locked python -m pytest exercises/test_calculate_monthly_remaining.py -v`:
+**6 passed in 0.01s**, exit 0. Full suite last verified 31 cases before this new
+test; it was not rerun in this targeted check. Optional diagnostic improvement:
+include the duplicate category in the error message.
+
+Next: tighten the duplicate test's exception scope, then separate application
+tests from learning exercises as a small behavior-preserving organizing step.

@@ -1,6 +1,7 @@
 from decimal import Decimal
 from mybudget.calculations import calculate_monthly_remaining
 import pytest
+from mybudget.models import Budget
 
 def test_calculate_remining_budgets_2026_oct(calculate_category_budgets, sample_budget):
 
@@ -31,3 +32,15 @@ def test_monthly_remaining_returns_empty_when_no_budgets(
 def test_invalid_month(month):
     with pytest.raises(ValueError):
         calculate_monthly_remaining([], [], 2026, month)
+
+def test_monthly_remaining_rejects_duplicates_budget_categories():
+    with pytest.raises(ValueError):
+        budgets = [
+
+        Budget("Groceries", Decimal("500.00")),
+        Budget("Groceries", Decimal("300.00"))
+
+        ]
+
+        calculate_monthly_remaining(budgets, [], 2026, 10)
+
