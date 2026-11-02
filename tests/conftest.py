@@ -55,3 +55,10 @@ def refund_sample_transaction() -> list(Transaction):
         Transaction("Groceries", Decimal("100.00"), date(2026,10,5)),
         Transaction("Groceries", Decimal("-25.00"), date(2026,10,6))
     ]
+
+@pytest.fixture
+def refund_sample_transaction_differnt_month() -> list(Transaction):
+    return [
+        Transaction("Groceries", Decimal("100.00"), date(2026,10,5)),
+        Transaction("Groceries", Decimal("-25.00"), date(2026,11,6))
+    ]

@@ -30,7 +30,7 @@ def test_monthly_total_returns_zero_when_no_dates_match(
     assert isinstance(actual, Decimal)
 
 @pytest.mark.parametrize("month", [0,13])
-def test_monthly_total_rejects_invalid_month(month):
+def test_monthly_total_rejects_invalid_month(month) -> list[Transaction]:
 
     with pytest.raises(ValueError):
         calculate_monthly_category_total(
@@ -41,7 +41,7 @@ def test_monthly_total_rejects_invalid_month(month):
         )
 
 @pytest.mark.parametrize("month", [1, 12])
-def test_monthly_total_accepts_valid_boundary_months(month):
+def test_monthly_total_accepts_valid_boundary_months(month) -> list[Transaction]:
     actual = calculate_monthly_category_total([], "Groceries", 2026, month)
 
     assert actual == Decimal("0.00")

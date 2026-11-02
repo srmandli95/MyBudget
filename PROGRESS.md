@@ -4,7 +4,7 @@ Last updated: 2026-11-02.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; same-month refund behavior verified.
+Milestone 1: Python budget calculation engine. Phase 1; cross-month refund exercise partly complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -39,6 +39,18 @@ restaurants 100.00, gas 50.00, miscellaneous 150.00. Data is fictional.
 Mentor reran the module demonstration after the date-field changes; same results, exit 0.
 
 ## Next recommended task
+
+Latest checkpoint: tests/test_refunds.py has two saved tests. Mentor verified
+same-month remaining 425.00 and November cross-month remaining 525.00; focused
+run: 2 passed, exit 0. Journal lesson 40 records the date-attribution policy.
+
+Learner reported finishing the October cross-month test and fixture annotation
+fixes, but saved files still contain two tests and list(Transaction). Resume by
+checking editor save/path, then verify October remaining 400.00 and annotations
+list[Transaction]. Do not claim three passing refund tests until observed.
+No learner implementation was changed during recording.
+
+## Previous same-month-refund checkpoint
 
 Latest checkpoint (2026-11-02): signed amount rule introduced: expenses positive,
 refunds negative. Learner's new refund test verifies 100.00 purchase plus -25.00
@@ -216,7 +228,7 @@ Broader financial rules, integration, and milestone completion checks remain.
 ## Learning-record convention
 
 User requests **one revision file, appended after each lesson**: LEARNING_NOTES.md.
-It now contains 39 lessons in learning order, including signed expense/refund amounts.
+It now contains 40 lessons in learning order, including the partial cross-month refund checkpoint.
 Append future lessons at the bottom, update contents, and refresh this checkpoint.
 The dated learnings/ files are retained as a historical archive, not the primary
 place for new entries. Do not keep prepending duplicate checkpoints to the journal.

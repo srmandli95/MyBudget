@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: same-month refund behavior verified in a focused test. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: same-month and November refund tests verified; cross-month exercise partly pending. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -51,6 +51,7 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 37: 2026-11-02: Sets and duplicate budget categories](#lesson-37)
 - [Lesson 38: 2026-11-02: Separating application tests from learning exercises](#lesson-38)
 - [Lesson 39: 2026-11-02: Refunds and signed expense amounts](#lesson-39)
+- [Lesson 40: 2026-11-02: Refunds received in another month](#lesson-40)
 
 <a id="lesson-01"></a>
 
@@ -1938,3 +1939,31 @@ passing runtime tests does not establish annotation correctness.
 Next: test a refund dated in the following month. Our current policy assigns
 spending/refunds to their own transaction dates rather than rewriting the original
 purchase month. Explain and verify the implications before further validation work.
+
+<a id="lesson-40"></a>
+
+## Lesson 40: 2026-11-02: Refunds received in another month
+
+Status: November result verified; October counterpart and annotation cleanup
+not present in the inspected saved files.
+
+Policy: attribute each transaction to its own transaction date. A November refund
+does not retroactively rewrite October's spending. A refund-only month may show
+remaining budget above its configured limit; this is intentional under this policy.
+
+Learner added a separate fixture with a 100.00 grocery purchase on October 5 and
+a -25.00 refund on November 6, 2026. The November test expects 525.00 remaining
+from a 500.00 limit. The existing same-month test still expects 425.00.
+
+Mentor inspected and ran `uv run --locked python -m pytest tests/test_refunds.py -v`:
+**2 passed in 0.01s**, exit 0. Full suite was not rerun for this focused check.
+
+Requested but not yet found in saved source: an October test using the cross-month
+fixture expecting 400.00, and changing both fixture annotations from
+list(Transaction) to list[Transaction]. The learner reported completion, but
+repeated disk inspection still showed the earlier files. Preserve the distinction
+between reported edits and verified saved code; check editor saving/path next time
+rather than claiming three passing cases or silently editing learner code.
+
+Resume by checking those saved files, finishing this small exercise, and then
+reviewing remaining milestone-1 correctness rules before new features.
