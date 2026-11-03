@@ -1,10 +1,10 @@
 # Progress
 
-Last updated: 2026-11-02.
+Last updated: 2026-11-03.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; cross-month refund exercise partly complete.
+Milestone 1: Python budget calculation engine. Phase 1; refund exercise complete for transaction-date attribution.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -39,6 +39,19 @@ restaurants 100.00, gas 50.00, miscellaneous 150.00. Data is fictional.
 Mentor reran the module demonstration after the date-field changes; same results, exit 0.
 
 ## Next recommended task
+
+Latest checkpoint (2026-11-03): all three refund tests now saved and verified.
+Both fixture annotations corrected to list[Transaction]. Mentor ran refund file:
+3 passed, exit 0. Results: same-month 425.00; October cross-month 400.00; November
+refund-only 525.00. Full suite not rerun for this focused check.
+
+Next: runtime validation on shared mybudget.models.Transaction, starting with a
+blank-category rule and a small test-first exercise. Preserve negative amounts
+for refunds. Earlier exercise-only merchant validation does not protect this model.
+Optional test-name cleanup: test_refund_same_month is actually the purchase-month
+exclusion of a later refund. Let the learner implement all core changes.
+
+## Previous incomplete-refund checkpoint
 
 Latest checkpoint: tests/test_refunds.py has two saved tests. Mentor verified
 same-month remaining 425.00 and November cross-month remaining 525.00; focused
@@ -228,7 +241,7 @@ Broader financial rules, integration, and milestone completion checks remain.
 ## Learning-record convention
 
 User requests **one revision file, appended after each lesson**: LEARNING_NOTES.md.
-It now contains 40 lessons in learning order, including the partial cross-month refund checkpoint.
+It now contains 41 lessons in learning order, including completed refund verification.
 Append future lessons at the bottom, update contents, and refresh this checkpoint.
 The dated learnings/ files are retained as a historical archive, not the primary
 place for new entries. Do not keep prepending duplicate checkpoints to the journal.

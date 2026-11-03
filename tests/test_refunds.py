@@ -11,3 +11,8 @@ def test_refund_different_month(refund_sample_transaction_differnt_month, sample
     actual = calculate_monthly_remaining(sample_budget, refund_sample_transaction_differnt_month, 2026, 11)
 
     assert actual["Groceries"] == Decimal("525.00")
+
+def test_refund_same_month(refund_sample_transaction_differnt_month, sample_budget):
+    actual = calculate_monthly_remaining(sample_budget, refund_sample_transaction_differnt_month, 2026, 10)
+
+    assert actual["Groceries"] == Decimal("400.00")

@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: same-month and November refund tests verified; cross-month exercise partly pending. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: all 3 refund tests and fixture annotations verified. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -52,6 +52,7 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 38: 2026-11-02: Separating application tests from learning exercises](#lesson-38)
 - [Lesson 39: 2026-11-02: Refunds and signed expense amounts](#lesson-39)
 - [Lesson 40: 2026-11-02: Refunds received in another month](#lesson-40)
+- [Lesson 41: 2026-11-03: Completing cross-month refund verification](#lesson-41)
 
 <a id="lesson-01"></a>
 
@@ -1967,3 +1968,27 @@ rather than claiming three passing cases or silently editing learner code.
 
 Resume by checking those saved files, finishing this small exercise, and then
 reviewing remaining milestone-1 correctness rules before new features.
+
+<a id="lesson-41"></a>
+
+## Lesson 41: 2026-11-03: Completing cross-month refund verification
+
+Status: refund exercise complete for the selected transaction-date policy.
+
+Learner saved the missing October check using the cross-month fixture and fixed
+both refund fixture annotations to list[Transaction]. Mentor confirmed the saved
+changes and ran `uv run --locked python -m pytest tests/test_refunds.py -v`:
+**3 passed in 0.01s**, exit 0.
+
+Verified cases: same-month purchase/refund leaves 425.00; the October purchase
+without its November refund leaves 400.00; November's refund-only activity leaves
+525.00 of a 500.00 limit. This confirms both sides of the cross-month policy,
+not just the refund month's behavior. The full suite was not rerun in this check.
+
+Optional naming cleanup: test_refund_same_month actually checks that a later
+refund does not change October. A name such as
+test_later_refund_does_not_change_purchase_month would describe its purpose better.
+
+Next: runtime validation in the shared Transaction model. Earlier merchant
+validation lives only in a learning model; it does not protect application inputs.
+Introduce one rule at a time and preserve negative amounts for refunds.
