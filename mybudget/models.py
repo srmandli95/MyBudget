@@ -11,6 +11,10 @@ class Transaction:
     def __post_init__(self):
         if not self.category.strip():
             raise ValueError("category cannot be empty") 
+        if not isinstance(self.amount, Decimal):
+            raise TypeError("amount must be a Decimal integer")
+        if not self.amount.is_finite():
+            raise ValueError("amount must be a decimal")
 
 
 @dataclass

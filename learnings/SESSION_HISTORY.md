@@ -1,0 +1,2105 @@
+# Archived MyBudget session history
+
+This is the former chronological journal, preserved for reference. Its past
+instructions about appending daily lessons have been superseded. Use the
+[concept study guide](../LEARNING_NOTES.md) for revision and
+[PROGRESS.md](../PROGRESS.md) for current work.
+
+The single revision file for this apprenticeship. Lessons are in learning order;
+append new completed lessons at the end and update this contents list.
+
+Current checkpoint: validation basics understood; next is iterators and generators. See [PROGRESS.md](../PROGRESS.md)
+for the current task and [ROADMAP.md](../ROADMAP.md) for the curriculum.
+
+Earlier entries preserve what was known and verified at that lesson. Historical
+pending tasks and test counts describe that point in time; later entries record
+subsequent completion. The dated files in learnings/ remain as an archive.
+
+## Contents
+
+- [Lesson 01: 2026-10-26: How Python executes a program](#lesson-01)
+- [Lesson 02: 2026-10-26: Decimal, functions, and type hints](#lesson-02)
+- [Lesson 03: 2026-10-26: Transaction classes and instances](#lesson-03)
+- [Lesson 04: 2026-10-27: Dataclasses, identity, and validation](#lesson-04)
+- [Lesson 05: 2026-10-27: Handling validation exceptions](#lesson-05)
+- [Lesson 06: 2026-10-27: When to use classes and functions](#lesson-06)
+- [Lesson 07: 2026-10-27: Lists, loops, and category totals](#lesson-07)
+- [Lesson 08: 2026-10-27: Configurable monthly budgets](#lesson-08)
+- [Lesson 09: 2026-10-27: Automated checks with assert](#lesson-09)
+- [Lesson 10: 2026-10-28: First pytest tests and import behavior](#lesson-10)
+- [Lesson 11: 2026-10-28: Context managers and validation tests](#lesson-11)
+- [Lesson 12: 2026-10-28: Pytest parametrization](#lesson-12)
+- [Lesson 13: 2026-10-28: Pytest fixtures and sharing setup](#lesson-13)
+- [Lesson 14: 2026-10-28: uv, dependency resolution, and lockfiles](#lesson-14)
+- [Lesson 15: 2026-10-28: Models, packages, and a small refactor](#lesson-15)
+- [Lesson 16: 2026-10-28: Separating calculations from demonstrations](#lesson-16)
+- [Lesson 17: 2026-10-28: Testing the remaining-budget rule](#lesson-17)
+- [Lesson 18: 2026-10-29: Boundary cases for remaining budgets](#lesson-18)
+- [Lesson 19: 2026-10-29: Using the tested calculation in the report](#lesson-19)
+- [Lesson 20: 2026-10-29: Date objects and calendar comparisons](#lesson-20)
+- [Lesson 21: 2026-10-29: Adding dates while preserving test coverage](#lesson-21)
+- [Lesson 22: 2026-10-29: Monthly filtering and meaningful test inputs](#lesson-22)
+- [Lesson 23: 2026-10-29: Empty inputs and checking result types](#lesson-23)
+- [Lesson 24: 2026-10-29: Nonempty input with no matching month](#lesson-24)
+- [Lesson 25: 2026-10-29: Monthly report integration](#lesson-25)
+- [Lesson 26: 2026-10-29: Invalid months and debugging test expectations](#lesson-26)
+- [Lesson 27: 2026-10-29: Boundary validation independent of transaction data](#lesson-27)
+- [Lesson 28: 2026-10-29: Accepting valid range boundaries](#lesson-28)
+- [Lesson 29: 2026-10-29: Budget validation and fixture setup errors](#lesson-29)
+- [Lesson 30: 2026-10-30: Testing blank budget categories](#lesson-30)
+- [Lesson 31: 2026-10-30: Accepting zero budget limits](#lesson-31)
+- [Lesson 32: 2026-10-30: Budget objects in the monthly report](#lesson-32)
+- [Lesson 33: 2026-10-30: Composing functions and returning report data](#lesson-33)
+- [Lesson 34: 2026-10-31: Calculate once, then iterate for presentation](#lesson-34)
+- [Lesson 35: 2026-11-02: Defining the empty-budget result](#lesson-35)
+- [Lesson 36: 2026-11-02: Shared validation independent of data presence](#lesson-36)
+- [Lesson 37: 2026-11-02: Sets and duplicate budget categories](#lesson-37)
+- [Lesson 38: 2026-11-02: Separating application tests from learning exercises](#lesson-38)
+- [Lesson 39: 2026-11-02: Refunds and signed expense amounts](#lesson-39)
+- [Lesson 40: 2026-11-02: Refunds received in another month](#lesson-40)
+- [Lesson 41: 2026-11-03: Completing cross-month refund verification](#lesson-41)
+- [Lesson 42: 2026-11-03: Validating categories in the application Transaction](#lesson-42)
+- [Lesson 43: 2026-11-03: Enforcing Decimal amounts at runtime](#lesson-43)
+- [Lesson 44: 2026-11-03: Non-finite Decimals and testing the intended branch](#lesson-44)
+
+<a id="lesson-01"></a>
+
+## Lesson 01: 2026-10-26: How Python executes a program
+
+### Language, interpreter, and executable
+
+- **Python** is a programming language with syntax and behavior rules.
+- **CPython** is the usual implementation of Python, written primarily in C.
+  It provides the interpreter we are discussing.
+- **`python3`** is the command that launches the installed Python 3 interpreter.
+- **Source code** is the text we write in a file such as `budget.py`.
+- An **executable** is a program file the operating system can launch.
+- A **process** is a running instance of a program, with memory and CPU time
+  managed by the operating system.
+
+An application such as Chrome includes executables and supporting resources.
+On macOS, an `.app` is an application bundle containing these files.
+One application can use multiple processes. Closing it stops its running
+processes; its installed files remain on disk.
+
+### What the command means
+
+```sh
+python3 budget.py
+```
+
+`python3` names the executable to start. `budget.py` is an argument telling
+Python which source file to execute.
+
+The shell searches the directories in **PATH** to find `python3`. The operating
+system starts the interpreter process, which receives the filename argument.
+A relative filename is resolved from the current working directory.
+
+- `python3` with no filename normally starts an interactive session in a terminal.
+- `python3 missing.py` starts Python, but it reports an error and exits if it
+  cannot open the requested file.
+
+### The execution pipeline
+
+```text
+Shell finds python3
+    ↓
+Operating system starts the interpreter process
+    ↓
+CPython reads the source file
+    ↓
+Tokenize and parse the source into a syntax tree
+    ↓
+Compile into a code object containing bytecode
+    ↓
+Execute the bytecode instructions
+    ↓
+Program finishes, or an unhandled exception stops execution
+```
+
+Syntax checking happens while processing and compiling the source. For an
+ordinary script, its compilation must succeed before its top-level code executes.
+
+**Bytecode** is an intermediate instruction format for Python's interpreter;
+it is not the CPU's machine code. CPython's evaluation loop executes the
+bytecode operations. Underneath, the CPU executes the interpreter's machine
+instructions, which carry out those operations.
+
+Conceptually, the evaluation loop repeatedly gets an instruction, determines
+the requested operation, and performs it. It executes bytecode instructions,
+not one source line at a time: one Python line can produce several instructions.
+
+```python
+remaining = budget - expense
+```
+
+Conceptually: look up `budget`, look up `expense`, subtract their values, and
+bind `remaining` to the result.
+
+**Compilation and execution require only one command:** `python3 budget.py`.
+CPython manages both stages automatically. Python is commonly called interpreted,
+but that does not mean CPython skips compilation into bytecode.
+
+### Names and objects
+
+```python
+merchant = "Sample Grocery"
+print(merchant)
+```
+
+`merchant` is a name bound to a string object. `print` receives that object and
+writes its text representation to standard output, normally shown in the terminal.
+The source file persists on disk after execution; this process's in-memory
+bindings do not persist into the next run.
+
+### Syntax errors versus execution errors
+
+#### Syntax error
+
+```python
+print("Starting MyBudget")
+remaining =
+```
+
+The assignment is incomplete. Compilation fails, so the first line does not execute.
+
+#### Runtime exception
+
+```python
+print("Starting MyBudget")
+remaining = unknown_budget
+print("Finished")
+```
+
+This has valid syntax. Assuming `unknown_budget` has not been defined, execution
+prints the first message, then raises `NameError`. The final line does not execute
+because this program does not handle the exception.
+
+An exception can be handled by application code; it does not always terminate
+the whole program. Exception handling is a later lesson.
+
+### Understanding demonstrated
+
+- Correctly identified `python3` as the interpreter executable in the command.
+- Correctly predicted that a syntax error at the end of the same script prevents
+  a print at the beginning from executing.
+- Explained the compilation and execution sequence, then refined the distinction
+  between source lines and bytecode instructions.
+- Confirmed that one command performs both compilation and execution.
+
+### Experiments and results
+
+Completed two intentional failure experiments. The learner shared terminal output,
+and the mentor independently ran both files and reproduced the results:
+
+- `python3 exercises/syntax_error_demo.py`: `my_name =` on line 3 raises
+  `SyntaxError: invalid syntax`. The earlier `print("hello world")` does not execute.
+- `python3 exercises/runtime_error_demo.py`: prints
+  `Hello world this would cause runtime error`, then line 3, `myname= inputname`,
+  raises `NameError: name 'inputname' is not defined`.
+
+Both processes exit with status 1, as expected for these unhandled errors.
+These are intentionally failing learning examples, not application failures.
+
+A traceback identifies the file, line, and execution context of a runtime failure.
+`<module>` means code executing at the top level of the file. For assignment,
+Python evaluates the right-hand expression before binding the left-hand name;
+looking up the undefined `inputname` fails before `myname` can be assigned.
+
+Previously verified environment: macOS, Python 3.14.6, Git 2.55.0, and a VS Code
+command available on PATH.
+
+### Next practice
+
+Create a small MyBudget script with fictional expense data. Practice defining
+a name before using it, and distinguish a string literal from a name lookup.
+
+<a id="lesson-02"></a>
+
+## Lesson 02: 2026-10-26: Decimal, functions, and type hints
+
+Status: complete, as requested by the learner.
+
+### Concepts covered
+
+- `decimal` is a standard-library module; `Decimal` is a class provided by it.
+- `from decimal import Decimal` makes the class name available directly.
+  Alternatively, `import decimal` allows `decimal.Decimal("500.00")`.
+- Calling `Decimal("500.00")` creates a Decimal object. Importing or annotating
+  with the class does not create an amount.
+- Construct amounts from strings to avoid importing float approximation into them.
+- Type hints describe expected inputs and outputs. Ordinary Python execution
+  does not automatically enforce them or convert arguments.
+- Names and function parameters refer to objects. Operators act on the objects'
+  values through behavior supplied by their types, not on reference addresses.
+- Decimal supports subtraction through its special-method machinery (`__sub__`).
+  Subtraction returns a new Decimal object; the original immutable amounts remain unchanged.
+- A function returns a result for other code to use. Printing that result is a
+  separate responsibility.
+
+### Implemented exercise
+
+Source: [decimal_budget.py](../exercises/decimal_budget.py).
+
+```python
+from decimal import Decimal
+
+
+def calculate_remaining(budget: Decimal, spent: Decimal) -> Decimal:
+    return budget - spent
+
+
+print(calculate_remaining(Decimal("500.00"), Decimal("75.25")))
+```
+
+### Misunderstanding corrected
+
+The original call used `500.00` and `75.25`, which are floats. Decimal annotations
+did not convert them. The learner changed the call to construct Decimal objects
+from strings. The learner also removed unnecessary parentheses around the return
+expression.
+
+### Verified results
+
+The mentor ran the updated exercise successfully and observed `424.75`.
+This verifies the sample calculation; it is not an automated test suite.
+Equal-budget and over-budget cases were suggested but their execution has not
+been demonstrated. Lesson completion does not imply those checks were run.
+
+### Next step
+
+Introduce classes, constructors, attributes, and instances by modeling one
+fictional transaction. Continue quickly through familiar concepts and pause for
+implementation at unfamiliar ones, per the learner's preference.
+
+<a id="lesson-03"></a>
+
+## Lesson 03: 2026-10-26: Transaction classes and instances
+
+Status: exercise complete and reviewed.
+
+### Concepts learned
+
+- A class defines a type; calling it creates an instance.
+- `__init__` initializes that instance. `self` refers to the instance being initialized.
+- Parameters such as `amount` are local to the method call; `self.amount` stores
+  a reference as an instance attribute that remains accessible afterward.
+- Each transaction has its own merchant, amount, and category attributes.
+- Adding the two Decimal amount attributes produces a new Decimal result.
+- An f-string embeds expressions in braces into text, such as
+  `f"Total spending: {t1.amount + t2.amount}"`.
+
+### Code reviewed and executed
+
+Source: [transaction_model.py](../exercises/transaction_model.py).
+
+The learner implemented the constructor and created two transactions with
+Decimal amounts `59.89` and `10.99`. The mentor ran the script successfully:
+
+```text
+merchant: Costco , amount: 59.89
+merchant: AMB , amount: 10.99
+Total sum of tranction 70.88
+```
+
+All exercise requirements were met. Small optional cleanup: use clearer names
+than `t1` and `t2`, simplify printed formatting, and correct the output typo.
+No changes to the learner's implementation were made during review.
+
+### Limits and next step
+
+This verifies the sample execution, not automated tests or input validation.
+Next: compare this explicit class with a dataclass before adding validation.
+
+<a id="lesson-04"></a>
+
+## Lesson 04: 2026-10-27: Dataclasses, identity, and validation
+
+### Dataclasses and representation
+
+`@dataclass` examines declared fields and generates methods such as `__init__`,
+`__repr__`, and `__eq__`. Importing `dataclass` alone does not apply it.
+Conceptually, the decorator applies `Transaction = dataclass(Transaction)` after
+the class definition. The generated initializer assigns fields; annotations do
+not automatically convert inputs or enforce their types.
+
+`__repr__` produces a developer-facing text representation of an object.
+`repr(transaction)` explicitly requests it. `print(transaction)` uses string
+conversion, which falls back to the representation when there is no custom
+`__str__` implementation.
+
+### Equality, identity, and references
+
+- `==` uses a type's equality behavior. By default, dataclass equality compares
+  field values for instances of the same class.
+- `is` checks whether two references refer to the same object.
+- `other = transaction` binds another name to the existing instance; it does not copy it.
+- Changing an attribute through either name changes that shared instance. This
+  sharing of one object through multiple names is called aliasing.
+- Assignment binds a name to the result of the right-hand expression. That
+  expression might supply an existing object or create a new one.
+- For this transaction class, `copy(transaction)` creates a distinct instance.
+  It is a shallow copy: referenced attribute objects are shared rather than
+  recursively copied. It is not a general guarantee of independent nested data.
+- `id(object)` reports its identity. CPython uses its memory address; other
+  implementations need not. IDs can be reused after an object is destroyed.
+
+Matching fields alone do not prove duplicate bank transactions: separate genuine
+purchases may share merchant, amount, and category.
+
+### Modules and imports
+
+`dataclasses`, `decimal`, and `copy` are standard-library modules. They provide
+the `dataclass` function, `Decimal` class, and `copy` function respectively.
+A module is an importable unit of code; a package organizes modules; library is
+a broader term for reusable code. Own modules and dependency management come later.
+
+### Validation with __post_init__
+
+A merchant must contain at least one non-whitespace character. Correct types
+alone do not guarantee valid business data.
+
+The dataclass-generated initializer assigns the fields, then calls the defined
+`__post_init__` hook. The learner implemented:
+
+```python
+def __post_init__(self) -> None:
+    if not self.merchant.strip():
+        raise ValueError("marchant should not be blank")
+```
+
+`.strip()` returns a string with surrounding whitespace removed; it does not
+change the original attribute. An empty string is false in a condition. Both
+`""` and `"   "` therefore trigger this check. Checking only `merchant == ""`
+would miss strings containing spaces. This assumes merchant is already a string.
+
+`raise ValueError(...)` rejects an unacceptable value. If the exception escapes
+initialization, the constructor call fails instead of returning an initialized
+instance to the caller. Negative amounts are not rejected by this rule; a refund
+policy requires a separate decision.
+
+### Debugging and current verification
+
+Source: [transaction_dataclass_postinit.py](../exercises/transaction_dataclass_postinit.py).
+
+The learner shared a run raising `TypeError: Transaction() takes no arguments`.
+Inspection found the class lacked `@dataclass`, so no field initializer was
+generated. There was also a `self.merchannt` typo that would cause AttributeError
+after fixing the decorator.
+
+Latest source inspection confirms both fixes: the decorator is present and the
+check uses `self.merchant`. The file currently attempts construction with `" "`
+as merchant. The error-message typo `marchant` is cosmetic and remains unchanged.
+
+The mentor has not executed this revised validation script. Valid, empty, and
+whitespace-only cases remain to be verified. Equality and identity were discussed
+and understood conceptually; no execution results for those experiments were recorded.
+
+### Next practice
+
+Run merchant cases `"Costco"`, `""`, and `"   "` separately and review the output.
+Then learn how to handle expected exceptions with `try` and `except`.
+
+<a id="lesson-05"></a>
+
+## Lesson 05: 2026-10-27: Handling validation exceptions
+
+Status: lesson complete based on learner-reported success; current saved script
+independently run for its valid-input path.
+
+### Concepts covered
+
+- `raise ValueError(...)` signals unacceptable input and interrupts the current operation.
+- `try` executes code that may fail. A matching `except ValueError as error`
+  handles that exception and binds the exception object to `error`.
+- After a handled error, execution continues after the handler. An unhandled
+  error propagates and can stop the script.
+- A failed construction does not assign a newly initialized transaction to the
+  target name. Print a successfully constructed object inside the `try` block.
+- Catch the expected exception type. `except ValueError` does not catch AttributeError.
+- Keep domain validation in the class; the caller decides how to respond to failure.
+
+### Bug investigated
+
+The learner added `.strip()` checks to merchant, amount, and category. Merchant
+and category are strings, but amount is a Decimal, which has no `.strip()` method.
+A blank merchant raised ValueError first and hid that later bug. A valid merchant
+would reach the amount check and raise AttributeError instead.
+
+The learner removed the amount check. Blank-string validation remains for merchant
+and category. Appropriate monetary validation needs separate rules; negative
+amounts may represent refunds.
+
+### Code and verification
+
+Source: [transaction_exception_handling.py](../exercises/transaction_exception_handling.py).
+
+- Learner initially shared output demonstrating a handled blank-merchant error
+  followed by `Continues`.
+- Learner subsequently reported the exercise works after removing the amount check.
+- Current saved file contains one valid Costco transaction inside `try`, a
+  ValueError handler, and a final print. It does not preserve all three attempts
+  or print the successfully created transaction.
+- Mentor ran that current file successfully; output was `Continues` and exit
+  status was 0. This verifies the current valid-input path, not all three cases.
+- No automated tests were added or executed.
+
+### Next task
+
+Use a list and a loop to process multiple fictional transaction inputs, handle
+individual validation failures, and calculate spending across valid transactions.
+Preserve valid, empty, and whitespace-only merchant cases in that exercise so
+their behavior is repeatable rather than requiring manual file edits.
+
+<a id="lesson-06"></a>
+
+## Lesson 06: 2026-10-27: When to use classes and functions
+
+Learner's definition: **A class keeps related data and operations on that data together.**
+
+- Data is held in instance attributes, such as a transaction's merchant, amount,
+  and category.
+- Behavior means operations expressed through methods, such as validating the
+  merchant or changing the category. Validation is one kind of behavior.
+- A standalone function is often enough for an operation on supplied inputs,
+  such as `calculate_remaining(budget, spent)` or `calculate_total(transactions)`.
+- Business logic can live in functions or methods; choose where the responsibility
+  fits. Classes are not required for all code and may also simply model data.
+- A dictionary can group values too. A Transaction class gives that information
+  a specific type and a place for its construction rules. Those rules require
+  explicit validation; annotations alone do not enforce them.
+
+Learner confirmed understanding after comparing a transaction instance with a
+standalone remaining-budget calculation. Next planned implementation: lists and
+loops for transaction totals.
+
+<a id="lesson-07"></a>
+
+## Lesson 07: 2026-10-27: Lists, loops, and category totals
+
+Status: exercise complete.
+
+### Concepts covered
+
+- A list is an ordered collection of references to objects.
+- A `for` loop visits items through an iterator; its loop variable refers to
+  the current object rather than copying it.
+- Initialize an accumulator before iteration so each pass builds on the prior result.
+- Return after the loop to include all matching items.
+- `total += transaction.amount` adds a Decimal amount and rebinds the total.
+  It does not change the transaction's amount.
+- An `if` condition selects transactions whose category matches the requested one.
+  String equality is case sensitive: `Food` and `food` differ.
+- One pass over n transactions takes O(n) time and constant extra accumulator storage.
+
+### Debugging and implementation
+
+Initially, adding a Transaction instance directly to a Decimal raised TypeError.
+The fix was accessing its Decimal attribute with `trans.amount`.
+
+The learner then adapted the overall-total function into
+`calculate_category_total(transaction, category)`. Source:
+[transaction_totals.py](../exercises/transaction_totals.py).
+It uses a Decimal zero, a loop, a matching-category condition, and a return after
+the loop. The list variable spelling was corrected to `transactions`.
+
+### Verification
+
+Earlier overall-total implementation: mentor verified `178.47` for three `59.49`
+amounts and Decimal zero for an empty list. That implementation was subsequently
+replaced by category filtering; it is not a separate function in the current file.
+
+The learner reported `118.98` for Food, then `0.00` for an unmatched category and
+an empty list. Mentor independently executed the current file and checked the
+function with assertions, including that every result is a Decimal:
+
+| Input | Category | Expected and observed |
+| --- | --- | --- |
+| Current three transactions | Food | 118.98 |
+| Current three transactions | Gas | 59.49 |
+| Current three transactions | Subscriptions | 0.00 |
+| Empty list | Food | 0.00 |
+
+All four checks passed. These were direct verification checks, not a saved
+automated test suite. The saved script prints only the two zero-result cases.
+
+### Limitations and next step
+
+The category parameter name is clear, but the list parameter is still singular
+`transaction`; optional cleanup is plural `transactions`.
+The separate overall-total function can be restored later if needed.
+This exercise's dataclass has no validation hook; validation remains in the
+earlier exercises. No bank data or services are involved.
+
+Next: use a dictionary to map categories to configurable Decimal monthly limits,
+then combine those limits with category spending to calculate remaining budgets.
+
+<a id="lesson-08"></a>
+
+## Lesson 08: 2026-10-27: Configurable monthly budgets
+
+Status: lesson complete.
+
+### Concepts learned
+
+- Dictionaries map category names to Decimal monthly limits, keeping configuration
+  separate from calculation logic.
+- `.items()` supplies key-value pairs; `.values()` supplies the amounts.
+- `sum(budgets.values(), Decimal("0.00"))` totals the configured limits.
+- `category in budgets` checks dictionary keys. `category in transaction.category`
+  checks a substring; use `==` for exact category matching.
+- Looping over budgets includes categories with no purchases.
+- Category spending accumulates all matching amounts. Start at Decimal zero
+  before the loop and return the total after the loop.
+- With no matches, the function returns Decimal zero, so the caller needs no
+  fallback from None. Remaining budget is limit minus spending.
+
+### Debugging lessons
+
+- A fallback `else` incorrectly charged miscellaneous for the gas transaction.
+  Replacing transaction-specific branches with aggregation fixed that design.
+- An unconditional assignment overwrote computed remaining values. Indentation
+  controls which statements execute conditionally.
+- Returning inside the loop ended the function on its first iteration. Returning
+  after the loop permits multiple matching purchases and a consistent zero result.
+- Corrected `Trasnaction` to `Transaction` and used `list[Transaction]` consistently.
+
+The learner became confused by the combined task. Breaking it into one function
+fix and one scenario at a time helped; continue this approach when needed.
+
+### Implementation and results
+
+Source: [monthly_budgets.py](../exercises/monthly_budgets.py).
+
+Learner reported grocery remaining amounts of `100.00` for spending `400.00`,
+`75.00` after another `25.00` purchase, and `-25.00` when that purchase became
+`125.00`. Miscellaneous retained its full `150.00` with no purchases.
+
+Mentor inspected and ran the final saved script successfully, exit 0:
+
+```text
+Total budget: 1100.00
+category: Groceries, limit: 500.00, remaining: -25.00
+category: Restaurants, limit: 200.00, remaining: 100.00
+category: Gas, limit: 250.00, remaining: 50.00
+category: miscellaneous, limit: 150.00, remaining: 150.00
+```
+
+Earlier intermediate scenarios are learner-reported, not separate mentor reruns.
+No saved automated test suite yet. The simple category/amount dataclass does not
+include earlier validation hooks. Category keys are case sensitive; subscriptions
+remain separate. Data is fictional and held in memory.
+
+### Next task
+
+Automated tests: begin with assertions, then introduce pytest and its setup.
+Cover multiple matches, no matches, empty input, and overspending. Explain imports
+before expecting the learner to use them. Milestone 1 remains in progress.
+
+<a id="lesson-09"></a>
+
+## Lesson 09: 2026-10-27: Automated checks with assert
+
+Status: complete.
+
+### Concepts learned
+
+`assert condition` checks an expectation. A true condition allows execution to
+continue; a false condition raises AssertionError. An unhandled failure stops
+the script, so a success message must appear after every check it describes.
+
+Assertions automate comparisons previously made by reading terminal output.
+They are development checks, not input validation: Python can omit them with
+optimization enabled. Continue using explicit validation and exceptions for
+invalid user data.
+
+### Exercise and results
+
+Source: [monthly_budgets.py](../exercises/monthly_budgets.py).
+
+```python
+assert calculate_category_total(transactions, "Groceries") == Decimal("525.00")
+assert calculate_category_total([], "Groceries") == Decimal("0.00")
+print("Both checks passed")
+```
+
+Learner intentionally changed the first expectation to `524.00` and shared the
+resulting AssertionError, confirming that a mismatch is detected. The expectation
+was restored to `525.00`, and the learner shared the passing output.
+
+Mentor inspected and ran the current saved script successfully (exit 0), observing
+`Both checks passed`. Both the multiple-purchase and empty-input checks are now
+saved in the script. This is not yet a separate pytest test suite.
+
+### Next task
+
+Set up a project virtual environment, then introduce pytest, separate test
+functions, discovery, and failure reports. Learner reports familiarity with
+virtual environments but is happy to walk through the setup. Let the learner
+run the setup commands; explain their purpose and verify the selected interpreter.
+
+<a id="lesson-10"></a>
+
+## Lesson 10: 2026-10-28: First pytest tests and import behavior
+
+Status: first pytest lesson complete; recorded at this session checkpoint.
+
+### Environment and commands
+
+- A virtual environment provides a project-specific Python/package environment.
+- pip installs packages; it is distinct from the environment itself.
+- `python3 -m venv .venv` creates the environment.
+- `source .venv/bin/activate` adjusts the current shell's PATH.
+- `python -m pip install pytest` installs through the selected interpreter.
+- `.venv/bin/python` explicitly selects the environment without activation.
+- `.venv/` is ignored by Git; dependency recording remains a future setup task.
+
+### Tests
+
+Pytest discovers `test_*.py` files and `test_*` functions. Assertions check
+expectations; pytest reports results independently for each test. `-v` displays
+individual test names. Arrange–Act–Assert means prepare inputs, call the operation,
+and check the result.
+
+The learner wrote:
+
+- A Decimal subtraction test to verify the test setup.
+- A category-total test adding two grocery purchases while excluding Gas.
+- An empty-list test expecting Decimal zero.
+- A nonempty, no-matching-category test expecting Decimal zero.
+
+Empty input and no matching category exercise different paths: in the latter,
+the loop runs but its condition never matches.
+
+### Imports and the main guard
+
+The first import of a module in a process executes its top-level statements to
+initialize its names. This includes assignments, calls, and class/function
+definitions. A function definition creates the function; its body runs only when
+called. Modules are normally cached, so repeated imports do not rerun initialization.
+
+Even `from exercises.monthly_budgets import calculate_category_total` initializes
+the module, not just the requested definition. The dotted path identifies the
+module inside exercises; importing is governed by Python's module search path,
+not simply by files being adjacent.
+
+The learner moved sample data, reports, and demonstration assertions under:
+
+```python
+if __name__ == "__main__":
+    # Demonstration code
+```
+
+Direct execution sets `__name__` to `__main__`, so that block runs. Importing uses
+the module name, so it skips the demonstration. Imports, Transaction, and the
+category-total function remain at top level and available to tests.
+
+### Verification
+
+Learner reported all four tests passing. Mentor inspected the files and independently ran:
+
+```sh
+.venv/bin/python -m pytest exercises/test_budget_basics.py exercises/test_monthly_budgets.py -v
+```
+
+Observed Python 3.14.6, pytest 9.2.0, exit 0, and **4 passed in 0.01s**.
+This verifies these tests; it is not a claim of complete application coverage.
+
+### Next task
+
+Teach `pytest.raises` to check expected validation exceptions. Before importing
+the validation exercise, inspect its top-level demonstration and guard it as
+needed. The Transaction in monthly_budgets.py currently has only category and
+amount and no merchant validation; distinguish it from the earlier validated
+model rather than assuming they are interchangeable. Keep the next exercise small.
+
+<a id="lesson-11"></a>
+
+## Lesson 11: 2026-10-28: Context managers and validation tests
+
+Status: validation-testing exercise complete.
+
+### Statements and expressions
+
+A statement is an instruction Python executes, such as assignment, import,
+return, or an if statement. An expression evaluates to a value, such as
+`transaction.category == category`, which evaluates to a boolean. The colon
+belongs to the surrounding if statement, not the comparison expression.
+
+### Context managers and with
+
+`with` is a statement that uses an object's context-manager protocol to manage
+entry into and exit from a block. The context manager defines that behavior;
+`with` itself does not mean file handling or expected-error checking.
+
+After successful entry (`__enter__`), Python calls `__exit__` when the block ends,
+including if its code raises an exception. The exit method receives exception
+information and can suppress an exception or allow it to propagate.
+
+Examples: files close on exit, locks release, and database transaction managers
+may commit or roll back. `pytest.raises` checks an expected exception. Handling
+an exception never resumes the interrupted block: remaining statements inside
+it are skipped, and execution continues after the block if the error is handled.
+
+A managed context is not a new variable scope. Scope describes where a name
+can be accessed. Functions create local scopes; if, for, and with blocks do not
+create separate variable scopes. Names assigned inside a with block can remain
+accessible afterward, although a managed resource may already be closed.
+
+### Why pytest.raises instead of just try/except?
+
+For invalid input, ValueError is the expected correct behavior. A test that calls
+`pytest.fail` upon catching that exception reverses the intended expectation.
+A try/except that merely catches it also fails to detect the absence of an error.
+An equivalent manual check needs an else branch to fail if no error is raised.
+
+```python
+with pytest.raises(ValueError):
+    Transaction("", Decimal("20.50"), "Food")
+```
+
+This context manager passes the check when ValueError (or a subclass) occurs,
+fails when no exception occurs, and lets unexpected exception types fail the test.
+The learner needed several comparisons with try/except, then correctly restated
+the distinction between the with statement and its context-manager object.
+
+### Import lesson reinforced
+
+Object construction runs initialization even without print statements. The
+blank-merchant demonstration had to move under the main guard so importing the
+validated class does not raise before pytest runs the test. The expected invalid
+construction belongs inside the pytest.raises block in the test instead.
+
+### Implemented and verified
+
+Source: [test_transaction_validation.py](../exercises/test_transaction_validation.py).
+
+- Empty merchant raises ValueError.
+- Whitespace-only merchant raises ValueError.
+- Valid merchant is accepted and retained as an attribute; no raises context is
+  needed because an unexpected exception automatically fails that test.
+
+Learner shared passing output for each. Mentor inspected the saved tests and ran:
+
+```sh
+.venv/bin/python -m pytest exercises/test_budget_basics.py exercises/test_monthly_budgets.py exercises/test_transaction_validation.py -v
+```
+
+Result: **7 passed in 0.01s**, exit 0. This includes the four earlier tests and
+three merchant-validation tests, not complete application coverage.
+
+### Next task
+
+Introduce pytest parametrization to express the empty and whitespace merchant
+cases as one test with multiple inputs. Explain the decorator before use;
+general decorator mechanics and building decorators remain future lessons.
+Keep the valid-input test separate. Shared transaction models and recording
+development dependencies remain future project cleanup.
+
+<a id="lesson-12"></a>
+
+## Lesson 12: 2026-10-28: Pytest parametrization
+
+Status: complete.
+
+### Concept and implementation
+
+Parametrization runs the same test logic with several inputs. The learner
+replaced two repeated invalid-merchant tests with:
+
+```python
+@pytest.mark.parametrize("merchant", ["", " ", "   ", "\t"])
+def test_rejects_blank_merchant(merchant):
+    with pytest.raises(ValueError):
+        Transaction(merchant, Decimal("59.99"), "Gas")
+```
+
+The decorator attaches parameter information to the test function. Pytest
+collects one test case for each supplied value, calls the test with that value,
+and reports each case separately. The parameter name in the function must match
+the name specified in the decorator. A tab (`\t`) is whitespace removed by strip.
+The valid-merchant test remains separate because it expects successful construction.
+
+### Debugging
+
+Initially the function had no merchant parameter despite the decorator naming
+one. Pytest reported an error during collection, before executing the tests.
+Adding `merchant` to the function signature fixed the mismatch. The learner then
+added the three-space input to complete all four planned invalid cases.
+
+Reinforced context-manager understanding before this exercise: with uses an
+object's entry and exit behavior; pytest.raises fails if no expected error occurs.
+General decorator internals are still a later lesson, not considered mastered
+solely from using this pytest decorator.
+
+### Verification
+
+Source: [test_transaction_validation.py](../exercises/test_transaction_validation.py).
+
+The learner reported all four invalid cases passing. Mentor inspected the saved
+file and independently ran:
+
+```sh
+.venv/bin/python -m pytest exercises/test_budget_basics.py exercises/test_monthly_budgets.py exercises/test_transaction_validation.py -v
+```
+
+Result: **9 passed in 0.01s**, exit 0. These are one setup subtraction test,
+three category-total tests, one valid-merchant test, and four invalid-merchant
+cases. The validation file alone now contains five runnable test cases, despite
+having only two test functions.
+
+### Next topic
+
+Pytest fixtures: reuse sample-transaction setup across tests without repeating
+construction code. Explain how requesting a fixture by name works and begin with
+the default function scope so mutable test data is fresh for each test.
+
+<a id="lesson-13"></a>
+
+## Lesson 13: 2026-10-28: Pytest fixtures and sharing setup
+
+Status: local fixture and conftest.py sharing exercises complete.
+
+### Learner's distinction: fixtures versus parametrization
+
+- **Fixtures: one setup definition → reused by many tests.**
+- **Parametrization: one test definition → run with many input values.**
+
+Reusing setup does not necessarily share one object: this default function-scoped
+fixture constructs fresh sample objects for each requesting test. Providing a
+list through a fixture does not automatically run a separate test for each item.
+Both mechanisms can be used together. Parametrized fixtures remain a later topic.
+
+### Latest verification: shared fixture
+
+Learner moved sample_transaction into exercises/conftest.py, preserving its name
+and three transactions. Mentor inspected both files: the local definition was
+removed and tests request the fixture without importing it. Ran
+`.venv/bin/python -m pytest exercises -v`: **10 passed in 0.01s**, exit 0.
+Optional cleanup: remove the unused pytest import from test_monthly_budgets.py.
+The earlier sections below describe the local-fixture stage before this move.
+
+### Fixtures
+
+A fixture prepares data or resources needed by a test. The learner decorated
+`sample_transaction` with `@pytest.fixture` and returned three fictional
+transactions: Groceries 40.00, Gas 20.00, and Groceries 10.00.
+
+A test requests a fixture by naming it as a parameter. Pytest finds and calls
+the fixture and passes its returned list into the test. The parameter receives
+the list, not the fixture function; the test does not call the fixture directly.
+
+The default fixture scope is function: for each requesting test, this fixture
+runs again and constructs a fresh list and fresh transactions. That prevents
+one test's changes to this data from leaking into another. Broader scopes and
+cleanup fixtures are future topics.
+
+Parametrization runs a test for several inputs; fixtures provide reusable setup.
+They can be used together but serve different purposes.
+
+### Names and sharing
+
+- In one module, defining another function with the same fixture name replaces
+  the earlier definition. Use distinct names for different local datasets.
+- Different test modules can each define local fixtures with the same name.
+- Keep a fixture local when only that module needs it.
+- For sharing across test files, place it in `conftest.py`. Pytest discovers
+  fixtures there for tests in that directory and its subdirectories; tests
+  request them by name without importing conftest.py.
+- More specific fixture definitions can override shared ones; detailed override
+  rules remain a later topic. Ordinary fixture-module imports are possible,
+  but conftest.py is the usual project-sharing mechanism.
+
+Moving the fixture must preserve all three transactions so existing expectations
+remain valid. No conftest.py exists in the inspected exercise files yet.
+
+### Implementation and verification
+
+Source: [test_monthly_budgets.py](../tests/test_monthly_budgets.py).
+
+The learner reused the local fixture in tests for Groceries 50.00 and Gas 20.00.
+Empty-input and nonmatching-category tests remain independent of the fixture.
+The learner reported four category tests passing.
+
+Mentor independently ran:
+
+```sh
+.venv/bin/python -m pytest exercises/test_budget_basics.py exercises/test_monthly_budgets.py exercises/test_transaction_validation.py -v
+```
+
+Result: **10 passed in 0.01s**, exit 0: four category tests, five validation
+cases, and one setup subtraction test. No test code was changed during recording.
+
+### Next task
+
+Optional small exercise: move the existing fixture into exercises/conftest.py,
+remove its old definition, preserve its name and data, and rerun the tests.
+Explain that shared setup is useful when multiple modules actually need it;
+the current fixture is used only in one module, so moving it is a learning
+exercise rather than a requirement for correctness.
+
+<a id="lesson-14"></a>
+
+## Lesson 14: 2026-10-28: uv, dependency resolution, and lockfiles
+
+Status: setup complete and verified.
+
+### What the tools do
+
+- A virtual environment isolates a project's installed Python packages.
+- A package manager installs packages and resolves dependencies. uv manages both
+  project dependencies and the environment; it does not eliminate the environment.
+- A direct dependency is one we request, such as pytest. Transitive dependencies
+  are packages needed by those dependencies, such as pluggy.
+- Pinning pytest alone in a requirements file would not pin every supporting
+  package. A lockfile records resolved direct and transitive dependency versions.
+
+### Project files
+
+| File or directory | Purpose | Commit to Git? |
+| --- | --- | --- |
+| `pyproject.toml` | Metadata, supported Python version, and declared dependencies | Yes |
+| `uv.lock` | Resolved dependency versions and package artifact information | Yes |
+| `.venv/` | Local interpreter environment and installed packages | No |
+
+The project requires Python `>=3.14`, has no declared runtime dependencies, and
+records `pytest==9.2.0` in the dev dependency group. Version `0.1.0` describes
+MyBudget, not Python or pytest. The lockfile is generated by uv; do not maintain
+it manually. A lockfile does not freeze the OS or every aspect of the machine.
+
+### Commands used and their purpose
+
+```sh
+uv init --bare --name mybudget --python 3.14
+uv add --dev "pytest==9.2.0"
+uv run python -m pytest exercises -v
+```
+
+- `init --bare` created only pyproject.toml for the existing project.
+- `add --dev` recorded pytest, resolved its dependencies, generated uv.lock,
+  and synchronized the environment.
+- `run` selects and synchronizes the project environment before running a command.
+- `uv run --locked ...` requires the existing lockfile to remain up to date
+  rather than allowing an implicit lockfile update.
+
+For someone cloning this repository with uv and a suitable Python available:
+
+```sh
+uv sync --locked
+uv run --locked python -m pytest exercises -v
+```
+
+`uv sync --locked` recreates/synchronizes the environment using the recorded
+resolution. It can download missing packages; the environment itself is not
+copied through Git.
+
+### Import-path error and correction
+
+The learner initially ran `uv run pytest exercises -v`. Loading conftest.py
+failed with `ModuleNotFoundError: No module named 'exercises'`.
+
+Our imports start at the project root. Running `uv run python -m pytest ...`
+from Mybudget ensures the current directory is on Python's module search path.
+Launching the installed pytest command can set up that path differently.
+This project uses the module invocation consistently; the fix required no test
+logic changes.
+
+### Activation is optional
+
+```sh
+source .venv/bin/activate
+python -m pytest exercises -v
+deactivate
+```
+
+Activation adjusts the current shell's PATH. Deactivation reverses that shell
+setup without deleting the environment. `uv run` selects the project environment
+without needing manual activation. Keep .venv ignored by Git.
+
+### Verified result
+
+Mentor inspected pyproject.toml and uv.lock and ran:
+
+```sh
+uv run --locked python -m pytest exercises -v
+```
+
+Observed Python 3.14.6, pytest 9.2.0, **10 passed in 0.02s**, exit 0.
+The sandbox initially blocked uv's external cache; verification succeeded after
+permission was granted. No application or test implementation was changed.
+
+### Learning-record preference
+
+Append each future completed lesson to this file, in learning order. Include
+an explanation, focused examples, mistakes corrected, actual verification, and
+next steps. Update the contents list and PROGRESS.md. Keep old lessons for
+revision rather than prepending repeated session checkpoints. The dated files
+in learnings/ are a historical archive; this is the primary revision document.
+
+### Next recommended lesson
+
+Introduce a shared application module and consolidate the repeated Transaction
+models progressively. Explain responsibilities and agree on the small model
+change before editing; do not generate the solution for the learner.
+
+<a id="lesson-15"></a>
+
+## Lesson 15: 2026-10-28: Models, packages, and a small refactor
+
+Status: model-extraction exercise complete.
+
+### What a model means
+
+A model represents something the application works with. Transaction represents
+the information about a purchase needed by the current calculation. Model is a
+description of its role, not a Python keyword. models.py is an ordinary module.
+Database and API models will later represent data for their specific purposes.
+
+### Why move the class?
+
+Reusable application code should have a home outside demonstration scripts.
+A refactor changes organization while preserving behavior. Moving rather than
+copying the class gives active callers one definition to maintain.
+
+The learner created:
+
+```text
+mybudget/
+├── __init__.py
+└── models.py
+```
+
+An empty __init__.py makes this a regular Python package. models.py contains the
+existing two-field dataclass:
+
+```python
+@dataclass
+class Transaction:
+    category: str
+    amount: Decimal
+```
+
+It imports Decimal and dataclass itself. monthly_budgets.py and conftest.py now use:
+
+```python
+from mybudget.models import Transaction
+```
+
+The original budget-model definition and its dataclass import were removed from
+monthly_budgets.py. Its calculation function and guarded demonstration remain.
+This change relocates the model; it does not add validation or alter its fields.
+
+### One change at a time
+
+The earlier validation exercise has a different Transaction with merchant,
+amount, category, and a merchant check. It remains separate. Consolidating that
+model would require a deliberate field/validation change and caller/test updates.
+Passing these tests does not mean the two models have already been unified.
+
+### Verification
+
+The learner reported passing tests and unchanged demonstration output. Mentor
+inspected the saved model and imports and independently ran both commands:
+
+```sh
+uv run --locked python -m pytest exercises -v
+uv run --locked python -m exercises.monthly_budgets
+```
+
+Both exited 0. Tests: **10 passed in 0.01s**. Demonstration: total limits 1100.00;
+remaining Groceries -25.00, Restaurants 100.00, Gas 50.00, miscellaneous 150.00;
+final output `Both checks passed`.
+
+Run modules from the project root with -m so imports can find the sibling
+mybudget package. The earlier test imports through exercises.monthly_budgets
+still work because that module imports Transaction; updating them to its direct
+application home can be part of the next small refactor.
+
+### Next task
+
+Move calculate_category_total into mybudget/calculations.py. Update the
+demonstration and tests to import reusable code from its application home,
+preserve behavior, and rerun the same checks. Let the learner make the move.
+
+<a id="lesson-16"></a>
+
+## Lesson 16: 2026-10-28: Separating calculations from demonstrations
+
+Status: calculation-extraction exercise complete.
+
+### Responsibilities
+
+- mybudget/models.py represents transaction data.
+- mybudget/calculations.py contains reusable spending calculations.
+- exercises/monthly_budgets.py supplies fictional data and prints a demonstration.
+
+The learner moved calculate_category_total into mybudget/calculations.py, with
+imports for Decimal and the shared Transaction. The demonstration and category
+tests now import the function from that application module. Tests import
+Transaction directly from mybudget.models as well.
+
+This is a refactor: the calculation and its behavior were preserved, rather than
+introducing a new business rule. One definition avoids independent copies drifting
+apart. Future interfaces can call the calculation without depending on an exercise.
+
+### Verification
+
+Learner reported unchanged results. Mentor inspected the implementation and
+independently ran:
+
+```sh
+uv run --locked python -m pytest exercises -v
+uv run --locked python -m exercises.monthly_budgets
+```
+
+Tests: **10 passed in 0.01s**, exit 0. Demonstration also exited 0: total budget
+1100.00; remaining Groceries -25.00, Restaurants 100.00, Gas 50.00, miscellaneous
+150.00; final output `Both checks passed`.
+
+The earlier merchant-validating exercise model remains separate. This refactor
+does not add financial validation or demonstrate new concurrency/scaling behavior.
+
+### Next task
+
+Extract remaining-budget calculation into a function in mybudget/calculations.py.
+Test spending below the limit, exactly at the limit, and above the limit. Start
+with a small test exercise and let the learner implement the function. Then use
+it in the demonstration and confirm unchanged output.
+
+<a id="lesson-17"></a>
+
+## Lesson 17: 2026-10-28: Testing the remaining-budget rule
+
+Status: function and under-limit test verified; remaining cases pending.
+
+### Concept and motivation
+
+A business rule describes expected application behavior. Our rule is:
+remaining budget equals limit minus spending. Negative results indicate
+overspending and must not be clamped to zero.
+
+Extracting this operation into a standalone function makes it reusable and
+directly testable without executing report printing or sample-data setup.
+
+### Implementation and test
+
+Learner added calculate_remaining to mybudget/calculations.py with Decimal
+parameter hints and a body returning `budget - spent`. The return annotation
+`-> Decimal` was suggested for consistency but is not in the inspected source yet.
+
+The learner added this test in exercises/test_monthly_budgets.py:
+
+```python
+def test_remaining_budget_when_under_limit():
+    actual = calculate_remaining(Decimal("500.00"), Decimal("425.00"))
+
+    assert actual == Decimal("75.00")
+```
+
+### Test-first workflow introduced
+
+The suggested sequence was to write the test, run it before creating the function,
+then implement the function and rerun. This introduces test-driven development:
+observe a failure for the expected reason, implement the behavior, then improve
+organization while preserving passing tests. Here a missing import would fail
+during collection; later behavior failures occur when assertions execute.
+
+The learner did not share the initial failing run, so test-first ordering has
+not been verified. Mentor inspected the implementation and independently ran
+`uv run --locked python -m pytest exercises -v`: **11 passed in 0.01s**, exit 0.
+The new under-limit test passes alongside all ten earlier cases.
+
+### Next steps
+
+1. Add the Decimal return hint.
+2. Write a separate exactly-at-limit test: 500.00 minus 500.00 returns 0.00.
+3. Write a separate overspending test: 500.00 minus 525.00 returns -25.00.
+4. After these pass, use calculate_remaining in the demonstration instead of
+   inline subtraction and verify unchanged report output.
+
+These two additional tests and demonstration integration are not completed yet.
+
+<a id="lesson-18"></a>
+
+## Lesson 18: 2026-10-29: Boundary cases for remaining budgets
+
+Status: remaining-budget test cases complete; demonstration integration pending.
+
+Learner added separate tests for spending exactly at the limit (500.00 minus
+500.00 equals 0.00) and over the limit (500.00 minus 525.00 equals -25.00).
+Together with the under-limit case, these cover both sides of the budget boundary
+and the boundary itself. Overspending remains a negative amount.
+
+Mentor inspected the saved tests and independently ran
+`uv run --locked python -m pytest exercises -v`: **13 passed in 0.01s**, exit 0.
+The proposed Decimal return annotation is still missing from calculate_remaining;
+this does not prevent runtime execution but should be added for consistency.
+
+Next: import calculate_remaining in the budget demonstration, replace inline
+subtraction with the function call, and verify unchanged output. Passing function
+tests alone does not establish that the report actually uses the function.
+
+<a id="lesson-19"></a>
+
+## Lesson 19: 2026-10-29: Using the tested calculation in the report
+
+Status: complete.
+
+Learner imported calculate_remaining in exercises/monthly_budgets.py and replaced
+inline subtraction with `calculate_remaining(limit, spend)`. Reusable calculations
+now supply the demonstration's behavior instead of leaving tested code unused.
+
+Mentor inspected the call and ran
+`uv run --locked python -m exercises.monthly_budgets`: exit 0, unchanged output.
+Total budget 1100.00; remaining Groceries -25.00, Restaurants 100.00, Gas 50.00,
+miscellaneous 150.00; `Both checks passed`. The full suite last passed 13 cases
+before this integration; it was not rerun during this demonstration check.
+
+Next: introduce date objects, then add transaction dates and monthly filtering
+in small steps. Current category totals include transactions regardless of month.
+
+<a id="lesson-20"></a>
+
+## Lesson 20: 2026-10-29: Date objects and calendar comparisons
+
+Status: date exercise complete.
+
+`from datetime import date` imports the date class. `date(year, month, day)`
+creates a calendar date, validating calendar rules. Instance attributes year,
+month, and day are integers. They are not conversion functions such as
+`date.day("10")`; compare `purchase_date.month == 10` directly.
+
+Learner used `range(9, 11)` to create September 1 and October 1, 2026. The upper
+range bound is excluded. An `and` condition checks both year and month, preventing
+October of another year from matching. Mentor inspected and ran
+`uv run --locked python -m exercises.transaction_dates`, exit 0:
+
+```text
+year: 2026, month: 9, day: 1
+year: 2026, month: 10, day: 1
+This date belongs to october 2026
+```
+
+Next: add an explicit transaction_date field to the shared Transaction model,
+update its existing callers and tests with fictional dates, and preserve existing
+category-total behavior before introducing a monthly-filtering function.
+
+<a id="lesson-21"></a>
+
+## Lesson 21: 2026-10-29: Adding dates while preserving test coverage
+
+Status: dated-model update complete.
+
+Learner added required transaction_date: date to mybudget.models.Transaction
+and updated the budget demonstration and fixtures with fictional dates. Existing
+category totals still include all dates; monthly filtering is the next change.
+
+Initial tests passed, but review found two gaps: the demonstration used date
+without importing it, and the no-match test had been changed to assert a matching
+total. Tests do not execute the guarded demo, and passing tests only establish
+what their actual inputs and assertions check.
+
+Learner fixed the date import and added sample_no_groceries, a separate fixture
+containing only party and Gas transactions. The no-match test now requests
+Groceries and expects Decimal zero. Decimal("00.00") is valid but Decimal("0.00")
+would match the notation used elsewhere.
+
+Imports belong to each module's namespace: importing Transaction does not make
+the date name from its defining module available to callers. Each file constructing
+dates must import date itself.
+
+Mentor inspected the fixes and independently ran:
+
+```sh
+uv run --locked python -m pytest exercises -v
+uv run --locked python -m exercises.monthly_budgets
+```
+
+Results: **13 passed in 0.01s**, both commands exit 0. Report unchanged: total
+limits 1100.00; remaining Groceries -25.00, Restaurants 100.00, Gas 50.00,
+miscellaneous 150.00; `Both checks passed`.
+
+Next: add a separate function filtering by category, year, and month. Preserve
+the existing all-dates category function and test exclusions for another month
+and the same month in another year.
+
+<a id="lesson-22"></a>
+
+## Lesson 22: 2026-10-29: Monthly filtering and meaningful test inputs
+
+Status: matching/exclusion test complete; zero-result cases pending.
+
+Learner wrote a monthly-total test first and shared the expected ImportError:
+calculate_monthly_category_total did not exist yet. This demonstrated the missing
+function failure during collection before implementing the behavior.
+
+The new function in mybudget/calculations.py accumulates amounts only when
+category, year, and month all match. The original accumulator `int()` would return
+integer zero with no matches; learner changed it to Decimal("0.00") so the result
+has the intended type even without additions. Type hints do not enforce this.
+
+Initial fixture inputs all matched, so even unfiltered summation would pass.
+Testing habit: ask whether an incorrect implementation could still pass.
+Learner added purchases that should be excluded. The current fixture contains:
+
+| Category | Amount | Date | Included for October 2026 groceries? |
+| --- | --- | --- | --- |
+| Groceries | 40.00 | 2026-10-05 | Yes |
+| Groceries | 20.00 | 2026-10-01 | Yes |
+| Groceries | 10.00 | 2026-10-08 | Yes |
+| Groceries | 40.00 | 2026-11-05 | No: other month |
+| Gas | 20.00 | 2026-10-01 | No: other category |
+| Groceries | 10.00 | 2025-10-08 | No: other year |
+
+Mentor inspected the expanded fixture and Decimal accumulator, then ran
+`uv run --locked python -m pytest exercises/test_calculate_monthly_budgets.py -v`:
+**1 passed in 0.01s**, exit 0, expected total 70.00. The full suite previously
+passed 14 cases before the fixture expansion; it was not rerun in this check.
+
+For one test use `path/to/test_file.py::test_function_name`. Using just the path
+runs that file's tests. `-v` means verbose output: displays individual test names
+and results; it does not change test selection.
+
+Next: test empty input and nonempty input with no matching category/month/year.
+Check Decimal result type as well as zero equality, because integer zero compares
+equal to Decimal zero. Monthly report integration remains pending.
+
+<a id="lesson-23"></a>
+
+## Lesson 23: 2026-10-29: Empty inputs and checking result types
+
+Status: empty-input monthly-total test complete.
+
+Learner added test_no_montly_transction in
+exercises/test_calculate_monthly_budgets.py:
+
+```python
+actual = calculate_monthly_category_total([], "Groceries", 2026, 10)
+assert actual == Decimal("0.00")
+assert isinstance(actual, Decimal)
+```
+
+The first assertion checks the numeric value. The second checks that the result
+is an instance of Decimal (including subclasses). Integer zero compares equal
+to Decimal zero, so equality alone would not detect returning the wrong numeric
+type. With empty input the loop never executes; initializing the accumulator
+as Decimal ensures a consistent result without a special caller fallback.
+
+Mentor inspected the saved test and ran the full current suite:
+
+```sh
+uv run --locked python -m pytest exercises -v
+```
+
+Result: **15 passed in 0.01s**, exit 0. This verifies both monthly tests, including
+the expanded mixed-input fixture, and all earlier tests. No learner code was
+modified during this review. Optional naming cleanup:
+test_monthly_category_total_returns_decimal_zero_for_empty_list.
+
+### Next task
+
+Test a nonempty list with no matching category/month/year and expect Decimal
+zero. Unlike empty input, this executes the loop but never adds an amount.
+After that, integrate monthly filtering into the report and verify month-specific
+results. Those steps are still pending; the report currently uses all-dates totals.
+
+<a id="lesson-24"></a>
+
+## Lesson 24: 2026-10-29: Nonempty input with no matching month
+
+Status: complete.
+
+Learner added test_monthly_total_returns_zero_when_no_dates_match, requesting
+December 2026 groceries from the mixed-input fixture. No purchases match that
+month. The test asserts Decimal zero and checks isinstance(actual, Decimal).
+Unlike empty input, this exercises iteration where every purchase is excluded.
+
+Mentor inspected the saved test and ran
+`uv run --locked python -m pytest exercises/test_calculate_monthly_budgets.py -v`:
+**3 passed in 0.01s**, exit 0. The full suite was not rerun in this check.
+Next: select report year/month explicitly and call the monthly function in the
+budget demonstration. Verify populated and empty-month output.
+
+<a id="lesson-25"></a>
+
+## Lesson 25: 2026-10-29: Monthly report integration
+
+Status: October integration verified; period display and November run pending.
+
+Learner configured report_year = 2026 and report_month = 10 in the demonstration,
+then used calculate_monthly_category_total for spending and calculate_remaining
+for each category's remaining limit. The reusable functions now drive the report.
+
+Mentor inspected the source and ran the report and full test suite through uv.
+Both exited 0; **16 tests passed in 0.01s**. October report: limits total 1100.00;
+remaining Groceries -25.00, Restaurants 100.00, Gas 50.00, miscellaneous 150.00.
+
+The report does not yet display its selected period. Add a year/month heading
+so output can be interpreted correctly. A separate November demonstration was
+requested but has not been observed by the mentor; with current October-only
+sample purchases, November should retain every full category limit.
+
+<a id="lesson-26"></a>
+
+## Lesson 26: 2026-10-29: Invalid months and debugging test expectations
+
+Status: month-13 validation test complete; broader boundary tests pending.
+
+Learner reported a November report with full remaining limits, as expected for
+a valid month without purchases. Month 13 previously behaved the same way, but
+invalid periods should be rejected rather than presented as zero spending.
+
+Learner wrote a pytest.raises(ValueError) test and shared its initial DID NOT RAISE
+failure, then added validation before iteration. This also makes validation run
+with empty input. The correct condition is:
+
+```python
+if month < 1 or month > 12:
+    raise ValueError("Month must be between 1 and 12")
+```
+
+The original `not month >= 1 and month <= 12` negated only the first comparison;
+for 13 it was false and did not raise. Alternatively, negate the entire valid
+range with `not (1 <= month <= 12)`.
+
+After correcting the implementation, the test still failed. Mentor inspected
+the saved test and reproduced the failure: it passed valid month 12 while
+expecting an error. Learner corrected that argument to 13. Keep December in the
+no-match test because that case checks a valid month without purchases.
+
+Testing lesson: failures can reveal mistakes in the test itself. Inspect inputs,
+the expected outcome, and the implementation rather than assuming either is right.
+
+Mentor verified the corrected input and ran
+`uv run --locked python -m pytest exercises -v`: **17 passed in 0.01s**, exit 0.
+The test currently uses nonempty fixture input. It does not yet explicitly verify
+month 0, valid boundary months 1/12, or invalid-month rejection on an empty list.
+
+Next: extend the invalid-month test with parametrization for 0 and 13 and verify
+the rule with empty transactions. Then check valid boundaries remain accepted.
+
+<a id="lesson-27"></a>
+
+## Lesson 27: 2026-10-29: Boundary validation independent of transaction data
+
+Status: invalid-boundary tests complete; valid-boundary checks next.
+
+Learner parametrized the invalid-month test with 0 and 13, then replaced its
+nonempty fixture input with an empty list and removed the unused fixture parameter.
+Both cases expect ValueError. This checks the rule before iteration: invalid
+periods must be rejected regardless of whether there are transactions.
+
+Mentor inspected the saved test and ran
+`uv run --locked python -m pytest exercises/test_calculate_monthly_budgets.py -v`:
+**5 passed in 0.01s**, exit 0, including separate month-0 and month-13 cases.
+The full suite was not rerun during this targeted check.
+
+Next: parametrize valid boundary months 1 and 12 with empty transactions. Expect
+Decimal zero without an exception. This checks that the validation accepts the
+endpoints rather than accidentally excluding them.
+
+<a id="lesson-28"></a>
+
+## Lesson 28: 2026-10-29: Accepting valid range boundaries
+
+Status: valid-month boundary tests complete.
+
+Learner added a parametrized test for months 1 and 12 with empty transactions,
+asserting Decimal zero. No pytest.raises block is used: successful completion is
+expected, and an unexpected exception would fail the test automatically.
+
+Combined with invalid months 0/13, these cases check acceptance and rejection
+immediately around both endpoints. They catch off-by-one validation mistakes.
+The requested isinstance assertion is not present in this new test; the earlier
+empty-list test already explicitly verifies the Decimal return type.
+
+Mentor inspected the saved test and ran
+`uv run --locked python -m pytest exercises -v`: **20 passed in 0.01s**, exit 0.
+Seven cases are in the monthly-filtering test file. This completes the current
+monthly-filtering and month-range validation exercise, not all application input
+validation; year/type policies remain future work.
+
+Next recommended topic: model configurable budgets with a Budget dataclass and
+explicit monthly-limit validation, starting with the rules before implementation.
+
+<a id="lesson-29"></a>
+
+## Lesson 29: 2026-10-29: Budget validation and fixture setup errors
+
+Status: model implemented; valid construction and negative-limit rejection verified.
+Additional rule tests and report integration remain pending.
+
+### Model and rules
+
+Learner added Budget to mybudget/models.py with category: str and limit: Decimal.
+The suggested name was monthly_limit; the implemented attribute is limit. Use
+the actual name consistently in callers and tests.
+
+__post_init__ rejects blank/whitespace categories and limits below Decimal zero.
+Zero is allowed: it represents no planned spending. A negative transaction may
+eventually represent a refund; a negative budget limit is invalid configuration.
+These are distinct business rules. Type annotations alone do not enforce them.
+
+### Fixture setup versus the operation under test
+
+Learner correctly anticipated that constructing an invalid Budget in a fixture
+would raise before the test could catch it. The mentor's initial answer was too
+broad: fixtures can supply invalid input values, but this fixture constructed the
+invalid object itself. The observed result was a setup ERROR, not the intended
+successful expected-exception check.
+
+```python
+def test_invalid_category():
+    with pytest.raises(ValueError):
+        actual = Budget("Groceries", Decimal("-1.00"))
+```
+
+The corrected test constructs the Budget inside pytest.raises. Merely assigning
+an already-created fixture object inside the block would not rerun construction
+or validation. A checker must be active before the failing operation happens.
+
+The invalid fixture is defined but not requested now. Defining a fixture does
+not execute its body; pytest calls it when a test requests it. This explains why
+the remaining invalid fixture does not currently break the suite.
+
+### Verified result and coverage limits
+
+Mentor inspected models.py, conftest.py, and test_budget_model.py, then ran:
+
+```sh
+uv run --locked python -m pytest exercises -v
+```
+
+Result: **22 passed in 0.01s**, exit 0. The valid Budget fixture has category
+Groceries and limit 50.00. Its test currently checks only the category. The other
+test rejects a negative limit; despite its name test_invalid_category, it supplies
+a valid category and does not test category rejection.
+
+### Resume here next session
+
+1. Rename the negative-limit test to test_budget_rejects_negative_limit.
+2. Add an assertion for the valid fixture's limit (50.00).
+3. Test blank/whitespace category rejection and acceptance of a zero limit.
+4. Remove the unused invalid-construction fixture when the learner is ready.
+5. Once model rules are tested, integrate Budget into the report in a separate step.
+
+Keep these as small learner exercises. The dictionary report is unchanged and
+the earlier merchant-validating Transaction remains separate from the shared model.
+
+<a id="lesson-30"></a>
+
+## Lesson 30: 2026-10-30: Testing blank budget categories
+
+Status: blank-category tests complete.
+
+Learner added a parametrized Budget test for empty text, a space, and a tab.
+Each construction is inside pytest.raises(ValueError) and uses a positive 100.00
+limit, isolating category validation from negative-limit rejection. Renamed the
+negative-limit test to describe its actual behavior.
+
+Mentor inspected and ran
+`uv run --locked python -m pytest exercises/test_budget_model.py -v`:
+**5 passed in 0.01s**, exit 0. Full suite was not rerun for this focused check.
+Optional typo fix: test_budget_rejects_black_category should say blank_category.
+
+Next: test acceptance of a zero limit and assert the valid fixture's 50.00 limit.
+Then consider integrating Budget objects into the report. Learning demonstrations
+remain in exercises/; reusable code lives in mybudget/. Application tests currently
+also live in exercises/ and will move into tests/ as a separate organizing step.
+
+<a id="lesson-31"></a>
+
+## Lesson 31: 2026-10-30: Accepting zero budget limits
+
+Status: current Budget validation exercise complete.
+
+Learner tested Budget("Groceries", Decimal("0.00")) and asserted its limit is
+Decimal zero. Zero is a valid spending limit; negative values are rejected.
+The valid-configuration test now also checks its fixture's 50.00 limit, not just
+the category. The blank-category test's naming typo was corrected.
+
+Mentor inspected and ran
+`uv run --locked python -m pytest exercises/test_budget_model.py -v`:
+**6 passed in 0.01s**, exit 0. Cases cover valid field retention, negative-limit
+rejection, three blank-category inputs, and zero-limit acceptance. The full suite
+was not rerun during this focused check. Broader numeric/type validation is not
+implied by these cases.
+
+Next: integrate Budget objects into the monthly report without changing sample
+results. Explain how iterating a list of objects differs from dictionary.items(),
+and let the learner change the configuration and attribute access in small steps.
+
+<a id="lesson-32"></a>
+
+## Lesson 32: 2026-10-30: Budget objects in the monthly report
+
+Status: Budget integration exercise complete.
+
+Learner replaced the category-to-limit dictionary with a list of Budget objects.
+Creating them invokes model validation. Iteration now supplies one budget object
+at a time, with category and limit accessed as attributes, instead of unpacking
+dictionary.items() pairs.
+
+The total limit starts at Decimal zero and accumulates budget.limit. The report
+calls monthly spending with budget.category and calculates remaining amounts
+from budget.limit. A separate dictionary still stores remaining values by category.
+
+Mentor inspected exercises/monthly_budgets.py and independently ran:
+
+```sh
+uv run --locked python -m exercises.monthly_budgets
+uv run --locked python -m pytest exercises -v
+```
+
+Both exited 0. **26 tests passed in 0.02s**. The December 2026 report displays
+total limits 1100.00 and full remaining limits 500.00, 200.00, 250.00, and 150.00,
+because all sample purchases are in October. The report displays its year/month.
+No implementation changes were made during review.
+
+Optional formatting cleanup: `total_budget += budget.limit` with spaces.
+The list representation permits duplicate categories; no uniqueness policy has
+been introduced or tested yet. The earlier validation-only Transaction remains
+separate. This is not a claim of complete financial validation or milestone completion.
+
+Next recommended step: extract report calculation from printing into a reusable
+function and test its returned summary, preserving the existing model and rules.
+
+<a id="lesson-33"></a>
+
+## Lesson 33: 2026-10-30: Composing functions and returning report data
+
+Status: monthly-remaining calculation exercise complete for current scenarios.
+
+### Function composition and separation of concerns
+
+Learner implemented calculate_monthly_remaining in mybudget/calculations.py. It
+takes budgets, transactions, year, and month and returns a dictionary mapping
+category names to Decimal remaining amounts. Its return hint dict[str, Decimal]
+describes that structure. It calls calculate_monthly_category_total for spending
+and calculate_remaining for subtraction rather than duplicating those rules.
+
+The calculation returns data without printing. The demonstration remains
+responsible for presentation, allowing future tests and interfaces to reuse the
+same result. repr(budget) is useful for temporary inspection; a dataclass's
+generated representation displays its fields.
+
+### Dictionary assignment versus accumulation
+
+The first version used defaultdict(int) and +=. A defaultdict supplies a default
+value for a missing key, while an ordinary dictionary raises KeyError when that
+missing value is read. Switching to {} but keeping += raised KeyError: Groceries.
+
+Here we compute one complete result per budget, so assignment is appropriate:
+
+```python
+remaining_budgets[budget.category] = calculate_remaining(budget.limit, expense)
+```
+
+This creates the entry without first reading it. A normal dictionary is enough;
+automatic defaults and repeated accumulation are unnecessary for this operation.
+
+### Review corrections
+
+- Removed temporary result printing from the reusable function.
+- Imported Budget for its annotation and corrected fixture list[Budgets] to
+  list[Budget]. Runtime tests alone did not catch those annotation-name mistakes.
+- Reused calculate_remaining instead of inline subtraction.
+- Added Vacation assertions to cover every category in the sample budget fixture.
+- Verified saved source rather than assuming an editor change had reached disk.
+
+### Verified results
+
+Tests live in exercises/test_calculate_monthly_remaining.py. The expanded
+transaction fixture includes October 2026 Vacation spending of 400.00.
+
+| Period | Groceries remaining | Gas remaining | Vacation remaining |
+| --- | --- | --- | --- |
+| October 2026 | 430.00 | 230.00 | 200.00 |
+| October 2027 | 500.00 | 250.00 | 600.00 |
+
+Mentor inspected the final saved changes and ran
+`uv run --locked python -m pytest exercises -v`: **28 passed in 0.02s**, exit 0.
+No learner implementation was modified during review.
+
+### Next step and limits
+
+Use calculate_monthly_remaining in the demonstration instead of its per-budget
+calculation loop, keeping printing outside. Verify unchanged report output.
+The function currently assumes distinct budget categories; duplicate handling,
+empty-budget behavior, and invalid-period behavior with no budgets have not
+been explicitly specified or tested. Do not claim those contracts are settled.
+
+<a id="lesson-34"></a>
+
+## Lesson 34: 2026-10-31: Calculate once, then iterate for presentation
+
+Status: shared monthly-remaining function integrated into demonstration.
+
+Learner replaced the report's per-category calculation with one call to
+calculate_monthly_remaining. That function receives all budgets and internally
+loops through them, returning the complete category-to-remaining dictionary.
+
+Initially the call was inside the report's loop, recalculating all categories
+once per printed category. Output could still be numerically correct while doing
+unnecessary repeated work. Separately, removing the printing loop made the report
+lose its category lines even though calculation tests continued to pass.
+
+The final structure is:
+
+```python
+budget_limit = calculate_monthly_remaining(
+    budgets, transactions, report_year, report_month
+)
+
+for budget in budgets:
+    print(budget.category, budget_limit[budget.category])
+```
+
+The calculation call runs once; the printing body runs once per budget. Python
+indentation determines this execution structure. A continuation line inside
+parentheses is not a new execution block. Calculation and presentation have
+different iteration needs, even though they work with the same budgets.
+
+Mentor inspected the saved indentation and ran
+`uv run --locked python -m exercises.monthly_budgets`: exit 0. December 2026
+report shows total 1100.00 and full remaining limits 500.00, 200.00, 250.00,
+150.00, followed by `Both checks passed`. Full suite previously passed 28 cases
+during integration review; it was not rerun for this final demonstration-only edit.
+
+Next: specify and test remaining-summary edge cases such as no budgets and
+duplicate categories before treating the summary contract as complete. A separate
+test-directory organizing step is also pending, per the learner's preference to
+keep application work and learning experiments distinct.
+
+<a id="lesson-35"></a>
+
+## Lesson 35: 2026-11-02: Defining the empty-budget result
+
+Status: valid-period empty-budget behavior specified and tested.
+
+Rule: with no configured budgets and a valid report period, the summary returns
+an empty dictionary, even when transactions exist. There are no configured
+categories to report. Learner added a test passing [] for budgets, the nonempty
+transaction fixture, year 2026, and month 10, then asserted actual == {}.
+
+Mentor inspected the test and ran
+`uv run --locked python -m pytest exercises/test_calculate_monthly_remaining.py -v`:
+**3 passed in 0.01s**, exit 0. No implementation change was needed. A test can
+document existing intended behavior, not only drive new behavior. Full suite
+was not rerun in this targeted check.
+
+Next: test invalid months with no budgets. Validation currently happens in the
+per-category helper, which is never called if the budget loop does not run.
+Specify rejection independently of data presence before changing the implementation.
+
+<a id="lesson-36"></a>
+
+## Lesson 36: 2026-11-02: Shared validation independent of data presence
+
+Status: complete for the month-range rule.
+
+calculate_monthly_remaining previously relied on its per-category helper to
+validate months. With no budgets, the helper was never called, so invalid months
+were silently accepted. Validity of the request should not depend on data presence.
+
+Learner added parametrized tests expecting ValueError for months 0 and 13 with
+both budget and transaction lists empty, then extracted:
+
+```python
+def validate_month(month: int) -> None:
+    if month < 1 or month > 12:
+        raise ValueError("Month must be between 1 and 12")
+```
+
+Both public monthly calculation functions call it before their loops. The helper
+returns no useful value: normal completion means acceptance; invalid input raises.
+The rule has one definition even though callers invoke it independently.
+
+### Why not Budget.__post_init__?
+
+__post_init__ validates an object at construction. Budget holds category and limit,
+not the separately supplied report month. With no Budget instances created, no
+Budget initialization runs. A ReportPeriod class could own year/month validation,
+but it is not needed for this small shared rule yet.
+
+### Where shared logic belongs
+
+The helper lives in calculations.py beside its current callers. A focused
+validation.py module could be introduced if related rules grow. A generic helpers.py
+name does not communicate a clear responsibility and is unnecessary here.
+
+Mentor inspected the helper, both call sites, and saved empty-budget tests and ran
+`uv run --locked python -m pytest exercises -v`: **31 passed in 0.01s**, exit 0.
+The initial failing run for this new summary check was described by the learner
+but no terminal output was shared; do not claim it was independently observed.
+
+Next: define duplicate budget-category behavior. The summary dictionary currently
+overwrites an earlier category if the configuration contains two budgets with
+the same name. Agree on the rule before implementing a check.
+
+<a id="lesson-37"></a>
+
+## Lesson 37: 2026-11-02: Sets and duplicate budget categories
+
+Status: duplicate-category rejection implemented and verified.
+
+Rule: each category may appear in at most one budget in a report. Exact category
+names remain case sensitive. Reject duplicates rather than silently replacing a
+dictionary entry or combining limits and potentially hiding a configuration error.
+This is different from duplicate transaction detection, which remains future work.
+
+Learner used a set, a collection of unique values supporting membership checks:
+
+```python
+seen_categories = set()
+for budget in budgets:
+    if budget.category in seen_categories:
+        raise ValueError("duplicate budget")
+    seen_categories.add(budget.category)
+    # Continue the existing calculation.
+```
+
+The set records previously encountered category names. Check before adding the
+current name so the first occurrence is accepted and the second is rejected.
+For string keys, membership and insertion take average constant time; the set
+uses storage proportional to distinct categories. This does not change the
+summary's existing repeated scans of transactions for each budget.
+
+Learner's test supplies two valid Groceries budgets with limits 500.00 and 300.00,
+expecting ValueError from calculate_monthly_remaining. The saved test still
+constructs its inputs inside pytest.raises. Moving setup before the block is
+recommended so only the summary call is under the exception checker.
+
+Mentor inspected the implementation and ran
+`uv run --locked python -m pytest exercises/test_calculate_monthly_remaining.py -v`:
+**6 passed in 0.01s**, exit 0. Full suite last verified 31 cases before this new
+test; it was not rerun in this targeted check. Optional diagnostic improvement:
+include the duplicate category in the error message.
+
+Next: tighten the duplicate test's exception scope, then separate application
+tests from learning exercises as a small behavior-preserving organizing step.
+
+<a id="lesson-38"></a>
+
+## Lesson 38: 2026-11-02: Separating application tests from learning exercises
+
+Status: test-directory refactor complete.
+
+Learner created tests/ beside mybudget/ and exercises/ and moved application
+test modules plus conftest.py there. Application imports still use mybudget.models
+and mybudget.calculations; changing test location does not change what they test.
+
+```text
+Mybudget/
+├── mybudget/       # Reusable application code
+├── tests/          # Application tests and shared conftest.py
+├── exercises/      # Learning programs and their practice tests
+├── pyproject.toml
+└── uv.lock
+```
+
+conftest.py moved with its requesting tests because fixtures there are available
+to tests in that directory and descendants, not a sibling directory. Tests
+continue requesting fixtures by name without importing conftest.py manually.
+The basic subtraction and earlier exercise-only Transaction validation tests
+remain in exercises/; they do not test the shared application's Transaction model.
+
+Mentor verified the file layout and imports and ran:
+
+```sh
+uv run --locked python -m pytest tests exercises -v
+```
+
+Result: **32 passed in 0.03s**, exit 0: 26 application cases and 6 learning cases.
+For application tests only, use `uv run --locked python -m pytest tests -v`.
+Earlier journal commands refer to the file locations at those historical lessons.
+The old exercises-only command now omits the application tests.
+
+Next: resume milestone 1's financial behavior and integration checks before
+SQLite. Refund/sign conventions and runtime validation on the shared Transaction
+model have not yet been covered; do not assume historical model validation applies.
+
+<a id="lesson-39"></a>
+
+## Lesson 39: 2026-11-02: Refunds and signed expense amounts
+
+Status: same-month refund rule specified and tested.
+
+For this expense engine, positive transaction amounts represent spending and
+negative amounts represent refunds that reduce spending. Rejecting all negative
+amounts would prevent representing this valid case. This is our domain convention,
+not an assumption about every future bank provider's amount-sign convention.
+
+Learner added refund_sample_transaction in tests/conftest.py: Groceries 100.00 on
+October 5, 2026 and -25.00 on October 6. test_refund_reduces_monthly_spending calls
+the summary for October and asserts 425.00 remains from a 500.00 budget. Net
+spending is 75.00. Existing addition already implements the selected rule;
+no calculation change was necessary.
+
+Mentor inspected the fixture and test and ran
+`uv run --locked python -m pytest tests/test_refunds.py -v`:
+**1 passed in 0.01s**, exit 0. Full suite last verified 32 cases before the new
+test; it was not rerun in this focused check.
+
+The fixture annotation is currently `list(Transaction)`, which is a call expression,
+not the intended generic annotation `list[Transaction]`. Correct the brackets;
+passing runtime tests does not establish annotation correctness.
+
+Next: test a refund dated in the following month. Our current policy assigns
+spending/refunds to their own transaction dates rather than rewriting the original
+purchase month. Explain and verify the implications before further validation work.
+
+<a id="lesson-40"></a>
+
+## Lesson 40: 2026-11-02: Refunds received in another month
+
+Status: November result verified; October counterpart and annotation cleanup
+not present in the inspected saved files.
+
+Policy: attribute each transaction to its own transaction date. A November refund
+does not retroactively rewrite October's spending. A refund-only month may show
+remaining budget above its configured limit; this is intentional under this policy.
+
+Learner added a separate fixture with a 100.00 grocery purchase on October 5 and
+a -25.00 refund on November 6, 2026. The November test expects 525.00 remaining
+from a 500.00 limit. The existing same-month test still expects 425.00.
+
+Mentor inspected and ran `uv run --locked python -m pytest tests/test_refunds.py -v`:
+**2 passed in 0.01s**, exit 0. Full suite was not rerun for this focused check.
+
+Requested but not yet found in saved source: an October test using the cross-month
+fixture expecting 400.00, and changing both fixture annotations from
+list(Transaction) to list[Transaction]. The learner reported completion, but
+repeated disk inspection still showed the earlier files. Preserve the distinction
+between reported edits and verified saved code; check editor saving/path next time
+rather than claiming three passing cases or silently editing learner code.
+
+Resume by checking those saved files, finishing this small exercise, and then
+reviewing remaining milestone-1 correctness rules before new features.
+
+<a id="lesson-41"></a>
+
+## Lesson 41: 2026-11-03: Completing cross-month refund verification
+
+Status: refund exercise complete for the selected transaction-date policy.
+
+Learner saved the missing October check using the cross-month fixture and fixed
+both refund fixture annotations to list[Transaction]. Mentor confirmed the saved
+changes and ran `uv run --locked python -m pytest tests/test_refunds.py -v`:
+**3 passed in 0.01s**, exit 0.
+
+Verified cases: same-month purchase/refund leaves 425.00; the October purchase
+without its November refund leaves 400.00; November's refund-only activity leaves
+525.00 of a 500.00 limit. This confirms both sides of the cross-month policy,
+not just the refund month's behavior. The full suite was not rerun in this check.
+
+Optional naming cleanup: test_refund_same_month actually checks that a later
+refund does not change October. A name such as
+test_later_refund_does_not_change_purchase_month would describe its purpose better.
+
+Next: runtime validation in the shared Transaction model. Earlier merchant
+validation lives only in a learning model; it does not protect application inputs.
+Introduce one rule at a time and preserve negative amounts for refunds.
+
+<a id="lesson-42"></a>
+
+## Lesson 42: 2026-11-03: Validating categories in the application Transaction
+
+Status: shared-model blank-category rule implemented and tested.
+
+Learner added a parametrized test in tests/test_transaction_model.py rejecting
+empty text, a space, and a tab with ValueError. Construction uses a valid Decimal
+amount and date so the test isolates category validation. This protects the
+application's Transaction rather than only an earlier learning-example class.
+
+The first implementation used __postinit__ instead of __post_init__. Dataclasses
+call the exact special hook name, so the misnamed method never ran. Mentor
+reproduced three DID NOT RAISE failures, then learner corrected the name.
+
+Learner had also attempted self.amount() and self.transaction_date(). Parentheses
+would call the stored Decimal/date objects as functions, causing TypeError once
+reached. Those checks were removed; only the requested category rule was introduced.
+Other amount/date rules need explicit decisions and tests, not generic emptiness
+checks. Negative amounts remain valid for refunds.
+
+Mentor inspected the final source and ran
+`uv run --locked python -m pytest tests -v`: **32 passed in 0.02s**, exit 0,
+including all three refund cases and the new category cases. This is the
+application suite only; the six historical learning cases were not run here.
+
+Next: define amount-validation rules explicitly, including Decimal type and
+finite values, while preserving signed refunds. Explain one rule at a time and
+let the learner write its test first.
+
+<a id="lesson-43"></a>
+
+## Lesson 43: 2026-11-03: Enforcing Decimal amounts at runtime
+
+Status: amount-type rule implemented and tested.
+
+Rule: Transaction amounts must already be Decimal instances. Do not silently
+convert caller-supplied floats or strings. Callers deliberately construct money
+values with Decimal and decimal strings; type hints alone do not enforce this.
+
+Learner added `if not isinstance(self.amount, Decimal): raise TypeError(...)`
+after category validation and parametrized a test with integer 100, float 100.0,
+string "100.00", and None. All four are rejected. This distinguishes a wrong
+type (TypeError) from an unacceptable value of an allowed type (ValueError).
+Negative Decimal amounts remain valid; existing refund tests continue to pass.
+
+Mentor inspected the saved model and tests and ran
+`uv run --locked python -m pytest tests -v`: **36 passed in 0.02s**, exit 0.
+Historical learning tests were not run. The initial suggested failing test run
+was not shared; do not claim that step was verified.
+
+Current error text says "Decimal integer"; use "amount must be a Decimal" instead.
+Decimal is not limited to integers: fractional amounts such as 49.99 are valid.
+
+Next: explain non-finite Decimal values (NaN and infinities), then reject them
+with ValueError while preserving finite positive, zero, and negative amounts.
+
+<a id="lesson-44"></a>
+
+## Lesson 44: 2026-11-03: Non-finite Decimals and testing the intended branch
+
+Status: non-finite amount rule implemented and its three cases verified.
+
+Decimal supports NaN (not a number), Infinity, and -Infinity. These are Decimal
+objects but unsuitable monetary values. is_finite() returns false for them and
+true for finite amounts, including zero and negative refunds.
+
+Learner initially combined the type and finite checks and raised TypeError for
+both. New tests passed string values rather than constructing Decimal(value),
+so they only exercised existing wrong-type rejection. Passing tests did not
+demonstrate that the intended finite-value branch was tested.
+
+The corrected model checks type first and raises TypeError for non-Decimal input,
+then calls is_finite() and raises ValueError for a non-finite Decimal. This ordering
+avoids calling a Decimal method on an unrelated type. The corrected test now
+constructs Decimal(value) and expects ValueError for all three special values.
+
+Mentor inspected the saved implementation and ran
+`uv run --locked python -m pytest tests/test_transaction_model.py -v`:
+**9 passed in 0.01s**, exit 0. The full suite was not rerun after this correction.
+There are nine rather than the proposed ten cases because None is still absent
+from the wrong-type parameter list; restore it to preserve the earlier check.
+
+Diagnostic wording cleanup remains: TypeError should say "amount must be a Decimal"
+rather than "Decimal integer"; the finite-value ValueError should say "amount must
+be finite" rather than claiming its type is wrong. Validation must communicate
+the rule that actually failed.
+
+Next: restore the None case and improve diagnostic messages, then apply the same
+type/finite-value protections to Budget.limit before its nonnegative comparison.
+Keep one rule/test step at a time; do not silently duplicate broader requirements.
+
+### Learning pace update — 2026-11-03
+
+The learner's primary goal is understanding concepts, with MyBudget as the
+practical vehicle. They are now comfortable with the unit-testing patterns used
+so far and asked to move on rather than repeat edge-case exercises. Future
+sessions should introduce new concepts, verify changed behavior appropriately,
+and track deferred hardening without making it a prerequisite for every lesson.
+Next planned topic: iterables, iterators, and generators for incremental
+transaction processing. This is a pacing decision, not a claim those concepts
+have already been taught or that deferred validation work is complete.

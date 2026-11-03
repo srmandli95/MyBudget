@@ -12,8 +12,9 @@ The current implementation is a set of standalone learning exercises in
 `exercises/`, using only Python's standard library. They cover Decimal calculations,
 transaction classes, dataclasses, validation, exceptions, and category totals.
 Some scripts intentionally raise errors; see the exercise README.
-For revision, read the [single learning journal](LEARNING_NOTES.md). New lessons
-are appended there in learning order. The dated files in `learnings/` are an archive.
+For revision, read the [concept study guide](LEARNING_NOTES.md), organized by topic
+with explanations, examples, and recall questions. New learning updates the
+relevant concept section. Session history and old dated notes are in `learnings/`.
 Configurable budgets and uv setup are complete; there is no web application or
 database yet. See PROGRESS.md for the next small task.
 
@@ -26,8 +27,8 @@ uv sync --locked
 uv run --locked python -m pytest tests exercises -v
 ```
 
-The current suite has 32 passing cases: 26 application cases in `tests/` and
-6 learning cases in `exercises/`. Shared app fixtures live in `tests/conftest.py`.
+Application cases live in `tests/`; historical learning cases live in `exercises/`.
+Shared app fixtures live in `tests/conftest.py`. See PROGRESS.md for verified runs.
 uv manages `.venv`; manual activation is
 optional. Commit `pyproject.toml` and `uv.lock`, not `.venv/`.
 Use `python -m pytest` through uv so project-root imports resolve correctly.
