@@ -8,6 +8,11 @@ class Transaction:
     amount: Decimal
     transaction_date: date
 
+    def __post_init__(self):
+        if not self.category.strip():
+            raise ValueError("category cannot be empty") 
+
+
 @dataclass
 class Budget:
     category: str

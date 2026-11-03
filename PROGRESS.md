@@ -4,7 +4,7 @@ Last updated: 2026-11-03.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; refund exercise complete for transaction-date attribution.
+Milestone 1: Python budget calculation engine. Phase 1; shared Transaction category validation complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -29,7 +29,7 @@ The project consists of working standalone exercises, not yet an integrated engi
 
 ## Latest verification
 
-Mentor ran `uv run --locked python -m pytest tests exercises -v`: **32 passed in 0.03s**,
+Mentor ran `uv run --locked python -m pytest tests -v`: **32 application tests passed in 0.02s**,
 exit 0, Python 3.14.6 and pytest 9.2.0. pyproject.toml and uv.lock record the
 project and dependencies; .venv remains ignored. Use Python's module invocation
 from the project root to make exercises imports work.
@@ -39,6 +39,18 @@ restaurants 100.00, gas 50.00, miscellaneous 150.00. Data is fictional.
 Mentor reran the module demonstration after the date-field changes; same results, exit 0.
 
 ## Next recommended task
+
+Latest checkpoint (2026-11-03): shared Transaction rejects blank category via
+__post_init__. Learner corrected __postinit__ typo and removed invalid attempts
+to call Decimal/date attributes. Mentor ran application suite: 32 passed, exit 0,
+including refunds. Six historical learning cases were not rerun in this check.
+
+Next: define transaction amount rules (Decimal type and finite values), one test
+at a time, preserving negative refunds. No amount/type/date validation is yet
+implemented in shared Transaction beyond the category check. Do not imply type
+hints enforce it. Let the learner implement core code.
+
+## Previous refund checkpoint
 
 Latest checkpoint (2026-11-03): all three refund tests now saved and verified.
 Both fixture annotations corrected to list[Transaction]. Mentor ran refund file:
@@ -241,7 +253,7 @@ Broader financial rules, integration, and milestone completion checks remain.
 ## Learning-record convention
 
 User requests **one revision file, appended after each lesson**: LEARNING_NOTES.md.
-It now contains 41 lessons in learning order, including completed refund verification.
+It now contains 42 lessons in learning order, including shared Transaction validation.
 Append future lessons at the bottom, update contents, and refresh this checkpoint.
 The dated learnings/ files are retained as a historical archive, not the primary
 place for new entries. Do not keep prepending duplicate checkpoints to the journal.

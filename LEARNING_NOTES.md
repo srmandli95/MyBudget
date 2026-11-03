@@ -3,7 +3,7 @@
 The single revision file for this apprenticeship. Lessons are in learning order;
 append new completed lessons at the end and update this contents list.
 
-Current checkpoint: all 3 refund tests and fixture annotations verified. See [PROGRESS.md](PROGRESS.md)
+Current checkpoint: shared Transaction category validation verified; 32 application tests pass. See [PROGRESS.md](PROGRESS.md)
 for the current task and [ROADMAP.md](ROADMAP.md) for the curriculum.
 
 Earlier entries preserve what was known and verified at that lesson. Historical
@@ -53,6 +53,7 @@ subsequent completion. The dated files in learnings/ remain as an archive.
 - [Lesson 39: 2026-11-02: Refunds and signed expense amounts](#lesson-39)
 - [Lesson 40: 2026-11-02: Refunds received in another month](#lesson-40)
 - [Lesson 41: 2026-11-03: Completing cross-month refund verification](#lesson-41)
+- [Lesson 42: 2026-11-03: Validating categories in the application Transaction](#lesson-42)
 
 <a id="lesson-01"></a>
 
@@ -1992,3 +1993,33 @@ test_later_refund_does_not_change_purchase_month would describe its purpose bett
 Next: runtime validation in the shared Transaction model. Earlier merchant
 validation lives only in a learning model; it does not protect application inputs.
 Introduce one rule at a time and preserve negative amounts for refunds.
+
+<a id="lesson-42"></a>
+
+## Lesson 42: 2026-11-03: Validating categories in the application Transaction
+
+Status: shared-model blank-category rule implemented and tested.
+
+Learner added a parametrized test in tests/test_transaction_model.py rejecting
+empty text, a space, and a tab with ValueError. Construction uses a valid Decimal
+amount and date so the test isolates category validation. This protects the
+application's Transaction rather than only an earlier learning-example class.
+
+The first implementation used __postinit__ instead of __post_init__. Dataclasses
+call the exact special hook name, so the misnamed method never ran. Mentor
+reproduced three DID NOT RAISE failures, then learner corrected the name.
+
+Learner had also attempted self.amount() and self.transaction_date(). Parentheses
+would call the stored Decimal/date objects as functions, causing TypeError once
+reached. Those checks were removed; only the requested category rule was introduced.
+Other amount/date rules need explicit decisions and tests, not generic emptiness
+checks. Negative amounts remain valid for refunds.
+
+Mentor inspected the final source and ran
+`uv run --locked python -m pytest tests -v`: **32 passed in 0.02s**, exit 0,
+including all three refund cases and the new category cases. This is the
+application suite only; the six historical learning cases were not run here.
+
+Next: define amount-validation rules explicitly, including Decimal type and
+finite values, while preserving signed refunds. Explain one rule at a time and
+let the learner write its test first.
