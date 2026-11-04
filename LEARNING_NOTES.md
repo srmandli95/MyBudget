@@ -18,16 +18,17 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
 6. [Dataclasses and special methods](#dataclasses-and-special-methods)
 7. [Decimal and money](#decimal-and-money)
 8. [Collections and loops](#collections-and-loops)
-9. [Dates and monthly reporting](#dates-and-monthly-reporting)
-10. [Modules, packages, and imports](#modules-packages-and-imports)
-11. [Exceptions and validation](#exceptions-and-validation)
-12. [Context managers and with](#context-managers-and-with)
-13. [Testing and pytest](#testing-and-pytest)
-14. [Fixtures and parametrization](#fixtures-and-parametrization)
-15. [Code organization and refactoring](#code-organization-and-refactoring)
-16. [Environments, dependencies, and uv](#environments-dependencies-and-uv)
-17. [Git and GitHub](#git-and-github)
-18. [Quick revision questions](#quick-revision-questions)
+9. [Iterables and iterators](#iterables-and-iterators)
+10. [Dates and monthly reporting](#dates-and-monthly-reporting)
+11. [Modules, packages, and imports](#modules-packages-and-imports)
+12. [Exceptions and validation](#exceptions-and-validation)
+13. [Context managers and with](#context-managers-and-with)
+14. [Testing and pytest](#testing-and-pytest)
+15. [Fixtures and parametrization](#fixtures-and-parametrization)
+16. [Code organization and refactoring](#code-organization-and-refactoring)
+17. [Environments, dependencies, and uv](#environments-dependencies-and-uv)
+18. [Git and GitHub](#git-and-github)
+19. [Quick revision questions](#quick-revision-questions)
 
 ## Python and execution
 
@@ -350,7 +351,7 @@ return total
 Initialize before the loop; add inside; return afterward. Initializing inside
 loses previous results; returning inside stops early. Empty input leaves Decimal
 zero unchanged. `range(9, 11)` yields the numbers 9 and 10: its stop is excluded.
-How loops obtain values through iterators is the next deeper topic.
+See the next section for how iterators supply loop values.
 
 ### Dictionary behavior
 
@@ -385,6 +386,44 @@ One scan of n transactions takes O(n) time. Dictionary/set membership is average
 O(1) for suitable keys, not a worst-case guarantee. Our summary scans transactions
 for each budget: roughly O(b × n). Deeper complexity/algorithm study remains ahead;
 optimization should address measured needs.
+
+## Iterables and iterators
+
+An **iterable** can provide an iterator through `iter(...)`. An **iterator**
+maintains progress and supplies its next item through `next(...)`.
+A list stores items; its iterator tracks a traversal through those items.
+
+```python
+amounts = [Decimal("40.00"), Decimal("20.00"), Decimal("10.00")]
+cursor = iter(amounts)
+print(next(cursor))  # 40.00
+
+for amount in cursor:
+    print(amount)   # 20.00, then 10.00
+
+for amount in cursor:
+    print(amount)   # Nothing: this iterator is exhausted.
+
+for amount in amounts:
+    print(amount)   # 40.00, 20.00, 10.00: a fresh list iterator.
+```
+
+A for loop obtains an iterator once, repeatedly asks for its next item, and
+stops on StopIteration. A manual next call on an exhausted iterator raises that
+exception instead of quietly printing nothing.
+
+An iterator is itself iterable: `iter(cursor)` returns that same cursor, not a
+reset copy. Consequently a new for loop over an exhausted iterator does not
+restart it. A list can supply a fresh independent iterator on each traversal.
+Do not assume every iterable can be restarted: iterators are iterables too.
+
+Consuming a list iterator does not remove items from its source list. Exhaustion
+belongs to that iterator's progress, not the list's contents. Creating another
+iterator with `iter(amounts)` starts a new traversal.
+
+This matters for MyBudget: a reusable list of transactions and a one-pass stream
+cannot always be processed with the same repeated-loop assumptions. Generators
+will let us produce such streams on demand; their implementation is the next topic.
 
 ## Dates and monthly reporting
 
@@ -741,10 +780,11 @@ Try answering without looking above:
 15. Why validate a report month even with no configured budgets?
 16. Why can a refund-only month have remaining funds above its budget?
 17. What belongs in pyproject.toml, uv.lock, and .venv? Which go to Git?
+18. Why does looping over an exhausted iterator print nothing, while a list can be traversed again?
 
 ### Coming next, not yet covered in depth
 
-Iterables, iterators, and generators are next. General decorator implementation,
+Iterator basics are covered above; generators are next. General decorator implementation,
 advanced OOP/composition/protocols, deeper algorithms, databases, HTTP, frontend,
 processes/threads/async, the GIL, distributed systems, security, and operations
 remain on the roadmap. Mentioning a subject doesn't mean it has been mastered.

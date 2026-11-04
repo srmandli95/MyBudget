@@ -1,10 +1,10 @@
 # Progress
 
-Last updated: 2026-11-03.
+Last updated: 2026-11-04.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; finite Transaction amount validation verified.
+Milestone 1: Python budget calculation engine. Phase 1; first iterator exercise complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -26,8 +26,14 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Empty-input monthly test checks both zero value and Decimal result type.
 - Budget dataclass with category/limit fields; valid construction and negative-limit rejection tested.
 - Fixture setup errors versus expected exceptions inside a test clarified by experiment.
+- Iterable versus iterator, next(), exhaustion, and fresh traversal of a list.
 
 ## Latest verification
+
+Mentor inspected and ran `uv run --locked python -m exercises.transaction_iteration`:
+exit 0. next(cursor) prints 40.00; first cursor loop prints 20.00 and 10.00;
+second cursor loop prints no items; looping over amounts prints all three again.
+No application tests rerun for this standalone learning exercise.
 
 Latest focused run: Transaction model tests, 9 passed, exit 0. Full application
 suite was last run before the latest non-finite-test corrections (38 passed then).
@@ -46,10 +52,12 @@ current validation patterns. Advance when understanding is demonstrated; use
 focused verification rather than more repetitions of the same test pattern.
 Do not silently drop deferred correctness work or call the application complete.
 
-Next: iterables, iterators, and generators, connected to processing fictional
-transactions incrementally. Explain how a for loop obtains values, then contrast
-building a list with yielding transactions on demand. Let the learner implement
-a small exercise. General decorators, OOP composition/protocols, algorithms,
+Iterator exercise complete. Learner initially predicted an iterator would restart
+and the list would not; clarified and demonstrated the opposite. Consuming the
+iterator does not remove items from its list. Concept guide updated by topic.
+Next: generators and yield, connected to producing fictional transactions on
+demand rather than building the whole list first. Let the learner implement a
+small exercise. General decorators, OOP composition/protocols, algorithms,
 databases, concurrency, GIL, and distributed systems remain future topics.
 
 ## Current code and verification checkpoint
