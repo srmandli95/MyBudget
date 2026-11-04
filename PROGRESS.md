@@ -4,7 +4,7 @@ Last updated: 2026-11-04.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; first iterator exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; first generator exercise complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -27,8 +27,14 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Budget dataclass with category/limit fields; valid construction and negative-limit rejection tested.
 - Fixture setup errors versus expected exceptions inside a test clarified by experiment.
 - Iterable versus iterator, next(), exhaustion, and fresh traversal of a list.
+- Generator functions/objects, yield suspension, and consumer-driven execution.
 
 ## Latest verification
+
+Mentor inspected the updated exercises/transaction_generator.py and ran it through
+uv: exit 0. The external Generator created message appears first; two next calls
+then print preparation messages and values 20.00 and 50.00. Third amount remains
+unrequested. No application tests run for this standalone learning exercise.
 
 Mentor inspected and ran `uv run --locked python -m exercises.transaction_iteration`:
 exit 0. next(cursor) prints 40.00; first cursor loop prints 20.00 and 10.00;
@@ -55,9 +61,17 @@ Do not silently drop deferred correctness work or call the application complete.
 Iterator exercise complete. Learner initially predicted an iterator would restart
 and the list would not; clarified and demonstrated the opposite. Consuming the
 iterator does not remove items from its list. Concept guide updated by topic.
-Next: generators and yield, connected to producing fictional transactions on
-demand rather than building the whole list first. Let the learner implement a
-small exercise. General decorators, OOP composition/protocols, algorithms,
+Generator exercise verified: learner wrote three yields and consumed with next.
+Clarified yield is a keyword; the generator object is the iterator. Discussed
+incremental CSV processing as a real-world connection; saved exercise yields
+amounts, not file records. Concept guide updated under iterators.
+Lazy-start marker is now correctly outside the function after generator creation.
+Learner initially put it inside, where it waited for next like the rest of the
+body. Mentor verified the corrected position and execution order.
+Next: apply generator basics to fictional Transaction production and explain the
+one-pass caveat before changing application functions. Can briefly consume the
+remaining amount with for if helpful; avoid more repetitive drills. General decorators,
+OOP composition/protocols, algorithms,
 databases, concurrency, GIL, and distributed systems remain future topics.
 
 ## Current code and verification checkpoint

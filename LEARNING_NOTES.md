@@ -423,7 +423,41 @@ iterator with `iter(amounts)` starts a new traversal.
 
 This matters for MyBudget: a reusable list of transactions and a one-pass stream
 cannot always be processed with the same repeated-loop assumptions. Generators
-will let us produce such streams on demand; their implementation is the next topic.
+produce such streams on demand.
+
+### Generators and yield
+
+A function containing yield is a **generator function**. Calling it creates a
+**generator object**, which is an iterator. Its body starts when a consumer asks
+for the next value, not when that object is created.
+
+```python
+def sample_amounts():
+    print("Preparing first amount")
+    yield Decimal("20.00")
+    print("Preparing second amount")
+    yield Decimal("50.00")
+
+cursor = sample_amounts()  # No preparation messages yet.
+first = next(cursor)      # Runs to first yield, returns 20.00, and pauses.
+for amount in cursor:    # Resumes and consumes the remaining value.
+    print(amount)
+```
+
+yield is a keyword, not an iterator itself. It supplies a value and suspends
+execution, preserving position and local state. return ends the generator;
+reaching the end also exhausts it. Further next calls raise StopIteration, which
+a for loop handles automatically. Create a new generator for a new traversal.
+
+The consumer drives execution through next or a loop. Generators do not produce
+continuously in the background and are not inherently async or parallel.
+This is lazy, incremental production: a file reader can parse a record, yield
+an amount, and resume when another is requested. A running total avoids storing
+every amount. Using list(...) to collect all results retains them in memory again.
+
+One-pass streams need care: a calculation that loops through its transaction
+input repeatedly for different budgets may exhaust a generator on its first pass.
+Review consumption patterns before replacing reusable lists with generators.
 
 ## Dates and monthly reporting
 
@@ -784,7 +818,7 @@ Try answering without looking above:
 
 ### Coming next, not yet covered in depth
 
-Iterator basics are covered above; generators are next. General decorator implementation,
+Iterator and generator basics are covered above. General decorator implementation,
 advanced OOP/composition/protocols, deeper algorithms, databases, HTTP, frontend,
 processes/threads/async, the GIL, distributed systems, security, and operations
 remain on the roadmap. Mentioning a subject doesn't mean it has been mastered.
