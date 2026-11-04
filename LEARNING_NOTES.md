@@ -455,6 +455,26 @@ This is lazy, incremental production: a file reader can parse a record, yield
 an amount, and resume when another is requested. A running total avoids storing
 every amount. Using list(...) to collect all results retains them in memory again.
 
+### Creating objects on demand
+
+Yielding from a prebuilt list is different from producing objects incrementally:
+
+```python
+def generate_transactions(count):
+    for _ in range(count):
+        yield Transaction("Groceries", Decimal("10.00"), date(2026, 10, 5))
+```
+
+Each request resumes the loop, constructs one Transaction, and yields it. In
+contrast, building a list of transactions inside the generator creates every
+listed object when that list-building statement is first executed. Lazy start
+alone does not guarantee incremental production or low memory use.
+
+The consumer can print each object and add its amount to a Decimal total without
+retaining all previously yielded transactions. Producing more items than a fixed
+prebuilt list contains would also fail if using indexed access; direct generation
+avoids that unnecessary limit. `_` conventionally names a value not used by the body.
+
 One-pass streams need care: a calculation that loops through its transaction
 input repeatedly for different budgets may exhaust a generator on its first pass.
 Review consumption patterns before replacing reusable lists with generators.

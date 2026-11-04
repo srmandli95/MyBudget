@@ -4,7 +4,7 @@ Last updated: 2026-11-04.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; first generator exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; on-demand Transaction generator exercise complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -30,6 +30,11 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Generator functions/objects, yield suspension, and consumer-driven execution.
 
 ## Latest verification
+
+Mentor inspected exercises/transaction_stream.py and ran it through uv: exit 0,
+three Transaction representations and total 30.00. Function now constructs and
+yields one transaction inside range(count), rather than building a fixed list.
+No application tests run for this standalone learning exercise.
 
 Mentor inspected the updated exercises/transaction_generator.py and ran it through
 uv: exit 0. The external Generator created message appears first; two next calls
@@ -65,12 +70,14 @@ Generator exercise verified: learner wrote three yields and consumed with next.
 Clarified yield is a keyword; the generator object is the iterator. Discussed
 incremental CSV processing as a real-world connection; saved exercise yields
 amounts, not file records. Concept guide updated under iterators.
-Lazy-start marker is now correctly outside the function after generator creation.
-Learner initially put it inside, where it waited for next like the rest of the
-body. Mentor verified the corrected position and execution order.
-Next: apply generator basics to fictional Transaction production and explain the
-one-pass caveat before changing application functions. Can briefly consume the
-remaining amount with for if helpful; avoid more repetitive drills. General decorators,
+Transaction-generator exercise complete: learner initially built a fixed list
+inside the generator, then changed to constructing one transaction per yield.
+Explained that first request executes list creation in full; lazy start does not
+alone eliminate retained collections. Corrected direct-file invocation to module
+execution so sibling package imports resolve. Concept guide updated by topic.
+Next: demonstrate one-pass generator exhaustion in a function that scans input
+separately for each budget, without changing application code in advance.
+General decorators,
 OOP composition/protocols, algorithms,
 databases, concurrency, GIL, and distributed systems remain future topics.
 
