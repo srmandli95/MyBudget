@@ -510,7 +510,40 @@ In our per-budget calculation, the first category scan consumes every transactio
 including nonmatching ones. A second scan of the same generator has nothing left.
 Materializing a fresh generator into a list restores correct repeated traversal.
 An alternative is redesigning the calculation to accumulate category totals in
-one pass, retaining only those totals. That is the next application of this concept.
+one pass, retaining only those totals.
+
+### One-pass aggregation and Iterable inputs
+
+Iterable[Transaction] describes an input that can supply transactions to a loop.
+It accepts reusable collections such as lists and one-pass sources such as
+generators. It does not promise indexing, length, or a fresh traversal. Iterator
+is the narrower concept: an object with next-item behavior. A generator is both.
+
+To total a stream by category, loop over transactions once and update a dictionary:
+
+```python
+totals = {}
+for transaction in transactions:
+    if transaction.category not in totals:
+        totals[transaction.category] = transaction.amount
+    else:
+        totals[transaction.category] += transaction.amount
+```
+
+Alternatively, get(key, default) supplies a starting value without inserting it:
+
+```python
+totals[transaction.category] = (
+    totals.get(transaction.category, Decimal("0.00")) + transaction.amount
+)
+```
+
+Both forms preserve the same accumulation rule. This visits n transactions once
+and retains k category totals: average O(n) time for dictionary operations and
+O(k) additional storage, rather than retaining all n transaction references.
+Each category's total can later be combined with its budget without rereading
+the exhausted stream. This example totals across all dates; monthly filtering
+must be included explicitly when applying it to a monthly report.
 
 ## Dates and monthly reporting
 

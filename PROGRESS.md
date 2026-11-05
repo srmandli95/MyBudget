@@ -4,7 +4,7 @@ Last updated: 2026-11-05.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; generator reuse/materialization exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; one-pass category aggregation exercise complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -30,6 +30,11 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Generator functions/objects, yield suspension, and consumer-driven execution.
 
 ## Latest verification
+
+Mentor inspected exercises/stream_category_totals.py and ran it through uv:
+exit 0, Groceries 15.00 and Gas 20.00. It accepts Iterable[Transaction], consumes
+the generator once, and accumulates using dictionary membership plus assignment.
+No application code changes or application tests for this standalone exercise.
 
 Mentor inspected exercises/generator_reuse.py and ran it through uv: exit 0,
 Groceries 90.00, Gas 80.00 after list(fresh_generator) materialization. This is a
@@ -84,8 +89,14 @@ object versus yielded item; internal producer loop and consumer next requests;
 iter(source) behavior for lists versus iterators; list() as a consumer retaining
 yielded references. Learner confirmed the materialized-list version works, and
 mentor independently observed correct results. Source skipping still consumes items.
-Next: one-pass category aggregation over a transaction stream in an exercise,
-then discuss integration and memory/time trade-offs. Do not prewrite the solution.
+One-pass aggregation now implemented correctly in an exercise. Learner uses an
+if/else for first/existing category; get is an alternative, not a required rewrite.
+The sample includes dates from different periods; function intentionally totals
+across all dates. Reviewed average O(n) traversal/O(k) aggregate storage. Existing
+application monthly summary still uses list/repeated traversal; not migrated yet.
+Next: list comprehensions, followed by generator expressions, to connect concise
+collection construction with eager versus lazy evaluation. Monthly stream
+integration can follow later; don't repeat existing tests as a learning blocker.
 General decorators,
 OOP composition/protocols, algorithms,
 databases, concurrency, GIL, and distributed systems remain future topics.
