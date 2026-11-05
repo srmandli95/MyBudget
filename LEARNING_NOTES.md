@@ -417,6 +417,12 @@ reset copy. Consequently a new for loop over an exhausted iterator does not
 restart it. A list can supply a fresh independent iterator on each traversal.
 Do not assume every iterable can be restarted: iterators are iterables too.
 
+The loop always asks through iter(...); it does not need a separate type check.
+An object's __iter__ defines what iterator it supplies. Lists supply fresh list
+iterators; an iterator's __iter__ returns itself. The iterator's __next__ supplies
+the next item. A list is iterable but not itself an iterator, so next(a_list)
+raises TypeError; next(iter(a_list)) is valid.
+
 Consuming a list iterator does not remove items from its source list. Exhaustion
 belongs to that iterator's progress, not the list's contents. Creating another
 iterator with `iter(amounts)` starts a new traversal.
@@ -478,6 +484,33 @@ avoids that unnecessary limit. `_` conventionally names a value not used by the 
 One-pass streams need care: a calculation that loops through its transaction
 input repeatedly for different budgets may exhaust a generator on its first pass.
 Review consumption patterns before replacing reusable lists with generators.
+
+### Consumers and materializing a stream
+
+list(source) is also a consumer of the iteration protocol. Conceptually, it gets
+iter(source), repeatedly requests items, and stores references to each yielded
+object until exhaustion:
+
+```python
+transactions = list(generate_transactions(3))
+```
+
+The generator function is called once to create a generator object. Item requests
+resume that object; they do not call the generator function again. An internal
+producer loop preserves its position across yields while an external consumer
+loop requests values. Yield one Transaction per request, not a list containing
+transactions, when the receiving calculation expects individual transactions.
+
+After materialization the generator is exhausted, but the list can supply fresh
+iterators for repeated traversals. This retains all objects and gives up the
+incremental-memory advantage. list(an_exhausted_generator) is empty. Storing
+references in the list does not itself copy the yielded objects.
+
+In our per-budget calculation, the first category scan consumes every transaction,
+including nonmatching ones. A second scan of the same generator has nothing left.
+Materializing a fresh generator into a list restores correct repeated traversal.
+An alternative is redesigning the calculation to accumulate category totals in
+one pass, retaining only those totals. That is the next application of this concept.
 
 ## Dates and monthly reporting
 

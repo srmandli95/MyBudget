@@ -1,10 +1,10 @@
 # Progress
 
-Last updated: 2026-11-04.
+Last updated: 2026-11-05.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; on-demand Transaction generator exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; generator reuse/materialization exercise complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -30,6 +30,10 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Generator functions/objects, yield suspension, and consumer-driven execution.
 
 ## Latest verification
+
+Mentor inspected exercises/generator_reuse.py and ran it through uv: exit 0,
+Groceries 90.00, Gas 80.00 after list(fresh_generator) materialization. This is a
+standalone experiment; no application implementation or tests changed in review.
 
 Mentor inspected exercises/transaction_stream.py and ran it through uv: exit 0,
 three Transaction representations and total 30.00. Function now constructs and
@@ -75,8 +79,13 @@ inside the generator, then changed to constructing one transaction per yield.
 Explained that first request executes list creation in full; lazy start does not
 alone eliminate retained collections. Corrected direct-file invocation to module
 execution so sibling package imports resolve. Concept guide updated by topic.
-Next: demonstrate one-pass generator exhaustion in a function that scans input
-separately for each budget, without changing application code in advance.
+Generator-reuse experiment complete. Clarified generator function versus generator
+object versus yielded item; internal producer loop and consumer next requests;
+iter(source) behavior for lists versus iterators; list() as a consumer retaining
+yielded references. Learner confirmed the materialized-list version works, and
+mentor independently observed correct results. Source skipping still consumes items.
+Next: one-pass category aggregation over a transaction stream in an exercise,
+then discuss integration and memory/time trade-offs. Do not prewrite the solution.
 General decorators,
 OOP composition/protocols, algorithms,
 databases, concurrency, GIL, and distributed systems remain future topics.
