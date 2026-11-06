@@ -353,7 +353,40 @@ loses previous results; returning inside stops early. Empty input leaves Decimal
 zero unchanged. `range(9, 11)` yields the numbers 9 and 10: its stop is excluded.
 See the next section for how iterators supply loop values.
 
-### Dictionary behavior
+### List comprehensions
+
+A list comprehension builds a new list from an iterable, optionally filtering
+items or transforming each value. It is useful for simple operations that read
+more clearly than separate initialization, loop, and append statements.
+
+```python
+grocery_amounts = [
+    transaction.amount
+    for transaction in transactions
+    if transaction.category == "Groceries"
+]
+```
+
+The expression comes first; for describes traversal; the trailing if decides
+which items to include. Nonmatching items contribute no entry.
+
+To choose between two values rather than skip an item, put the conditional
+expression before for:
+
+```python
+amounts_or_zero = [
+    transaction.amount if transaction.category == "Groceries" else Decimal("0.00")
+    for transaction in transactions
+]
+```
+
+This includes one entry per input, replacing nonmatching amounts with zero.
+A comprehension creates the full result list immediately. It consumes a generator
+source if given one; it is not lazy merely because its source is a generator.
+Use ordinary loops for multi-step logic, side effects, or complex error handling.
+The main benefit is clarity for simple transformations, not making everything one line.
+
+### Dictionary access and membership
 
 ```python
 remaining[category] = amount   # Create or replace a value.
