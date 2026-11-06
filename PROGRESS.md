@@ -4,7 +4,7 @@ Last updated: 2026-11-06.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; first closure exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; manual function-decorator exercise complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -30,6 +30,10 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Generator functions/objects, yield suspension, and consumer-driven execution.
 
 ## Latest verification
+
+Mentor inspected exercises/decorators.py and ran it with the project interpreter:
+exit 0; Starting calculation, Calculation finished, then 425.00. Wrapper retains
+the original function and returns its result. No app code changes or app tests.
 
 Mentor inspected exercises/closures.py and ran `.venv/bin/python -m exercises.closures`:
 exit 0, True then False. Learner returns an inner checker retaining Groceries and
@@ -128,8 +132,11 @@ updated by topic, including dictionary comprehensions discussed alongside iterat
 Closure exercise verified. Explained the inner function's use of an outer local
 binding, retention after outer return, closure cells, and returning a function
 instead of calling it. Concept guide updated under functions.
-Next: a simple function decorator that captures a function, calls it in a wrapper,
-and returns its result. Start with before/after messages, then discuss timing.
+Manual decorator now verified with before/after messages. Learner initially
+returned operation(...) directly; explained storing the result before after-work
+and returning it. Concept guide updated under functions.
+Next: @announce syntax and its equivalence to rebinding a newly defined function;
+then explain *args/**kwargs forwarding and metadata preservation before timing.
 Monthly stream integration can follow later; don't repeat tests as a learning blocker.
 General decorators,
 OOP composition/protocols, algorithms,

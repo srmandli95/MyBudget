@@ -222,6 +222,38 @@ function.__closure__ holds their cells, whose cell_contents exposes the binding.
 Recognition matters more than memorizing inspection attributes: look for an
 inner function using an enclosing function's local name.
 
+### Function decorators: wrapping behavior
+
+A decorator receives a function and returns a function to use in its place.
+Our first example adds messages around an existing calculation:
+
+```python
+def announce(operation):
+    def wrapper(budget, spent):
+        print("Starting calculation")
+        result = operation(budget, spent)
+        print("Calculation finished")
+        return result
+    return wrapper
+
+calculate = announce(calculate_remaining)
+result = calculate(Decimal("500.00"), Decimal("75.00"))
+```
+
+Applying announce creates the wrapper without running the calculation. Calling
+the returned wrapper later runs before/after behavior and the original operation.
+The wrapper retains operation through a closure. The original function object
+still exists; the wrapper delegates to it rather than modifying its body.
+
+Return the original result so callers receive the same useful value. To perform
+work afterward, store the value before returning; return operation(...) would
+exit immediately. In this basic example, if operation raises, the after message
+is skipped; guaranteed cleanup/timing would require a deliberate try/finally.
+
+This first wrapper accepts only budget/spent. General argument forwarding,
+metadata preservation, timing, and @ syntax are upcoming extensions, not implied
+by completing this example.
+
 ## Objects, references, and copying
 
 An **object** has a type, identity, and associated value/state. A **reference**
