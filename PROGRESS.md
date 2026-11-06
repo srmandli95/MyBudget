@@ -4,7 +4,7 @@ Last updated: 2026-11-06.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; list-comprehension exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; generator-expression exercise complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -30,6 +30,11 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Generator functions/objects, yield suspension, and consumer-driven execution.
 
 ## Latest verification
+
+Mentor inspected the saved generator expression in transaction_comprehensions.py
+and ran `.venv/bin/python -m exercises.transaction_comprehensions`: exit 0,
+120.00 on the first sum and 0.00 on the second. It uses parentheses and consumes
+the same generator twice. No application changes or application tests in this review.
 
 Mentor inspected exercises/transaction_comprehensions.py and ran it through uv:
 exit 0, list of grocery Decimal amounts 40.00, 20.00, 10.00, 40.00, 10.00.
@@ -103,9 +108,12 @@ List-comprehension filter now implemented and verified. Explained trailing if
 (filter) versus conditional expression before for (choose one of two values).
 Learner requested quick concept practice; don't require additional drills or sum
 checks before advancing. Concept guide updated under collections.
-Next: generator expressions, connecting parenthesized expression syntax to lazy
-production versus eager list construction. Monthly stream integration can follow
-later; don't repeat existing tests as a learning blocker.
+Generator expression now saved and verified: [] comprehension changed to (),
+then two sums demonstrate exhaustion (120.00, 0.00). Explained parentheses alone
+do not create a generator; the comprehension expression does. Guide updated.
+Next: functions as objects/values, leading into writing a simple decorator. Connect
+to reusable timing of MyBudget calculations, rather than more iteration drills.
+Monthly stream integration can follow later; don't repeat tests as a learning blocker.
 General decorators,
 OOP composition/protocols, algorithms,
 databases, concurrency, GIL, and distributed systems remain future topics.

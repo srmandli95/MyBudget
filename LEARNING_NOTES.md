@@ -494,7 +494,34 @@ This is lazy, incremental production: a file reader can parse a record, yield
 an amount, and resume when another is requested. A running total avoids storing
 every amount. Using list(...) to collect all results retains them in memory again.
 
-### Creating objects on demand
+### Generator expressions
+
+A generator expression is a compact way to produce values lazily:
+
+```python
+grocery_amounts = (
+    transaction.amount
+    for transaction in transactions
+    if transaction.category == "Groceries"
+)
+total = sum(grocery_amounts, Decimal("0.00"))
+```
+
+The same comprehension with square brackets builds a list eagerly. Parentheses
+around an expression containing for create a generator expression; parentheses
+around an ordinary calculation do not. A generator expression is already an
+iterator and has the same one-pass consumption behavior as a generator function.
+
+sum consumes the matching amounts incrementally without creating an intermediate
+amount list. Summing the same exhausted generator again returns the supplied
+starting value. A source list still occupies memory; avoiding one intermediate
+list does not make the entire program a stream. Printing a generator displays
+its representation, not all its values.
+
+Use a generator expression for a simple transformation consumed once. Use a list
+comprehension when the result needs repeated traversal, indexing, or storage.
+
+### Producing objects incrementally
 
 Yielding from a prebuilt list is different from producing objects incrementally:
 

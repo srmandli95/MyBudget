@@ -14,8 +14,14 @@ transactions = [
 
 ]
 
-grocery_amount = [
+grocery_amounts = (
     transaction.amount for transaction in transactions if transaction.category == 'Groceries'
-]
+)
 
-print(grocery_amount)
+print(next(grocery_amounts))
+print(next(grocery_amounts))
+print(next(grocery_amounts))
+print(next(grocery_amounts))
+print(next(grocery_amounts))
+print(next(grocery_amounts))
+
