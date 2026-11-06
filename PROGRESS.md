@@ -4,7 +4,7 @@ Last updated: 2026-11-06.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; function-object exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; first closure exercise complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -30,6 +30,11 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Generator functions/objects, yield suspension, and consumer-driven execution.
 
 ## Latest verification
+
+Mentor inspected exercises/closures.py and ran `.venv/bin/python -m exercises.closures`:
+exit 0, True then False. Learner returns an inner checker retaining Groceries and
+uses it on grocery and gas transactions. This is a valid variation on the suggested
+two-checker/one-transaction exercise. No application code changes or tests in review.
 
 Mentor inspected exercises/function_objects.py and ran it with the project
 interpreter: exit 0, True followed by 425.00 twice. The learner aliases an existing
@@ -120,8 +125,11 @@ Function-object exercise now verified. Clarified that = binds a name and does no
 itself create an instance, and parentheses call a callable. A function name is an
 object reference; passing a call would supply its result instead. Concept guide
 updated by topic, including dictionary comprehensions discussed alongside iteration.
-Next: nested functions and returning a function, then closures and a small
-decorator. Connect to timing MyBudget calculations rather than validation drills.
+Closure exercise verified. Explained the inner function's use of an outer local
+binding, retention after outer return, closure cells, and returning a function
+instead of calling it. Concept guide updated under functions.
+Next: a simple function decorator that captures a function, calls it in a wrapper,
+and returns its result. Start with before/after messages, then discuss timing.
 Monthly stream integration can follow later; don't repeat tests as a learning blocker.
 General decorators,
 OOP composition/protocols, algorithms,

@@ -186,6 +186,42 @@ which is a Decimal rather than the intended operation. Receiving a function lets
 an operation's behavior be supplied by its caller. Returning functions and closures
 will build on this to explain decorators.
 
+### Nested functions and closures
+
+A function can define and return another function. A **closure** lets the inner
+function retain access to an enclosing function's local bindings, even after
+the outer call finishes:
+
+```python
+def make_category_checker(category):
+    def checker(transaction):
+        return transaction.category == category
+    return checker
+
+is_grocery = make_category_checker("Groceries")
+```
+
+Calling make_category_checker creates and returns a checker function. Calling
+is_grocery(transaction) later runs that inner function with its retained category.
+Return checker without parentheses to return behavior for later execution;
+return checker(...) would execute it immediately and return its result instead.
+
+The captured name belongs to the **outer** function, not the inner function's
+own local scope. Python retains bindings through closure cells; the returned
+function keeps those cells reachable. It does not keep the entire outer call
+running or manually copy every local variable. A closure retains access to a
+binding, not necessarily a frozen snapshot of a value.
+
+Separate calls can create independently configured functions, such as a grocery
+checker and a gas checker. This is useful for callbacks and for decorators that
+retain the function they wrap. In contrast, using only an inner function's own
+parameters/locals does not require capturing an enclosing variable.
+
+Optional inspection: function.__code__.co_freevars names captured variables;
+function.__closure__ holds their cells, whose cell_contents exposes the binding.
+Recognition matters more than memorizing inspection attributes: look for an
+inner function using an enclosing function's local name.
+
 ## Objects, references, and copying
 
 An **object** has a type, identity, and associated value/state. A **reference**
