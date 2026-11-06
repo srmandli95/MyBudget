@@ -155,6 +155,37 @@ Function composition combines operations by calling existing functions. Our
 monthly summary uses category spending and remaining-budget functions instead
 of copying their rules.
 
+### Functions as objects
+
+Defining a function creates a function object and binds its name. Referring to
+the name retrieves the object; parentheses call it:
+
+```python
+operation = calculate_remaining  # Existing function; no calculation yet.
+result = operation(Decimal("500.00"), Decimal("75.00"))
+```
+
+operation and calculate_remaining refer to the same object. Assignment does not
+itself mean object creation: the right-hand expression might create an instance,
+retrieve an existing object, or call a function and produce its returned value.
+Calling a class normally constructs an instance; calling a function executes its
+body. Both use parentheses, but the callable determines what happens.
+
+A function can receive another function as an argument:
+
+```python
+def run_calculation(operation, budget, spent):
+    return operation(budget, spent)
+
+result = run_calculation(calculate_remaining, Decimal("500.00"), Decimal("75.00"))
+```
+
+Pass the function without parentheses to let the receiver call it. Passing
+calculate_remaining(...) instead evaluates that call first and passes its result,
+which is a Decimal rather than the intended operation. Receiving a function lets
+an operation's behavior be supplied by its caller. Returning functions and closures
+will build on this to explain decorators.
+
 ## Objects, references, and copying
 
 An **object** has a type, identity, and associated value/state. A **reference**
@@ -386,7 +417,20 @@ source if given one; it is not lazy merely because its source is a generator.
 Use ordinary loops for multi-step logic, side effects, or complex error handling.
 The main benefit is clarity for simple transformations, not making everything one line.
 
-### Dictionary access and membership
+### Dictionary comprehensions and generated pairs
+
+```python
+limits = {budget.category: budget.limit for budget in budgets}
+pairs = ((budget.category, budget.limit) for budget in budgets)
+```
+
+The dictionary comprehension eagerly builds a mapping. The generator expression
+produces two-element tuples (key, value) on demand. dict(pairs) consumes those
+pairs and builds the mapping in memory. There is no separate lazy dictionary
+comprehension form. Repeated keys overwrite earlier values; validation is needed
+when duplicates should be rejected rather than replaced.
+
+### Dictionary lookup and assignment
 
 ```python
 remaining[category] = amount   # Create or replace a value.
