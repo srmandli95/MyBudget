@@ -272,6 +272,25 @@ does not provide useful reuse or consistency. This first wrapper accepts only
 budget/spent; general argument forwarding, metadata preservation, and timing
 remain upcoming extensions.
 
+### Preserving the wrapped function's result
+
+A decorator can inspect a calculation's result and report status without
+replacing its return value:
+
+```python
+def report_status(operation):
+    def wrapper(budget, spent):
+        balance = operation(budget, spent)
+        print("Within budget" if balance >= 0 else "Over budget")
+        return balance
+    return wrapper
+```
+
+Returning a status string instead would change the calculation's interface: a
+caller expecting Decimal could no longer use its result in arithmetic. Printing
+the status and returning balance are separate responsibilities. Zero means
+exactly at the limit and belongs with the within-budget case.
+
 ## Objects, references, and copying
 
 An **object** has a type, identity, and associated value/state. A **reference**

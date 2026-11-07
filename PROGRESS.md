@@ -4,7 +4,7 @@ Last updated: 2026-11-07.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; @announce exercise complete, decorator practice requested.
+Milestone 1: Python budget calculation engine. Phase 1; status-decorator practice complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -30,6 +30,11 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Generator functions/objects, yield suspension, and consumer-driven execution.
 
 ## Latest verification
+
+Mentor inspected exercises/decorator_status.py and executed its calls plus an
+exactly-at-limit call: within budget/425.00, over budget/-25.00, within budget/0.00.
+Asserted zero result remains Decimal. Learner fixed string return to printing
+status plus returning balance, then corrected >= 0 boundary. No application tests.
 
 Mentor inspected the saved @announce version of exercises/decorators.py and ran
 it with the project interpreter: exit 0, Starting calculation, Calculation
@@ -142,10 +147,12 @@ returned operation(...) directly; explained storing the result before after-work
 and returning it. Concept guide updated under functions.
 @announce now implemented and verified. Clarified the extra local calculate
 function, what is passed implicitly, wrapper return/rebinding, and later call flow.
-Explained practical reasons for decorators. User requests additional practice:
-next exercise report_status decorates a calculation, prints a status based on its
-returned remaining amount, and preserves the result. Let the learner implement.
-Then explain *args/**kwargs forwarding and metadata preservation before timing.
+Explained practical reasons for decorators. Additional report_status exercise
+now complete: captures operation, reports status, preserves Decimal result,
+and includes zero in the within-budget case. Concept guide updated by topic.
+Next: *args and **kwargs, first as ordinary function parameter collection, then
+argument forwarding for a decorator that works across different signatures.
+Metadata preservation and timing follow afterward. Let the learner implement.
 Monthly stream integration can follow later; don't repeat tests as a learning blocker.
 General decorators,
 OOP composition/protocols, algorithms,
