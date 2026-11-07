@@ -10,6 +10,8 @@ def announce(operation):
 
     return wrapper
 
-calculate = announce(calculate_remaining)
+@announce
+def calculate(budget: Decimal, spent: Decimal):
+    return calculate_remaining(budget, spent)
 
 print(calculate(Decimal("500.00"), Decimal("75.00")))

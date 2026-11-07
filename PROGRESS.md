@@ -1,10 +1,10 @@
 # Progress
 
-Last updated: 2026-11-06.
+Last updated: 2026-11-07.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; manual function-decorator exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; @announce exercise complete, decorator practice requested.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -30,6 +30,11 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Generator functions/objects, yield suspension, and consumer-driven execution.
 
 ## Latest verification
+
+Mentor inspected the saved @announce version of exercises/decorators.py and ran
+it with the project interpreter: exit 0, Starting calculation, Calculation
+finished, 425.00. The decorated local calculate delegates to imported
+calculate_remaining. User requests another exercise for confidence.
 
 Mentor inspected exercises/decorators.py and ran it with the project interpreter:
 exit 0; Starting calculation, Calculation finished, then 425.00. Wrapper retains
@@ -135,8 +140,12 @@ instead of calling it. Concept guide updated under functions.
 Manual decorator now verified with before/after messages. Learner initially
 returned operation(...) directly; explained storing the result before after-work
 and returning it. Concept guide updated under functions.
-Next: @announce syntax and its equivalence to rebinding a newly defined function;
-then explain *args/**kwargs forwarding and metadata preservation before timing.
+@announce now implemented and verified. Clarified the extra local calculate
+function, what is passed implicitly, wrapper return/rebinding, and later call flow.
+Explained practical reasons for decorators. User requests additional practice:
+next exercise report_status decorates a calculation, prints a status based on its
+returned remaining amount, and preserves the result. Let the learner implement.
+Then explain *args/**kwargs forwarding and metadata preservation before timing.
 Monthly stream integration can follow later; don't repeat tests as a learning blocker.
 General decorators,
 OOP composition/protocols, algorithms,

@@ -250,9 +250,27 @@ work afterward, store the value before returning; return operation(...) would
 exit immediately. In this basic example, if operation raises, the after message
 is skipped; guaranteed cleanup/timing would require a deliberate try/finally.
 
-This first wrapper accepts only budget/spent. General argument forwarding,
-metadata preservation, timing, and @ syntax are upcoming extensions, not implied
-by completing this example.
+### Decorator application with @
+
+```python
+@announce
+def calculate(budget, spent):
+    return calculate_remaining(budget, spent)
+```
+
+This means: define calculate, then rebind it with calculate = announce(calculate).
+The decorator receives the newly defined calculate function, not the separate
+calculate_remaining function it calls. announce returns wrapper; calculate then
+refers to that wrapper. A later calculate(...) call invokes wrapper, which calls
+the original calculate through its retained operation reference. That original
+body delegates to calculate_remaining. Decoration and calculation happen at
+different times: applying the decorator does not execute the calculation.
+
+Decorators are useful for reusable surrounding behavior such as timing, logging,
+caching, or retries. They add indirection, so prefer a plain call when wrapping
+does not provide useful reuse or consistency. This first wrapper accepts only
+budget/spent; general argument forwarding, metadata preservation, and timing
+remain upcoming extensions.
 
 ## Objects, references, and copying
 
