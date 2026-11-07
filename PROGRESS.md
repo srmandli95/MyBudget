@@ -4,7 +4,7 @@ Last updated: 2026-11-07.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; positional argument collection exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; argument collection/unpacking concepts covered.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -157,9 +157,14 @@ now complete: captures operation, reports status, preserves Decimal result,
 and includes zero in the within-budget case. Concept guide updated by topic.
 *amounts collection now verified, including tuple inspection and empty tuple.
 Clarified sum's default integer starting value versus Decimal start.
-Next: * unpacking in a call versus * collection in a definition, then **kwargs
-collection/unpacking, then forwarding for a decorator across different signatures.
-Metadata preservation and timing follow afterward. Let the learner implement.
+Learner correctly restated * collection/unpacking and ** keyword mapping behavior.
+Clarified unpacking makes multiple arguments to one call, not multiple calls;
+printing the collected tuple once displays values together. ** is not an error
+handling safety net. Concept guide updated by topic. keyword_arguments.py exists
+but was not reviewed or executed during this notes-only update.
+Next: generic decorator using wrapper(*args, **kwargs) and operation(*args, **kwargs)
+to forward different signatures. Metadata preservation and timing follow.
+Let the learner implement; no more repetitive validation tests are needed here.
 Monthly stream integration can follow later; don't repeat tests as a learning blocker.
 General decorators,
 OOP composition/protocols, algorithms,

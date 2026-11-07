@@ -173,8 +173,52 @@ added, or removed. It can still refer to mutable objects; immutability of the
 container does not recursively make its contents immutable.
 
 sum defaults to integer zero if no starting value is supplied. Giving Decimal
-zero preserves the intended result type for empty inputs. Positional collection
-in a definition is different from unpacking an iterable in a call, covered next.
+zero preserves the intended result type for empty inputs.
+
+### Argument collection versus unpacking
+
+The position of * or ** determines its role:
+
+| Syntax | In a function definition | In a function call |
+| --- | --- | --- |
+| `*args` | Collect extra positional arguments into a tuple | Unpack iterable items into positional arguments |
+| `**kwargs` | Collect extra keyword arguments into a dictionary | Unpack mapping entries into keyword arguments |
+
+args and kwargs are conventional names, not special keywords. *amounts and
+**details work the same way.
+
+```python
+def show(*args):
+    print(args)
+
+values = [10, 20, 30]
+show(*values)  # Equivalent to show(10, 20, 30); prints (10, 20, 30).
+```
+
+This makes one call with three arguments, not three calls. The body prints the
+tuple once; use a loop inside the function to print each value separately.
+Without the star, show(values) receives one argument: the list itself.
+
+```python
+def show_budget(**details):
+    print(details)
+
+settings = {"category": "Groceries", "limit": 500}
+show_budget(**settings)  # Equivalent to category="Groceries", limit=500.
+```
+
+At the call, the dictionary supplies named arguments. At the definition, those
+arguments are collected into details. With explicit named parameters as well,
+only the extra keyword arguments are collected by **kwargs.
+
+** is not an exception-handling safety net. The mapping's keyword keys must be
+strings, and the receiving signature must accept the resulting arguments.
+Unexpected names without **kwargs, missing required arguments, or duplicate
+values for a parameter can still raise TypeError.
+
+These two directions let a generic decorator collect its caller's arguments and
+then unpack them when forwarding to the original function, without knowing its
+specific parameter names in advance.
 
 ### Functions as objects
 
