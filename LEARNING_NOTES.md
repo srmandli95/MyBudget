@@ -155,6 +155,27 @@ Function composition combines operations by calling existing functions. Our
 monthly summary uses category spending and remaining-budget functions instead
 of copying their rules.
 
+### Variable positional arguments: *args
+
+An asterisk on a function parameter collects positional arguments into a tuple:
+
+```python
+def total_expenses(*amounts):
+    return sum(amounts, Decimal("0.00"))
+
+total_expenses(Decimal("10.00"), Decimal("20.00"))
+total_expenses()  # amounts is an empty tuple; result is Decimal zero.
+```
+
+args is a conventional name, not a keyword: *amounts provides the same collection
+behavior. A tuple is an ordered collection whose elements cannot be replaced,
+added, or removed. It can still refer to mutable objects; immutability of the
+container does not recursively make its contents immutable.
+
+sum defaults to integer zero if no starting value is supplied. Giving Decimal
+zero preserves the intended result type for empty inputs. Positional collection
+in a definition is different from unpacking an iterable in a call, covered next.
+
 ### Functions as objects
 
 Defining a function creates a function object and binds its name. Referring to

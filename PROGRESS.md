@@ -4,7 +4,7 @@ Last updated: 2026-11-07.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; status-decorator practice complete.
+Milestone 1: Python budget calculation engine. Phase 1; positional argument collection exercise complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -30,6 +30,11 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Generator functions/objects, yield suspension, and consumer-driven execution.
 
 ## Latest verification
+
+Mentor inspected exercises/variable_arguments.py and ran it with the project
+interpreter: exit 0. *amounts receives tuples for two, three, and zero inputs;
+totals 30.00, 35.00, 0.00. Learner corrected sum's default integer start to explicit
+Decimal zero. No app changes or app tests for the learning exercise.
 
 Mentor inspected exercises/decorator_status.py and executed its calls plus an
 exactly-at-limit call: within budget/425.00, over budget/-25.00, within budget/0.00.
@@ -150,8 +155,10 @@ function, what is passed implicitly, wrapper return/rebinding, and later call fl
 Explained practical reasons for decorators. Additional report_status exercise
 now complete: captures operation, reports status, preserves Decimal result,
 and includes zero in the within-budget case. Concept guide updated by topic.
-Next: *args and **kwargs, first as ordinary function parameter collection, then
-argument forwarding for a decorator that works across different signatures.
+*amounts collection now verified, including tuple inspection and empty tuple.
+Clarified sum's default integer starting value versus Decimal start.
+Next: * unpacking in a call versus * collection in a definition, then **kwargs
+collection/unpacking, then forwarding for a decorator across different signatures.
 Metadata preservation and timing follow afterward. Let the learner implement.
 Monthly stream integration can follow later; don't repeat tests as a learning blocker.
 General decorators,
