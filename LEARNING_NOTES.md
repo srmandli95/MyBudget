@@ -390,6 +390,43 @@ Metadata helps inspection, documentation, and tooling represent a decorated
 function meaningfully. It does not enforce types, validate arguments, or preserve
 business behavior automatically; the wrapper must still forward and return correctly.
 
+### Measuring elapsed time with a decorator
+
+time.perf_counter() supplies a high-resolution elapsed-time reading in seconds.
+Its absolute value is not a calendar timestamp; subtract two readings to obtain
+a duration. The elapsed interval includes waiting as well as execution.
+
+```python
+start = perf_counter()
+result = operation(*args, **kwargs)
+elapsed = perf_counter() - start
+print(f"{operation.__name__} took {elapsed:.6f} seconds")
+return result
+```
+
+Place this inside a generic wrapper with wraps(operation) to retain descriptive
+metadata. :.6f controls displayed decimal places, not measurement accuracy.
+The decorator adds its own overhead. Tiny operations and single samples cannot
+establish a reliable benchmark or an application's capacity.
+
+This simple form reports time only when the operation returns normally. If it
+raises, subsequent timing/printing is skipped. Use try/finally to report on exit:
+
+```python
+start = perf_counter()
+try:
+    result = operation(*args, **kwargs)
+finally:
+    elapsed = perf_counter() - start
+    print(f"{operation.__name__} took {elapsed:.6f} seconds")
+return result
+```
+
+On success, finally reports time and the function returns result. On failure,
+finally still reports time and the original exception continues outward; the
+return after the block is not reached. The wrapper preserves failure semantics
+instead of turning errors into normal-looking results.
+
 ### Preserving the wrapped function's result
 
 A decorator can inspect a calculation's result and report status without
@@ -979,6 +1016,29 @@ Put rules where their inputs/state belong. Budget's initializer knows its catego
 and limit, not a separately supplied reporting month. A shared validate_month
 function suits the current calculation entry points. A ReportPeriod class is a
 possible future design, not necessary just to obtain a post-init hook.
+
+### try/finally and exit work
+
+except handles a matching exception. finally performs exit work whenever control
+leaves the try block, whether normally, through return, or through an exception.
+It does not by itself catch the exception. Keep returns out of finally when they
+would replace an earlier result or suppress an error. If finally itself raises,
+it can also replace the outward failure; keep cleanup/reporting deliberate.
+
+For `print(calculate(...))`, arguments are evaluated before print is called. If
+calculate raises, its own finally can run, but the outer print never receives a
+value and is not called. These are two separate output locations.
+
+### Standard output, standard error, and buffering
+
+print normally writes to stdout; an unhandled-exception traceback is written to
+stderr. Buffering and how streams are merged can make a traceback appear before
+an earlier print. Display order across these streams does not necessarily reflect
+the order the Python statements executed.
+
+For a terminal experiment, `uv run python -u -m exercises.timing_decorator` uses
+unbuffered Python stdout/stderr. `print(..., flush=True)` can explicitly flush a
+particular stdout message. This affects output delivery, not try/finally semantics.
 
 ## Context managers and with
 

@@ -4,7 +4,7 @@ Last updated: 2026-11-08.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; decorator metadata preservation verified.
+Milestone 1: Python budget calculation engine. Phase 1; try/finally timing exercise complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -30,6 +30,17 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Generator functions/objects, yield suspension, and consumer-driven execution.
 
 ## Latest verification
+
+Mentor inspected timing_decorator.py using try/finally and ran the user's uv
+module command: expected exit 1 from Decimal-minus-string TypeError; timing line
+still printed. Explained stdout versus stderr buffering and outer print argument
+evaluation. Learner confirmed seeing the timing line. This is an intentional
+failure experiment, not an application regression. No application tests run.
+
+Mentor inspected exercises/timing_decorator.py and ran it with the project
+interpreter: exit 0, calculate took 0.000002 seconds, then 425.00. It uses wraps,
+generic forwarding, perf_counter subtraction, and preserves the Decimal result.
+Timing varies; this single trivial call is not a performance benchmark. No app tests.
 
 Mentor inspected exercises/generic_decorator.py with @wraps(operation) and ran
 it using the project interpreter: exit 0. calculate reports its preserved name
@@ -179,10 +190,13 @@ operation(*args, **kwargs), preserving results. Category label says Calculate:
 rather than Category:, a cosmetic variation. Concept guide updated by topic.
 Metadata exercise complete: @wraps applied, names/docstrings inspected; explained
 __wrapped__, wrapper code name versus copied metadata, and object identity.
-Concept guide updated by topic. Next: timing decorator using time.perf_counter,
-generic argument forwarding, wraps, and result preservation. Explain elapsed-time
-measurement and instrumentation overhead; don't claim benchmark quality from a
-single call. Let the learner implement. Failure-path timing/finally comes later.
+Timing decorator with try/finally now verified for deliberate failure. Learner
+understands finally reports elapsed time while the error propagates; it initially
+looked absent because stdout's timing line appeared after stderr's traceback.
+Updated concept guide with exit semantics, output streams, and python -u.
+Next: build a small custom context manager with __enter__/__exit__, connecting
+the earlier with concept to timing a block. Explain suppression/propagation and
+let the learner implement; don't repeat validation tests as prerequisites.
 Monthly stream integration can follow later; don't repeat tests as a learning blocker.
 General decorators,
 OOP composition/protocols, algorithms,
