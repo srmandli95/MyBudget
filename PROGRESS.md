@@ -1,10 +1,10 @@
 # Progress
 
-Last updated: 2026-11-07.
+Last updated: 2026-11-08.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; argument collection/unpacking concepts covered.
+Milestone 1: Python budget calculation engine. Phase 1; generic-decorator exercise complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -30,6 +30,12 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Generator functions/objects, yield suspension, and consumer-driven execution.
 
 ## Latest verification
+
+Mentor inspected exercises/generic_decorator.py and ran the user-requested
+`uv run python -m exercises.generic_decorator`: exit 0. Both functions print
+Starting operation/Finished operation; returned results are 425.00 and
+Calculate: Groceries. Generic wrapper correctly forwards mixed positional and
+keyword arguments. No app code changes or app tests for this learning exercise.
 
 Mentor inspected exercises/variable_arguments.py and ran it with the project
 interpreter: exit 0. *amounts receives tuples for two, three, and zero inputs;
@@ -162,9 +168,12 @@ Clarified unpacking makes multiple arguments to one call, not multiple calls;
 printing the collected tuple once displays values together. ** is not an error
 handling safety net. Concept guide updated by topic. keyword_arguments.py exists
 but was not reviewed or executed during this notes-only update.
-Next: generic decorator using wrapper(*args, **kwargs) and operation(*args, **kwargs)
-to forward different signatures. Metadata preservation and timing follow.
-Let the learner implement; no more repetitive validation tests are needed here.
+Previous stopping-point task is complete: generic decorator saved and verified
+on 2026-11-08. Both differing signatures work with wrapper(*args, **kwargs) and
+operation(*args, **kwargs), preserving results. Category label says Calculate:
+rather than Category:, a cosmetic variation. Concept guide updated by topic.
+Next: function metadata (__name__, docstrings) and functools.wraps, then timing.
+Explain why wrapping changes the callable's identity/metadata before adding wraps.
 Monthly stream integration can follow later; don't repeat tests as a learning blocker.
 General decorators,
 OOP composition/protocols, algorithms,

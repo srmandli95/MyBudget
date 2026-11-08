@@ -333,9 +333,32 @@ different times: applying the decorator does not execute the calculation.
 
 Decorators are useful for reusable surrounding behavior such as timing, logging,
 caching, or retries. They add indirection, so prefer a plain call when wrapping
-does not provide useful reuse or consistency. This first wrapper accepts only
-budget/spent; general argument forwarding, metadata preservation, and timing
-remain upcoming extensions.
+does not provide useful reuse or consistency. The first wrapper accepts only
+budget/spent; use argument collection/unpacking to generalize it.
+
+### Generic argument forwarding in decorators
+
+```python
+def announce(operation):
+    def wrapper(*args, **kwargs):
+        print("Starting operation")
+        result = operation(*args, **kwargs)
+        print("Finished operation")
+        return result
+    return wrapper
+```
+
+The wrapper definition collects positional arguments into args and keyword
+arguments into kwargs. The operation call unpacks them, preserving how the
+caller supplied inputs. The wrapper need not name budget/spent/category itself.
+
+For calculate(Decimal("500.00"), spent=Decimal("75.00")), args contains one
+Decimal and kwargs maps spent to the other. The same wrapper also accepts a
+category-only function. It forwards arguments; it does not make invalid arguments
+valid or silence errors raised by the original function.
+
+Returning result preserves the original function's output. Metadata preservation
+and timing are the next extensions; flexible forwarding alone does not supply them.
 
 ### Preserving the wrapped function's result
 
