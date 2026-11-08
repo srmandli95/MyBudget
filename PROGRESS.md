@@ -4,7 +4,7 @@ Last updated: 2026-11-08.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; generic-decorator exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; decorator metadata preservation verified.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -30,6 +30,11 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Generator functions/objects, yield suspension, and consumer-driven execution.
 
 ## Latest verification
+
+Mentor inspected exercises/generic_decorator.py with @wraps(operation) and ran
+it using the project interpreter: exit 0. calculate reports its preserved name
+and docstring; describe_category has its preserved name and None docstring because
+none is defined. Return values and before/after behavior remain correct.
 
 Mentor inspected exercises/generic_decorator.py and ran the user-requested
 `uv run python -m exercises.generic_decorator`: exit 0. Both functions print
@@ -172,8 +177,12 @@ Previous stopping-point task is complete: generic decorator saved and verified
 on 2026-11-08. Both differing signatures work with wrapper(*args, **kwargs) and
 operation(*args, **kwargs), preserving results. Category label says Calculate:
 rather than Category:, a cosmetic variation. Concept guide updated by topic.
-Next: function metadata (__name__, docstrings) and functools.wraps, then timing.
-Explain why wrapping changes the callable's identity/metadata before adding wraps.
+Metadata exercise complete: @wraps applied, names/docstrings inspected; explained
+__wrapped__, wrapper code name versus copied metadata, and object identity.
+Concept guide updated by topic. Next: timing decorator using time.perf_counter,
+generic argument forwarding, wraps, and result preservation. Explain elapsed-time
+measurement and instrumentation overhead; don't claim benchmark quality from a
+single call. Let the learner implement. Failure-path timing/finally comes later.
 Monthly stream integration can follow later; don't repeat tests as a learning blocker.
 General decorators,
 OOP composition/protocols, algorithms,

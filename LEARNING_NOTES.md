@@ -358,7 +358,37 @@ category-only function. It forwards arguments; it does not make invalid argument
 valid or silence errors raised by the original function.
 
 Returning result preserves the original function's output. Metadata preservation
-and timing are the next extensions; flexible forwarding alone does not supply them.
+requires another step; flexible forwarding alone does not supply it.
+
+### Function metadata and functools.wraps
+
+Functions expose descriptive attributes such as __name__ and __doc__. A docstring
+is a string placed first in the function body. Rebinding a decorated function's
+name to a wrapper normally exposes the wrapper's name/documentation instead.
+
+```python
+from functools import wraps
+
+def announce(operation):
+    @wraps(operation)
+    def wrapper(*args, **kwargs):
+        return operation(*args, **kwargs)
+    return wrapper
+```
+
+wraps copies useful original metadata onto the wrapper, including name and
+docstring, and supplies __wrapped__ pointing to the original callable. The
+wrapper still executes and remains a different object; its body is not replaced.
+
+After decorating calculate, calculate.__name__ describes the original function;
+calculate.__code__.co_name still identifies the wrapper's compiled code name.
+calculate.__wrapped__ accesses the original function. The wrapper's previous
+metadata is not separately saved automatically; inspect or save it before copying
+if needed. A missing original docstring produces None, which is expected.
+
+Metadata helps inspection, documentation, and tooling represent a decorated
+function meaningfully. It does not enforce types, validate arguments, or preserve
+business behavior automatically; the wrapper must still forward and return correctly.
 
 ### Preserving the wrapped function's result
 
