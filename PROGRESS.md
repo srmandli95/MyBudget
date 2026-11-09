@@ -1,10 +1,10 @@
 # Progress
 
-Last updated: 2026-11-08.
+Last updated: 2026-11-09.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; try/finally timing exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; class-based Timer context-manager exercise complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -30,6 +30,11 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Generator functions/objects, yield suspension, and consumer-driven execution.
 
 ## Latest verification
+
+Mentor inspected exercises/timer_context.py and ran it with the project
+interpreter: exit 0, elapsed time: 0.000009. __enter__ stores self.start and returns
+self; __exit__ stores/prints self.elapsed and returns False. Current script does
+not print its remaining-budget value; only timing was observed. No app tests run.
 
 Mentor inspected timing_decorator.py using try/finally and ran the user's uv
 module command: expected exit 1 from Decimal-minus-string TypeError; timing line
@@ -194,9 +199,14 @@ Timing decorator with try/finally now verified for deliberate failure. Learner
 understands finally reports elapsed time while the error propagates; it initially
 looked absent because stdout's timing line appeared after stderr's traceback.
 Updated concept guide with exit semantics, output streams, and python -u.
-Next: build a small custom context manager with __enter__/__exit__, connecting
-the earlier with concept to timing a block. Explain suppression/propagation and
-let the learner implement; don't repeat validation tests as prerequisites.
+Class-based Timer now implemented and verified on normal completion. Discussed
+dunder methods versus normal methods, protocol lookup by with, instance creation,
+__enter__ return/as binding, exception parameters and False versus True on exit.
+Learner fixed local start to self.start after NameError/AttributeError, clarifying
+method-local scope versus per-instance attributes. Concept guide updated by topic.
+Next: contextlib.contextmanager, connecting generators/yield with setup and
+try/finally cleanup. Let the learner implement a small generator-based timer;
+don't repeat existing validation tests as prerequisites.
 Monthly stream integration can follow later; don't repeat tests as a learning blocker.
 General decorators,
 OOP composition/protocols, algorithms,

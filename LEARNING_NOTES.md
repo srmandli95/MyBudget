@@ -1073,6 +1073,47 @@ an expected exception does not execute skipped lines inside the block.
 accessible afterward, although the resource may be closed. Ordinary arithmetic
 doesn't need a with block.
 
+### Building a context manager with a class
+
+```python
+from time import perf_counter
+
+class Timer:
+    def __enter__(self):
+        self.start = perf_counter()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.elapsed = perf_counter() - self.start
+        print(f"Elapsed: {self.elapsed:.6f} seconds")
+        return False
+```
+
+For `with Timer() as timer:`, Timer() first creates the instance, then Python
+calls its entry method. The value returned by __enter__ is bound to timer.
+Returning self supplies the same instance, not a copy. It is optional: another
+return value would be bound instead, and no return would provide None.
+
+The keyword implements the context-manager protocol; a variable named timer is
+not itself special. Normal start/stop methods would require explicit calls, but
+the recognized dunder methods let with coordinate entry and exit. Special methods
+can be called directly, but prefer the associated language operation for normal use.
+
+On exit, Python supplies the exception class, exception instance, and traceback
+object, or three None values for normal completion. Returning False lets any
+exception propagate; it does not mean cleanup failed. Returning True suppresses
+the exception, without resuming interrupted statements inside the block.
+
+State shared between methods belongs on the instance: self.start is created in
+entry and read in exit. Plain start would be local to __enter__; exit cannot
+access it by that name. Reading self.start without first assigning it raises
+AttributeError. Each Timer instance has its own attributes. Returning self alone
+does not copy local variables into the instance.
+
+The method names use double underscores, often pronounced dunder: dunder enter,
+dunder exit. Python invokes these specific protocol hooks, not arbitrary method
+names. The same principle connects iter/next and arithmetic to their special methods.
+
 ## Testing and pytest
 
 A test states expected behavior and compares the actual result. Good inputs
