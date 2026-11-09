@@ -204,9 +204,14 @@ dunder methods versus normal methods, protocol lookup by with, instance creation
 __enter__ return/as binding, exception parameters and False versus True on exit.
 Learner fixed local start to self.start after NameError/AttributeError, clarifying
 method-local scope versus per-instance attributes. Concept guide updated by topic.
-Next: contextlib.contextmanager, connecting generators/yield with setup and
-try/finally cleanup. Let the learner implement a small generator-based timer;
-don't repeat existing validation tests as prerequisites.
+Generator-based timer now implemented in exercises/generator_timer.py. Inspected
+and executed with .venv/bin/python -m exercises.generator_timer: exit 0, printed
+425.00 followed by elapsed time. No application tests run for this standalone
+exercise. Explained the distinction between with, a context manager, class
+entry/exit methods, @contextmanager, and function decorators. Recorded the
+entry → yield/pause → with body → finally sequence in the concept guide.
+Learner requested clarification of these relationships; revisit briefly before
+advancing rather than assuming all generator-manager mechanics are mastered.
 Monthly stream integration can follow later; don't repeat tests as a learning blocker.
 General decorators,
 OOP composition/protocols, algorithms,

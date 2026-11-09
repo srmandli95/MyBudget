@@ -1114,6 +1114,72 @@ The method names use double underscores, often pronounced dunder: dunder enter,
 dunder exit. Python invokes these specific protocol hooks, not arbitrary method
 names. The same principle connects iter/next and arithmetic to their special methods.
 
+### How with, context managers, and decorators relate
+
+These names describe different parts of one entry → work → exit pattern:
+
+| Term | Role |
+| --- | --- |
+| Context manager | Object that defines entry and exit behavior around a block |
+| `with` | Statement that uses that object and coordinates entry, body, and exit |
+| `__enter__` / `__exit__` | Methods for implementing that behavior in a class |
+| `@contextmanager` | Standard-library decorator that adapts a generator function into a factory for context managers |
+| A function decorator such as `@timed` | Wraps a function call; useful when the entire call should receive the extra behavior |
+
+Choose either the class implementation or the generator implementation; they
+provide the same protocol to `with`. You do not need to implement both for one
+timer. Use a class when explicit instance state or additional methods help. A
+generator-based manager is convenient for a short setup/cleanup sequence.
+
+`with` can surround several statements chosen by the caller. A timing decorator
+surrounds calls to the decorated function. Direct start/stop method calls are
+also possible, but the caller must arrange reliable cleanup with `try/finally`.
+`with` packages that responsibility for reuse. Exit is arranged after successful
+entry, including when the body raises; if entry itself fails, its exit method
+is not automatically called.
+
+### Building a context manager with a generator
+
+```python
+from contextlib import contextmanager
+from time import perf_counter
+
+@contextmanager
+def timer():
+    start = perf_counter()
+    try:
+        yield
+    finally:
+        elapsed = perf_counter() - start
+        print(elapsed)
+
+with timer():
+    print("Doing budget calculations")
+```
+
+The sequence is:
+
+1. `timer()` creates a context manager through the decorator.
+2. On entry, the manager advances the generator: record start, then pause at yield.
+3. Python runs the indented **with body** while the generator is suspended.
+4. On exit, the manager resumes the generator. Its finally block reports elapsed
+   time; an exception from the body is delivered back at the yield point, so
+   finally also runs on that path.
+
+`yield` does not call timer or execute the with body itself. It provides a pause
+point; the context manager handles advancing and resuming the generator. This
+generator must yield exactly once. Bare yield supplies None; yielding a value
+would make that value available through `with timer() as value`.
+
+The generator retains its local start across suspension. In the class version,
+separate methods shared self.start instead. The try/finally structure ensures
+cleanup; yield alone does not guarantee it. With no exception handler suppressing
+the body's error, that error propagates after cleanup.
+
+Revision checks: Who calls timer? Who advances its generator? What runs while
+the generator is paused? Why is yield inside try? When would a function decorator
+be more convenient than a with block?
+
 ## Testing and pytest
 
 A test states expected behavior and compares the actual result. Good inputs
