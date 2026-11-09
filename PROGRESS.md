@@ -4,7 +4,8 @@ Last updated: 2026-11-09.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; class-based Timer context-manager exercise complete.
+Milestone 1: Python budget calculation engine. Phase 1; generator-based timer
+and basic text-file read/write exercises complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -30,6 +31,15 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Generator functions/objects, yield suspension, and consumer-driven execution.
 
 ## Latest verification
+
+Inspected exercises/file_basics.py and executed
+.venv/bin/python -m exercises.file_basics: exit 0. Printed and independently read
+budget_note.txt containing "Remaining budget: 424.75". Both write/read operations
+use with and UTF-8; content is printed after the read block. No application tests
+run for this standalone exercise. Concept guide now covers text persistence,
+file modes, automatic closing, paths, and retained in-memory text.
+Next proposed lesson: JSON serialization to save structured budget data.
+Introduce the concept before asking the learner to implement it.
 
 Mentor inspected exercises/timer_context.py and ran it with the project
 interpreter: exit 0, elapsed time: 0.000009. __enter__ stores self.start and returns
@@ -242,21 +252,22 @@ learning tests in exercises/, with shared fixtures in tests/conftest.py.
 ## Learning-record convention
 
 User requests **one concept-based revision guide**: LEARNING_NOTES.md. It is now
-organized into 18 topics with a contents list, explanations, focused examples,
+organized by concept with a contents list, explanations, focused examples,
 common mistakes, and recall questions. Update relevant concept sections as we
 learn; do not append a new entry per test/day. This supersedes the earlier
 chronological-lesson convention. Session history is preserved in
 learnings/SESSION_HISTORY.md; daily files are archives. Verification and next tasks
-stay in this progress file. The next learning topic remains iterators/generators.
+stay in this progress file. Iterator/generator basics and text-file handling have
+been covered; the next proposed topic is JSON serialization.
 
 ## Session recovery and teaching preferences
 
 Read LEARNING_MASTER_PROMPT.md, LEARNING_NOTES.md, ROADMAP.md, and this checkpoint.
 Inspect actual files before assuming prior changes exist. Mentor first: let the
 learner implement core code. Skip familiar material on request; pause at unfamiliar
-concepts. When confused, use one change and one check at a time. General decorator
-internals, generators, concurrency, GIL, databases, and web development remain
-future lessons; mentioning them does not mean they were mastered.
+concepts. When confused, use one change and one check at a time. Function decorators
+and generator basics have been practiced; concurrency, GIL, databases, and web
+development remain future lessons. Mentioning a topic does not mean it was mastered.
 
 ## Repository
 

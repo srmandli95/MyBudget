@@ -23,6 +23,7 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
 11. [Modules, packages, and imports](#modules-packages-and-imports)
 12. [Exceptions and validation](#exceptions-and-validation)
 13. [Context managers and with](#context-managers-and-with)
+    - [Text files and persistence](#text-files-and-persistence)
 14. [Testing and pytest](#testing-and-pytest)
 15. [Fixtures and parametrization](#fixtures-and-parametrization)
 16. [Code organization and refactoring](#code-organization-and-refactoring)
@@ -1179,6 +1180,50 @@ the body's error, that error propagates after cleanup.
 Revision checks: Who calls timer? Who advances its generator? What runs while
 the generator is paused? Why is yield inside try? When would a function decorator
 be more convenient than a with block?
+
+### Text files and persistence
+
+Objects in memory ordinarily disappear when the process ends. A file stores
+information on disk for later runs. Text is encoded as bytes; encoding="utf-8"
+explicitly selects that representation. Saving display text does not preserve
+the Python object's type or automatically reconstruct it when read.
+
+```python
+remaining = calculate_remaining(Decimal("500.00"), Decimal("75.25"))
+
+with open("budget_note.txt", "w", encoding="utf-8") as file:
+    file.write(f"Remaining budget: {remaining}\n")
+
+with open("budget_note.txt", "r", encoding="utf-8") as file:
+    content = file.read()
+
+print(content)
+```
+
+open returns a file object. Its context-manager entry supplies the object bound
+to file; exit closes it, including when the body raises. This behavior is built
+in; no custom context manager is needed.
+
+- "w" creates a file if needed, or truncates an existing file when opened.
+- "r" opens an existing file for reading; a missing file raises FileNotFoundError.
+- write(text) writes a string; the f-string converts our Decimal into display text.
+- read() without a size reads the remaining contents into a string in memory.
+- `\n` is a newline. print adds another newline by default, so printing content
+  that already ends in one can display an extra blank line.
+
+A relative path such as budget_note.txt is resolved against the process's
+current working directory, not automatically the script's directory. Running
+our module from the MyBudget root creates the file there.
+
+Closing the file does not delete its saved contents or the content string in
+memory. The with block introduces no variable scope: content remains accessible
+afterward, while further reads through the closed file object fail.
+
+Common mistakes: accidentally overwriting existing contents with "w", expecting
+read to return a Decimal, or assuming paths follow the source file's location.
+
+Revision checks: Why use with for files? When does "w" erase previous contents?
+What remains after closing the file? Where are relative paths resolved?
 
 ## Testing and pytest
 
