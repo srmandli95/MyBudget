@@ -25,6 +25,7 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
 13. [Context managers and with](#context-managers-and-with)
     - [Text files and persistence](#text-files-and-persistence)
     - [JSON serialization and text encoding](#json-serialization-and-text-encoding)
+    - [Converting domain objects to JSON data and back](#converting-domain-objects-to-json-data-and-back)
 14. [Testing and pytest](#testing-and-pytest)
 15. [Fixtures and parametrization](#fixtures-and-parametrization)
 16. [Code organization and refactoring](#code-organization-and-refactoring)
@@ -1289,6 +1290,55 @@ treating serialization and encoding as the same operation.
 Revision checks: What does load return for our saved dictionary? Why explicitly
 convert the amount twice? How does JSON serialization differ from UTF-8 encoding?
 Which function would produce JSON text without opening a file?
+
+### Converting domain objects to JSON data and back
+
+A domain object such as Transaction groups application data and rules. The
+default JSON encoder cannot directly serialize that custom object, Decimal, or
+date. Explicitly convert its attributes into supported values:
+
+```python
+transaction_dict = {
+    "category": transaction.category,
+    "amount": str(transaction.amount),
+    "transaction_date": transaction.transaction_date.isoformat(),
+}
+```
+
+date.isoformat() produces text such as "2026-10-05". After dumping this dictionary
+and loading it, reconstruct the domain object explicitly:
+
+```python
+restored = Transaction(
+    category=loaded["category"],
+    amount=Decimal(loaded["amount"]),
+    transaction_date=date.fromisoformat(loaded["transaction_date"]),
+)
+```
+
+The round trip is Transaction → dictionary with strings → JSON text → loaded
+dictionary → new Transaction. json.load does not call Transaction or restore
+Python-specific types. The constructor restores the object and runs its existing
+__post_init__ validation; the explicit conversions can also raise errors first.
+
+For this dataclass, restored == transaction compares field values and is True
+when the round trip preserves them. They are distinct instances; equality does
+not mean that loading recovered the same in-memory object.
+
+Common mistakes:
+
+- dictionary[category] looks up the variable category; dictionary["category"]
+  uses a literal string key. An undefined unquoted name raises NameError.
+- Convert transaction.amount, not transaction.category, for the amount field.
+  Decimal("Groceries") raises decimal.InvalidOperation because it is not numeric.
+- Access the date through transaction.transaction_date before calling isoformat.
+- Constructor keyword names must match exactly: transaction_date and
+  transation_date are different names; the latter raises TypeError here.
+- After correcting conversion code, rerun the writing step so the saved file
+  contains the corrected data.
+
+Revision checks: What type does json.load return here? Which step reconstructs
+the date? When does model validation run? Why can == be True for separate objects?
 
 ## Testing and pytest
 

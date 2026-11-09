@@ -5,7 +5,7 @@ Last updated: 2026-11-09.
 ## Current milestone
 
 Milestone 1: Python budget calculation engine. Phase 1; generator-based timer,
-text-file handling, and basic JSON serialization exercises complete.
+text-file handling, and Transaction JSON round-trip exercises complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -31,8 +31,21 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Generator functions/objects, yield suspension, and consumer-driven execution.
 - Text-file reading/writing, UTF-8 encoding, and JSON serialization/deserialization.
 - JSON file versus string APIs and explicit Decimal → string → Decimal conversion.
+- Explicit Transaction-to-dictionary conversion, ISO date strings, and reconstruction.
 
 ## Latest verification
+
+Inspected exercises/transaction_json.py and ran
+.venv/bin/python -m exercises.transaction_json: exit 0. Printed reconstructed
+Transaction(category='Groceries', amount=Decimal('40.00'),
+transaction_date=datetime.date(2026, 10, 5)) and equality True. Independently read
+transaction.json: category Groceries, amount string "40.00", date string
+"2026-10-05". Corrected literal dictionary keys, amount source attribute, and
+constructor keyword spelling through learner edits. Concept guide updated with
+explicit conversion, reconstruction/validation, and value equality versus identity.
+No application tests run for this standalone exercise.
+Next proposed lesson: extract conversion into reusable functions, then apply
+them to a collection of transactions without repeating serialization code.
 
 Inspected exercises/json_basics.py and ran
 .venv/bin/python -m exercises.json_basics: exit 0, printed Groceries, 424.75,
@@ -41,8 +54,7 @@ and <class 'decimal.Decimal'>. Earlier run also verified budget.json stored
 Decimal after loading. Explained dump/dumps and load/loads, unsupported Decimal
 serialization, and JSON text versus UTF-8 bytes. Concept guide updated by topic.
 No application tests run for this standalone exercise.
-Next proposed lesson: serialize a Transaction with Decimal and date fields,
-then reconstruct it, introducing explicit object-to-data conversion.
+Transaction round trip subsequently completed; see latest checkpoint above.
 
 Inspected exercises/file_basics.py and executed
 .venv/bin/python -m exercises.file_basics: exit 0. Printed and independently read
@@ -269,7 +281,8 @@ learn; do not append a new entry per test/day. This supersedes the earlier
 chronological-lesson convention. Session history is preserved in
 learnings/SESSION_HISTORY.md; daily files are archives. Verification and next tasks
 stay in this progress file. Iterator/generator basics and text-file handling have
-been covered along with basic JSON; next proposed topic is object-to-data conversion.
+been covered along with basic JSON and object-to-data conversion. Next proposed
+step: reusable conversion functions and saving a collection of transactions.
 
 ## Session recovery and teaching preferences
 
