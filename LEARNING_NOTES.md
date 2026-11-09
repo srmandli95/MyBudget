@@ -24,6 +24,7 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
 12. [Exceptions and validation](#exceptions-and-validation)
 13. [Context managers and with](#context-managers-and-with)
     - [Text files and persistence](#text-files-and-persistence)
+    - [JSON serialization and text encoding](#json-serialization-and-text-encoding)
 14. [Testing and pytest](#testing-and-pytest)
 15. [Fixtures and parametrization](#fixtures-and-parametrization)
 16. [Code organization and refactoring](#code-organization-and-refactoring)
@@ -1224,6 +1225,70 @@ read to return a Decimal, or assuming paths follow the source file's location.
 
 Revision checks: Why use with for files? When does "w" erase previous contents?
 What remains after closing the file? Where are relative paths resolved?
+
+### JSON serialization and text encoding
+
+Serialization converts data into a representation that can be stored or sent.
+Deserialization reads that representation back into usable data. JSON is a text
+format for structured values such as objects, arrays, strings, numbers, booleans,
+and null. Python's json module maps dictionaries to JSON objects and lists to
+arrays; loading reconstructs corresponding Python values, not arbitrary classes.
+
+```python
+import json
+from decimal import Decimal
+
+remaining = Decimal("424.75")
+data = {"category": "Groceries", "remaining": str(remaining)}
+
+with open("budget.json", "w", encoding="utf-8") as file:
+    json.dump(data, file)
+
+with open("budget.json", "r", encoding="utf-8") as file:
+    loaded = json.load(file)
+
+amount = Decimal(loaded["remaining"])
+```
+
+| Function | Input/output |
+| --- | --- |
+| json.dump(data, file) | Writes JSON text to a file object |
+| json.dumps(data) | Returns JSON text as a Python string |
+| json.load(file) | Reads JSON from a file object and returns Python data |
+| json.loads(text) | Parses JSON text from a string and returns Python data |
+
+Remember the s as "string." Passing a file as a second positional argument to
+dumps raises TypeError; use dump for the file operation.
+
+The default JSON encoder does not support Decimal: attempting to serialize one
+raises TypeError. We explicitly store its decimal string to preserve the value
+without converting through a binary float. On loading, it remains a string
+until our code calls Decimal. JSON does not know that the remaining field means
+money or that its string should become a Decimal.
+
+Serialization and character encoding perform different conversions:
+
+```text
+Python dictionary → JSON text → UTF-8 bytes on disk
+                  serialize     encode
+
+Bytes on disk → JSON text → Python dictionary
+               decode      deserialize
+```
+
+json.dump supplies JSON text; the file object opened with encoding="utf-8"
+encodes that text into bytes. Reading reverses those steps. UTF-8 describes how
+characters are represented as bytes, not how dictionaries are structured; it
+also applies to ordinary text files. JSON may escape characters in its textual
+representation; those escapes are separate from the file's character encoding.
+
+Common mistakes: confusing dump with dumps, expecting Decimal to serialize
+automatically, assuming loaded strings regain their original Python types, or
+treating serialization and encoding as the same operation.
+
+Revision checks: What does load return for our saved dictionary? Why explicitly
+convert the amount twice? How does JSON serialization differ from UTF-8 encoding?
+Which function would produce JSON text without opening a file?
 
 ## Testing and pytest
 

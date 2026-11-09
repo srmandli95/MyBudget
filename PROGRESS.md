@@ -4,8 +4,8 @@ Last updated: 2026-11-09.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; generator-based timer
-and basic text-file read/write exercises complete.
+Milestone 1: Python budget calculation engine. Phase 1; generator-based timer,
+text-file handling, and basic JSON serialization exercises complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -29,8 +29,20 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Fixture setup errors versus expected exceptions inside a test clarified by experiment.
 - Iterable versus iterator, next(), exhaustion, and fresh traversal of a list.
 - Generator functions/objects, yield suspension, and consumer-driven execution.
+- Text-file reading/writing, UTF-8 encoding, and JSON serialization/deserialization.
+- JSON file versus string APIs and explicit Decimal → string → Decimal conversion.
 
 ## Latest verification
+
+Inspected exercises/json_basics.py and ran
+.venv/bin/python -m exercises.json_basics: exit 0, printed Groceries, 424.75,
+and <class 'decimal.Decimal'>. Earlier run also verified budget.json stored
+{"category": "Groceries", "remaining": "424.75"}. Final code reconstructs the
+Decimal after loading. Explained dump/dumps and load/loads, unsupported Decimal
+serialization, and JSON text versus UTF-8 bytes. Concept guide updated by topic.
+No application tests run for this standalone exercise.
+Next proposed lesson: serialize a Transaction with Decimal and date fields,
+then reconstruct it, introducing explicit object-to-data conversion.
 
 Inspected exercises/file_basics.py and executed
 .venv/bin/python -m exercises.file_basics: exit 0. Printed and independently read
@@ -38,8 +50,7 @@ budget_note.txt containing "Remaining budget: 424.75". Both write/read operation
 use with and UTF-8; content is printed after the read block. No application tests
 run for this standalone exercise. Concept guide now covers text persistence,
 file modes, automatic closing, paths, and retained in-memory text.
-Next proposed lesson: JSON serialization to save structured budget data.
-Introduce the concept before asking the learner to implement it.
+JSON serialization subsequently completed; see latest checkpoint above.
 
 Mentor inspected exercises/timer_context.py and ran it with the project
 interpreter: exit 0, elapsed time: 0.000009. __enter__ stores self.start and returns
@@ -258,7 +269,7 @@ learn; do not append a new entry per test/day. This supersedes the earlier
 chronological-lesson convention. Session history is preserved in
 learnings/SESSION_HISTORY.md; daily files are archives. Verification and next tasks
 stay in this progress file. Iterator/generator basics and text-file handling have
-been covered; the next proposed topic is JSON serialization.
+been covered along with basic JSON; next proposed topic is object-to-data conversion.
 
 ## Session recovery and teaching preferences
 
