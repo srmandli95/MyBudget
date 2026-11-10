@@ -15,8 +15,17 @@ class FileDestination:
         with open("polymorphism_report.txt", "w", encoding="utf-8") as file:
             file.write(report)
 
+class LabeledConsoleDestination(ConsoleDestination):
+    def write(self, report: str) -> None:
+        super().write(f"LabeledConsoleDestination: {report}")
+
     
 report = "Remaining budget: 424.75"
 
-deliver_report(ConsoleDestination(), report)
-deliver_report(FileDestination(), report)
+#deliver_report(ConsoleDestination(), report)
+#deliver_report(FileDestination(), report)
+
+
+destination = LabeledConsoleDestination()
+deliver_report(destination, "Remaining budget: 424.75")
+

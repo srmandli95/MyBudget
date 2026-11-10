@@ -18,6 +18,7 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
     - [Composition, instance methods, and default factories](#composition-instance-methods-and-default-factories)
     - [Properties versus instance methods](#properties-versus-instance-methods)
     - [Polymorphism, duck typing, and classes without instance data](#polymorphism-duck-typing-and-classes-without-instance-data)
+    - [Inheritance, overriding, and super](#inheritance-overriding-and-super)
 6. [Dataclasses and special methods](#dataclasses-and-special-methods)
 7. [Decimal and money](#decimal-and-money)
 8. [Collections and loops](#collections-and-loops)
@@ -693,6 +694,60 @@ compatible parameters and behavior.
 Revision checks: Which object selects the write implementation? What does
 deliver_report need to know about its destination? Why is report not an instance
 attribute? When might a file destination need instance state?
+
+### Inheritance, overriding, and super
+
+Inheritance defines a class as a specialized kind of another class. Composition
+expresses a has-a relationship (a tracker has transactions); inheritance expresses
+an is-a relationship (a labeled console destination is a console destination).
+Use inheritance when that substitutability fits, not merely to avoid a few lines.
+
+```python
+class LabeledConsoleDestination(ConsoleDestination):
+    def write(self, report: str) -> None:
+        super().write(f"MyBudget: {report}")
+```
+
+ConsoleDestination is the base class; LabeledConsoleDestination is the subclass.
+The class declaration establishes inheritance. The subclass can use inherited
+methods, override them, or add new methods. Overriding means defining a method
+with the same name to customize behavior. It can do work before and after a
+super call or replace the behavior entirely.
+
+super() does not establish inheritance or create a parent instance. It provides
+access to the next implementation in the method resolution order. In this
+single-inheritance example, super().write invokes ConsoleDestination.write with
+the same subclass instance as self. Multiple inheritance and its lookup order
+have not yet been practiced.
+
+Instance data belongs to that one instance. Methods are normally stored on the
+classes and found through attribute lookup, not copied into every instance.
+Calling an inherited method does not switch to another object's data.
+
+```python
+class FileDestination:
+    def __init__(self, filename):
+        self.filename = filename
+
+class LabeledFileDestination(FileDestination):
+    def __init__(self, filename, label):
+        super().__init__(filename)
+        self.label = label
+```
+
+The base initializer assigns filename on the same instance on which the subclass
+initializer assigns label. If a subclass defines no initializer, it inherits the
+base initializer. When it defines its own initializer, the base initializer is
+not automatically called; super().__init__(...) explicitly delegates that work.
+This initializer example was explained, not exercised in the destination script.
+
+Common mistakes: calling super a mechanism that creates inheritance, imagining
+a separate parent instance, assuming methods are copied into each instance, or
+forgetting required base initialization when overriding __init__.
+
+Revision checks: Which line establishes inheritance? Can a subclass inherit a
+method without super? What instance receives a super call? Where are methods
+normally stored? How does initialization create inherited instance data?
 
 ## Dataclasses and special methods
 
