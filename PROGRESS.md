@@ -6,7 +6,7 @@ Last updated: 2026-11-10.
 
 Milestone 1: Python budget calculation engine. Phase 1; generator-based timer,
 text-file handling, Transaction JSON round trip, tracker composition, and computed
-property exercises complete.
+property and destination-polymorphism exercises complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -34,8 +34,20 @@ The project consists of working standalone exercises, not yet an integrated engi
 - JSON file versus string APIs and explicit Decimal → string → Decimal conversion.
 - Explicit Transaction-to-dictionary conversion, ISO date strings, and reconstruction.
 - Tracker composition, instance methods, per-instance list factories, and computed properties.
+- Polymorphism through compatible write methods, duck typing, and optional instance data.
 
 ## Latest verification
+
+Inspected exercises/report_destinations.py and ran
+.venv/bin/python -m exercises.report_destinations: exit 0. Console printed
+"Remaining budget: 424.75"; independently read polymorphism_report.txt and
+confirmed the same text. Both destinations work through deliver_report's
+destination.write(report) call without inheritance. Explained interchangeable
+implementations, avoiding destination-specific branches, and classes that provide
+behavior without instance attributes. Suggested removing unused dataclass import;
+that cleanup has not been reinspected. Concept guide updated by topic.
+No application tests run for this standalone exercise. Inheritance and explicit
+typing.Protocol contracts have not yet been taught; either can build on this lesson.
 
 Inspected exercises/budget_tracker.py with @property total_spent and executed
 .venv/bin/python -m exercises.budget_tracker: exit 0; printed 40.00, 55.00,

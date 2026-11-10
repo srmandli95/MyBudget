@@ -17,6 +17,7 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
 5. [Classes, instances, and methods](#classes-instances-and-methods)
     - [Composition, instance methods, and default factories](#composition-instance-methods-and-default-factories)
     - [Properties versus instance methods](#properties-versus-instance-methods)
+    - [Polymorphism, duck typing, and classes without instance data](#polymorphism-duck-typing-and-classes-without-instance-data)
 6. [Dataclasses and special methods](#dataclasses-and-special-methods)
 7. [Decimal and money](#decimal-and-money)
 8. [Collections and loops](#collections-and-loops)
@@ -641,6 +642,57 @@ parentheses, or treating a getter-only property as full object immutability.
 Revision checks: Can a method compute the same total? What executes on each
 property read? Why might attribute-style access be useful? What remains mutable
 when a computed property has no setter?
+
+### Polymorphism, duck typing, and classes without instance data
+
+Polymorphism lets different objects respond to a shared operation with their
+own behavior. In our example, objects of different classes are interchangeable
+at the call site because each supports write(report):
+
+```python
+class ConsoleDestination:
+    def write(self, report: str) -> None:
+        print(report)
+
+class FileDestination:
+    def write(self, report: str) -> None:
+        with open("polymorphism_report.txt", "w", encoding="utf-8") as file:
+            file.write(report)
+
+def deliver_report(destination, report: str) -> None:
+    destination.write(report)
+
+deliver_report(ConsoleDestination(), "Remaining budget: 424.75")
+deliver_report(FileDestination(), "Remaining budget: 424.75")
+```
+
+deliver_report stays the same; the receiving object's method supplies the
+behavior. Merely giving unrelated methods the same name is not the full idea:
+the caller must be able to use them through a compatible operation. Here both
+accept a report string. Python does not require a common parent class for this
+example. Duck typing means using an object according to the operations it
+supports rather than checking its exact class first.
+
+This helps callers work with interchangeable implementations without adding
+branches for each destination type. A new destination supporting write(report)
+could be supplied without editing deliver_report. For tiny tasks a conditional
+or a standalone function can also be reasonable; these classes demonstrate
+the mechanism rather than being required just to print or save text.
+
+Instance attributes are optional. ConsoleDestination provides behavior without
+storing data on self; report is a method parameter, and self still refers to
+the instance. A class can provide data, behavior, or both. If each file destination
+needed a configurable filename, an initializer could store self.filename so
+different instances remember different paths. A dataclass is not required when
+there are no data fields to initialize here.
+
+Common mistakes: assuming all classes require instance attributes, thinking
+polymorphism requires inheritance, or assuming matching names alone guarantee
+compatible parameters and behavior.
+
+Revision checks: Which object selects the write implementation? What does
+deliver_report need to know about its destination? Why is report not an instance
+attribute? When might a file destination need instance state?
 
 ## Dataclasses and special methods
 
