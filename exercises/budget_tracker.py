@@ -11,6 +11,13 @@ class BudgetTracker1:
     def add_transaction(self, transaction:Transaction) -> None:
         self.transactions.append(transaction)
 
+    @property
+    def total_spent(self) -> Decimal:
+        return sum(
+            (transaction.amount for transaction in self.transactions),
+            Decimal("0.00"),
+        )
+
 
 first = BudgetTracker1()
 second = BudgetTracker1()
@@ -26,7 +33,12 @@ transaction = Transaction(
 )
 
 first.add_transaction(transaction)
+print(first.total_spent)  
+
+first.add_transaction(
+    Transaction("Gas", Decimal("15.00"), date(2026, 10, 5))
+)
 
 
-print(first.transactions is second.transactions)
-print(first.transactions[0] is transaction)
+print(first.total_spent)
+print(second.total_spent)

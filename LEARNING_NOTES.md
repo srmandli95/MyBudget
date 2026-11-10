@@ -16,6 +16,7 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
 4. [Objects, references, and copying](#objects-references-and-copying)
 5. [Classes, instances, and methods](#classes-instances-and-methods)
     - [Composition, instance methods, and default factories](#composition-instance-methods-and-default-factories)
+    - [Properties versus instance methods](#properties-versus-instance-methods)
 6. [Dataclasses and special methods](#dataclasses-and-special-methods)
 7. [Decimal and money](#decimal-and-money)
 8. [Collections and loops](#collections-and-loops)
@@ -588,6 +589,58 @@ Dataclasses reject a direct list default such as transactions = [] for this fiel
 Revision checks: What does self refer to during a method call? What is composed
 inside a tracker? When does the factory run? Why can lists be distinct while a
 contained transaction is the same object?
+
+### Properties versus instance methods
+
+A property provides attribute-style access backed by code. @property decorates
+a getter method; reading the attribute invokes that getter without parentheses:
+
+```python
+# Inside BudgetTracker:
+@property
+def total_spent(self) -> Decimal:
+    return sum(
+        (transaction.amount for transaction in self.transactions),
+        Decimal("0.00"),
+    )
+
+# Caller:
+print(tracker.total_spent)
+```
+
+tracker.transactions reads a stored list attribute; tracker.total_spent executes
+the getter to compute a value. This getter sums the current list on each access.
+property does not cache the result or store a separate running total. Appending
+another transaction changes the result of the next access.
+
+An ordinary instance method calculate_total() can use exactly the same code.
+There is no calculation or performance advantage inherent in choosing property.
+For our tracker either interface is reasonable; property is optional.
+
+| Interface | What it presents to callers |
+| --- | --- |
+| tracker.calculate_total() | An operation to perform |
+| tracker.total_spent | A value associated with the object |
+
+A property is useful when you want attribute access while calculating or
+controlling the value. It can also preserve an existing attribute-style interface
+if implementation changes from stored data to a calculation. Prefer ordinary
+methods for actions, work requiring caller-supplied arguments, or surprising or
+expensive operations such as network requests. A total over a very large list
+may also warrant a method or a different implementation to make its cost clear.
+
+A getter-only property rejects normal assignment such as
+tracker.total_spent = Decimal("0.00") with AttributeError. This does not freeze
+the tracker or its transactions: changing the source list still affects the
+computed total. Setter/deleter behavior is a separate topic, not yet practiced.
+
+Common mistakes: assuming a property is required whenever a method returns
+data, assuming it caches its value, calling this Decimal-valued property with
+parentheses, or treating a getter-only property as full object immutability.
+
+Revision checks: Can a method compute the same total? What executes on each
+property read? Why might attribute-style access be useful? What remains mutable
+when a computed property has no setter?
 
 ## Dataclasses and special methods
 

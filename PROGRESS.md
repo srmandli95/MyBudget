@@ -5,7 +5,8 @@ Last updated: 2026-11-10.
 ## Current milestone
 
 Milestone 1: Python budget calculation engine. Phase 1; generator-based timer,
-text-file handling, Transaction JSON round trip, and tracker composition exercises complete.
+text-file handling, Transaction JSON round trip, tracker composition, and computed
+property exercises complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -32,8 +33,20 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Text-file reading/writing, UTF-8 encoding, and JSON serialization/deserialization.
 - JSON file versus string APIs and explicit Decimal → string → Decimal conversion.
 - Explicit Transaction-to-dictionary conversion, ISO date strings, and reconstruction.
+- Tracker composition, instance methods, per-instance list factories, and computed properties.
 
 ## Latest verification
+
+Inspected exercises/budget_tracker.py with @property total_spent and executed
+.venv/bin/python -m exercises.budget_tracker: exit 0; printed 40.00, 55.00,
+and 0.00. Getter recalculates after another transaction is added, while the
+second tracker's list remains independent. No application tests run.
+Recorded property versus stored attribute and method, no automatic caching,
+and getter-only assignment behavior (explained, not separately executed).
+Learner questioned why property is necessary; clarified it is an optional
+interface choice and a normal method is equally valid for this calculation.
+Do not treat this choice as a mandatory improvement or assign repetitive total
+tests. Setters/deleters and property internals have not been practiced.
 
 Inspected exercises/budget_tracker.py and executed
 .venv/bin/python -m exercises.budget_tracker: exit 0, printed False then True.
