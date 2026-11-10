@@ -15,6 +15,7 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
 3. [Functions and type hints](#functions-and-type-hints)
 4. [Objects, references, and copying](#objects-references-and-copying)
 5. [Classes, instances, and methods](#classes-instances-and-methods)
+    - [Composition, instance methods, and default factories](#composition-instance-methods-and-default-factories)
 6. [Dataclasses and special methods](#dataclasses-and-special-methods)
 7. [Decimal and money](#decimal-and-money)
 8. [Collections and loops](#collections-and-loops)
@@ -538,6 +539,55 @@ behavior, not its entire meaning.
 An object is not automatically a database record or HTTP request. Later, code
 will validate request data, construct objects, and persist records. Classes alone
 do not provide user isolation or authorization.
+
+### Composition, instance methods, and default factories
+
+Composition builds an object using other objects: a BudgetTracker **has
+transactions**. The tracker keeps a list of references to Transaction instances;
+adding a transaction does not copy it. One class can create many independent
+tracker instances; separate class definitions are unnecessary.
+
+```python
+from dataclasses import dataclass, field
+
+@dataclass
+class BudgetTracker:
+    transactions: list[Transaction] = field(default_factory=list)
+
+    def add_transaction(self, transaction: Transaction) -> None:
+        self.transactions.append(transaction)
+```
+
+add_transaction is an instance method. In first.add_transaction(transaction),
+self refers to first. The method changes that instance's list; -> None indicates
+it returns no result. A dataclass still supports methods you define: generated
+initialization and custom operations work together.
+
+default_factory=list tells the generated initializer to call list() when no
+transactions argument is supplied. The default is a fresh empty list [], not
+the integer 0. Each such instance receives a different list:
+
+```python
+first = BudgetTracker()
+second = BudgetTracker()
+first.add_transaction(transaction)
+
+print(first.transactions is second.transactions)  # False
+print(first.transactions[0] is transaction)        # True
+```
+
+Passing an explicit list bypasses the factory for that field. BudgetTracker(items)
+stores that list reference; it does not copy items. Passing the same list to two
+trackers makes them share it, so additions through either tracker are visible
+through both. The factory does not guarantee independence for supplied lists.
+
+Use field(default_factory=list), passing the callable list rather than calling
+list() there. The callable creates each default when an instance needs it.
+Dataclasses reject a direct list default such as transactions = [] for this field.
+
+Revision checks: What does self refer to during a method call? What is composed
+inside a tracker? When does the factory run? Why can lists be distinct while a
+contained transaction is the same object?
 
 ## Dataclasses and special methods
 

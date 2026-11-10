@@ -1,11 +1,11 @@
 # Progress
 
-Last updated: 2026-11-09.
+Last updated: 2026-11-10.
 
 ## Current milestone
 
 Milestone 1: Python budget calculation engine. Phase 1; generator-based timer,
-text-file handling, and Transaction JSON round-trip exercises complete.
+text-file handling, Transaction JSON round trip, and tracker composition exercises complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -34,6 +34,18 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Explicit Transaction-to-dictionary conversion, ISO date strings, and reconstruction.
 
 ## Latest verification
+
+Inspected exercises/budget_tracker.py and executed
+.venv/bin/python -m exercises.budget_tracker: exit 0, printed False then True.
+Both instances use the default factory; only first receives the transaction.
+Subsequent inspection confirms the unused second class was removed. Covered
+composition, instance methods on dataclasses, fresh empty-list defaults, explicit
+arguments bypassing defaults, and shared references rather than copying.
+Updated concept guide by topic. No application tests run for this exercise.
+Learner asked to skip familiar function/refactoring and exception exercises;
+prioritize new concepts instead of requiring repeated practice of known patterns.
+Next topic should extend OOP understanding with a new concept, not another
+serialization refactor or repetition of basic validation tests.
 
 Inspected exercises/transaction_json.py and ran
 .venv/bin/python -m exercises.transaction_json: exit 0. Printed reconstructed
