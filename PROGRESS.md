@@ -7,7 +7,9 @@ Last updated: 2026-11-11.
 Milestone 1: Python budget calculation engine. Phase 1; generator-based timer,
 text-file handling, Transaction JSON round trip, tracker composition, and computed
 property, destination-polymorphism, inheritance, and basic abstract-class exercises complete.
-The project consists of working standalone exercises, not yet an integrated engine.
+Most learning examples remain standalone exercises. The application now has its
+first CLI calculation command in mybudget/cli.py, reusing calculations.py.
+The full engine and persistence/reporting workflow are not yet integrated.
 
 ## Completed learning
 
@@ -41,6 +43,17 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Inspected mybudget/cli.py and ran
+.venv/bin/python -m mybudget.cli --budget 500.00 --spent 75.25: exit 0,
+printed 424.75 after learner saved print(main()) in the main guard. main parses
+required string arguments, converts them to Decimal, and returns the calculation.
+Earlier --help run exited 0 and listed --budget, --spent, and -h/--help; that was
+before moving parsing into main, not a separate rerun of the final help command.
+Recorded argparse, CLI/package paths, main guard, and return versus print in the
+concept guide. No full application suite or new CLI tests run for this update.
+Next agreed step: introduce friendly invalid-input handling at the CLI boundary
+instead of a raw traceback. Do not claim that behavior is implemented yet.
 
 Inspected exercises/static_methods.py and ran
 .venv/bin/python -m exercises.static_methods: exit 0, printed False for spending

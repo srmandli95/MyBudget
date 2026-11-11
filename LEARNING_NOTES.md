@@ -37,8 +37,9 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
 15. [Fixtures and parametrization](#fixtures-and-parametrization)
 16. [Code organization and refactoring](#code-organization-and-refactoring)
 17. [Environments, dependencies, and uv](#environments-dependencies-and-uv)
-18. [Git and GitHub](#git-and-github)
-19. [Quick revision questions](#quick-revision-questions)
+18. [Command-line interfaces and argparse](#command-line-interfaces-and-argparse)
+19. [Git and GitHub](#git-and-github)
+20. [Quick revision questions](#quick-revision-questions)
 
 ## Python and execution
 
@@ -1872,6 +1873,63 @@ deactivate
 Activation changes the current shell's PATH. Deactivation doesn't delete .venv.
 `python -m pip` selects pip through that interpreter. `sys.executable` helps verify
 the selected interpreter. A virtual environment is not a complete virtual machine.
+
+## Command-line interfaces and argparse
+
+A command-line interface (CLI) accepts inputs when a program is launched and
+displays results in the terminal. Python's standard-library argparse module
+parses command-line text into named values and supplies usage/help output.
+
+```python
+import argparse
+from decimal import Decimal
+from mybudget.calculations import calculate_remaining
+
+def main():
+    parser = argparse.ArgumentParser(description="MyBudget calculations")
+    parser.add_argument("--budget", required=True)
+    parser.add_argument("--spent", required=True)
+    args = parser.parse_args()
+    return calculate_remaining(Decimal(args.budget), Decimal(args.spent))
+
+if __name__ == "__main__":
+    print(main())
+```
+
+From the project root:
+
+```sh
+uv run python -m mybudget.cli --budget 500.00 --spent 75.25
+uv run python -m mybudget.cli --help
+```
+
+ArgumentParser configures the interface. add_argument declares each named option;
+required=True means it must be provided. parse_args normally reads the process's
+command-line arguments and returns a Namespace, accessed here as args.budget and
+args.spent. Without an explicit type conversion, these values are strings.
+Decimal converts them for the existing arithmetic function. --help displays
+generated help and exits without performing the calculation.
+
+The CLI handles input/output; calculations.py retains the arithmetic. A main
+function provides a callable entry point, and the main guard runs it only when
+the module is executed as the program rather than normally imported.
+
+return passes a value to the caller; it does not display that value. main()
+alone discards this returned Decimal when run as a module. print(main()) both
+calls main and displays its result. An interactive Python prompt may display
+expression results automatically; ordinary module execution does not.
+
+The module name mybudget.cli maps to mybudget/cli.py in this project. Create and
+save that file before running it; running from the right directory cannot make
+a missing module exist. Commands and file paths are separate: the root is
+Mybudget, while the package directory inside it is mybudget.
+
+Current scope is valid numeric input. Friendly messages for invalid amounts,
+exit-status design, and CLI-specific automated verification are future work.
+
+Revision checks: What type is args.budget before conversion? What does argparse
+provide for --help? Why separate main from the guard? Why is return alone silent
+in a module? Which directory should contain cli.py?
 
 ## Git and GitHub
 
