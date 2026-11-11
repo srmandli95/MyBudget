@@ -11,9 +11,16 @@ def parse_amount(text: str) -> Decimal:
         )
 
 def main():
-    parser = argparse.ArgumentParser(description="MyBudget calculations")
-    parser.add_argument("--budget", required=True, type=parse_amount)
-    parser.add_argument("--spent", required=True, type=parse_amount)
+    parser = argparse.ArgumentParser(description="MyBudget")
+
+    commands = parser.add_subparsers(dest="command", required=True)
+    calculate_parser = commands.add_parser(
+        "calculate",
+        help="Calculate the remaining budget",
+    )
+
+    calculate_parser.add_argument("--budget", required=True, type=parse_amount)
+    calculate_parser.add_argument("--spent", required=True, type=parse_amount)
 
     args = parser.parse_args()
 

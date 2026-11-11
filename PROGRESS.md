@@ -44,6 +44,17 @@ The full engine and persistence/reporting workflow are not yet integrated.
 
 ## Latest verification
 
+Inspected mybudget/cli.py after subcommand changes and ran three focused commands
+with .venv/bin/python -m mybudget.cli: calculate --budget 500.00 --spent 75.25
+printed 424.75, top-level --help listed calculate, and calculate --help listed
+required --budget/--spent inputs. All exited 0. Corrected the learner's
+parser.calculate_parser() call to parser.parse_args() through their edit.
+Explained subparser registration, dest="command", required command selection,
+command-specific arguments, and parsing versus function dispatch. Concept guide
+updated. Only calculate is implemented; add/report are examples of future commands.
+No automated suite run. Next proposed lesson: dispatch a second command to its
+own handler, then connect transaction input to the existing model and persistence.
+
 Inspected mybudget/cli.py with parse_amount and ran two focused commands using
 the project interpreter. Valid --budget 500.00 --spent 75.25 printed 424.75,
 exit 0. Invalid --budget hello --spent 75.25 printed usage and
@@ -52,8 +63,7 @@ without a traceback. Converter catches InvalidOperation and raises
 argparse.ArgumentTypeError; both arguments use the callback and main receives
 Decimals directly. Concept guide updated with callbacks, targeted catches,
 error presentation, and status codes. No automated application suite run.
-Next lesson: argparse subcommands, creating a calculate command as a foundation
-for separate future add/report operations. Non-finite inputs and sign policies
+Subcommands were subsequently implemented and verified above. Non-finite inputs and sign policies
 remain deferred; they are familiar validation concepts, not blockers to learning.
 
 Inspected mybudget/cli.py and ran

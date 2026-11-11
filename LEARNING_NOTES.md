@@ -38,6 +38,7 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
 16. [Code organization and refactoring](#code-organization-and-refactoring)
 17. [Environments, dependencies, and uv](#environments-dependencies-and-uv)
 18. [Command-line interfaces and argparse](#command-line-interfaces-and-argparse)
+    - [Subcommands and subparsers](#subcommands-and-subparsers)
 19. [Git and GitHub](#git-and-github)
 20. [Quick revision questions](#quick-revision-questions)
 
@@ -1970,6 +1971,54 @@ Revision checks: What type is args.budget without a converter? What does argpars
 provide for --help? Why separate main from the guard? Why is return alone silent
 in a module? Which directory should contain cli.py? Why pass type=parse_amount
 instead of calling it? How does ArgumentTypeError affect error presentation?
+
+### Subcommands and subparsers
+
+A subcommand selects an operation within one command-line program. Git's status,
+commit, and push and uv's run, add, and sync illustrate this command pattern;
+these examples do not imply those tools use Python's argparse internally.
+
+A subparser defines a subcommand and the arguments belonging to it. It does not
+automatically call an application function with a matching name.
+
+```python
+parser = argparse.ArgumentParser(description="MyBudget")
+commands = parser.add_subparsers(dest="command", required=True)
+calculate_parser = commands.add_parser(
+    "calculate", help="Calculate the remaining budget"
+)
+calculate_parser.add_argument("--budget", required=True, type=parse_amount)
+calculate_parser.add_argument("--spent", required=True, type=parse_amount)
+
+args = parser.parse_args()
+```
+
+- add_subparsers creates the object used to register commands.
+- dest="command" stores the selected name in args.command.
+- required=True requires a command to be selected.
+- add_parser("calculate") registers the command and returns its argument parser.
+- Arguments added to calculate_parser belong to that command.
+- The main parser's parse_args() reads input and uses the selected subparser.
+
+For `python -m mybudget.cli calculate --budget 500.00 --spent 75.25`,
+args.command is "calculate" and the amount fields are Decimals through our
+converter. The program still explicitly calls calculate_remaining afterward.
+With multiple operations it will need dispatch logic; registering a command alone
+does not implement its behavior.
+
+Each future subcommand can have different inputs: calculate uses budget/spent,
+add could use category/amount/date, and report could use year/month. Only
+calculate is currently implemented. Top-level --help describes commands;
+calculate --help describes that command's inputs.
+
+Common mistake: parser.calculate_parser() is not the parsing call. The name
+calculate_parser is a local variable containing an object, not an attribute or
+method automatically created on the main parser. Use parser.parse_args().
+Parser configuration describes allowed input; parse_args actually reads it.
+
+Revision checks: What is the difference between a command and its subparser?
+Where does the selected name appear? Why call parse_args on the main parser?
+Does naming a command calculate connect it to calculate_remaining automatically?
 
 ## Git and GitHub
 
