@@ -21,6 +21,7 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
     - [Inheritance, overriding, and super](#inheritance-overriding-and-super)
     - [Abstract base classes and required methods](#abstract-base-classes-and-required-methods)
     - [Class methods and alternative constructors](#class-methods-and-alternative-constructors)
+    - [Static methods versus module functions](#static-methods-versus-module-functions)
 6. [Dataclasses and special methods](#dataclasses-and-special-methods)
 7. [Decimal and money](#decimal-and-money)
 8. [Collections and loops](#collections-and-loops)
@@ -864,6 +865,47 @@ other marks an abstract requirement. They are not alternative forms of each othe
 Revision checks: What is cls? Why is no instance needed to call from_dict?
 Does from_dict replace __init__? Could a standalone function do this conversion?
 What happens if the dataclass fields or generated initializer are removed?
+
+### Static methods versus module functions
+
+@staticmethod places a function on a class without supplying an automatic first
+argument. It receives neither self nor cls and uses only the explicit arguments:
+
+```python
+class BudgetMath:
+    @staticmethod
+    def is_over_budget(budget: Decimal, spent: Decimal) -> bool:
+        return spent > budget
+
+BudgetMath.is_over_budget(Decimal("500.00"), Decimal("550.00"))  # True
+```
+
+| Method kind | Automatic first argument | Typical reason |
+| --- | --- | --- |
+| Instance method | self, the instance | Work with instance state |
+| Class method | cls, the class | Work with the class, often through an alternative constructor |
+| Static method | None | Group a closely related function under a class without using instance/class state |
+
+A static method adds no calculation capability. A module-level function can do
+the same work. Prefer a static method when the function belongs closely to an
+existing class and that location makes it easier to find and understand. General
+helpers can remain module functions, such as mybudget.calculations functions.
+Do not create utility classes merely because helpers need a place to live:
+modules already group related functions in Python. Our BudgetMath class is an
+exercise in the mechanism, not a recommendation to move all calculations there.
+
+Compared with the traditional Java utility-class pattern, a common Python
+equivalent is a module of functions. That organizational difference does not
+mean every helper needs a static method in Python.
+
+Returning a comparison directly is sufficient for a boolean result. Over budget
+means spent > budget; equality is exactly at the limit, not over it. A condition
+budget - spent <= 0 incorrectly includes equality; use spent > budget or a
+strictly negative remaining balance.
+
+Revision checks: What does Python automatically pass to a static method? Could
+the same helper be a module function? Why might it belong on an existing class?
+How do you distinguish spending at the limit from spending over it?
 
 ## Dataclasses and special methods
 

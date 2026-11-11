@@ -38,8 +38,20 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Inheritance, overriding, super delegation, and one-instance data versus class methods.
 - Abstract base classes, required abstract methods, and concrete subclass implementations.
 - Class methods, cls binding, and alternative constructors that convert input data.
+- Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Inspected exercises/static_methods.py and ran
+.venv/bin/python -m exercises.static_methods: exit 0, printed False for spending
+75.25 against 500.00 and True for spending 550.25. Static-method binding is
+correct. Focused equal-limit check using the saved class returned True for
+500.00 spent against 500.00: pending correction, because at-limit is not over.
+Current condition is budget - spent <= 0; learner should use a strict comparison
+such as spent > budget and add an equal-limit demonstration. Do not mark this
+behavior complete until verified after their edit. No application tests run.
+Concept guide records instance/class/static distinctions, optional class grouping,
+Python module functions versus traditional Java utility classes, and boundary rule.
 
 Class-method concept recorded: BudgetConfig.from_dict prepares dictionary data,
 converts the limit to Decimal, calls cls(...), and returns the new instance.
