@@ -1,12 +1,12 @@
 # Progress
 
-Last updated: 2026-11-10.
+Last updated: 2026-11-11.
 
 ## Current milestone
 
 Milestone 1: Python budget calculation engine. Phase 1; generator-based timer,
 text-file handling, Transaction JSON round trip, tracker composition, and computed
-property, destination-polymorphism, and basic inheritance exercises complete.
+property, destination-polymorphism, inheritance, and basic abstract-class exercises complete.
 The project consists of working standalone exercises, not yet an integrated engine.
 
 ## Completed learning
@@ -36,8 +36,20 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Tracker composition, instance methods, per-instance list factories, and computed properties.
 - Polymorphism through compatible write methods, duck typing, and optional instance data.
 - Inheritance, overriding, super delegation, and one-instance data versus class methods.
+- Abstract base classes, required abstract methods, and concrete subclass implementations.
 
 ## Latest verification
+
+Inspected exercises/abstract_destinations.py and ran
+.venv/bin/python -m exercises.abstract_destinations: exit 0, printed
+"MyBudget report". ConsoleDestination implements the inherited abstract write
+method and is instantiable. Learner earlier reported the expected TypeError for
+the incomplete subclass; that earlier failing version was not run by the mentor.
+Explained ABC versus abstractmethod versus pass, instantiation-time enforcement,
+and overriding an abstract method with a concrete implementation. Learner
+confused this with overloading; reduced explanation to overriding and deferred
+overloading alternatives rather than adding more mechanisms. Concept guide
+updated. No application tests run for this standalone exercise.
 
 Inspected exercises/report_destinations.py with LabeledConsoleDestination and
 ran .venv/bin/python -m exercises.report_destinations: exit 0, printed

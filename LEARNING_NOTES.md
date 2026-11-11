@@ -19,6 +19,7 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
     - [Properties versus instance methods](#properties-versus-instance-methods)
     - [Polymorphism, duck typing, and classes without instance data](#polymorphism-duck-typing-and-classes-without-instance-data)
     - [Inheritance, overriding, and super](#inheritance-overriding-and-super)
+    - [Abstract base classes and required methods](#abstract-base-classes-and-required-methods)
 6. [Dataclasses and special methods](#dataclasses-and-special-methods)
 7. [Decimal and money](#decimal-and-money)
 8. [Collections and loops](#collections-and-loops)
@@ -748,6 +749,64 @@ forgetting required base initialization when overriding __init__.
 Revision checks: Which line establishes inheritance? Can a subclass inherit a
 method without super? What instance receives a super call? Where are methods
 normally stored? How does initialization create inherited instance data?
+
+### Abstract base classes and required methods
+
+An abstract base class can declare operations that concrete subclasses must
+provide before their instances can be created. It represents a general concept
+such as a report destination without choosing where the report is written.
+
+```python
+from abc import ABC, abstractmethod
+
+class ReportDestination(ABC):
+    @abstractmethod
+    def write(self, report: str) -> None:
+        pass
+
+class ConsoleDestination(ReportDestination):
+    def write(self, report: str) -> None:
+        print(report)
+
+destination = ConsoleDestination()
+destination.write("MyBudget report")
+```
+
+ABC supplies the abstract-class machinery; @abstractmethod marks write as a
+requirement. pass is just an empty body and does not enforce anything itself.
+ReportDestination cannot be instantiated while it has an abstract method.
+A subclass containing only pass inherits the unimplemented abstract requirement
+and also cannot be instantiated: creating it raises TypeError.
+
+The concrete ConsoleDestination overrides write with a non-abstract method,
+so object creation is allowed. No super call is required to fulfill this
+requirement. If a subclass inherits a concrete implementation, it need not
+override that method again merely to be instantiable. Inheriting ABC alone,
+without any remaining abstract methods, does not prohibit instantiation.
+
+This check ensures that an abstract requirement has a non-abstract implementation,
+not that the implementation behaves correctly. An ordinary override whose body
+is only pass satisfies this mechanism but does nothing. Parameter types and
+compatible signatures are not automatically enforced by ABC either.
+
+| Approach | Failure point for a missing implementation |
+| --- | --- |
+| Duck typing | Calling an unsupported operation fails at runtime |
+| Abstract base class | Instantiating a subclass with remaining abstract methods raises TypeError |
+
+An ABC is an optional explicit contract within an inheritance hierarchy; duck
+typing remains valid without that hierarchy.
+
+**Overriding versus overloading:** our exercise is overriding. A subclass defines
+its own version of the inherited write method, making an abstract requirement
+concrete. Overloading usually refers to multiple versions selected by parameter
+signature. Repeating def write in one Python class does not create that dispatch;
+the later definition replaces the earlier binding. Advanced alternatives have
+not been practiced, so keep this lesson focused on overriding.
+
+Revision checks: What marks write abstract? Why does an empty subclass fail at
+construction? Why is the concrete implementation overriding? Does ABC verify
+that the method prints anything or that its type hints are obeyed?
 
 ## Dataclasses and special methods
 
