@@ -1924,12 +1924,52 @@ save that file before running it; running from the right directory cannot make
 a missing module exist. Commands and file paths are separate: the root is
 Mybudget, while the package directory inside it is mybudget.
 
-Current scope is valid numeric input. Friendly messages for invalid amounts,
-exit-status design, and CLI-specific automated verification are future work.
+### Custom argument conversion and readable errors
 
-Revision checks: What type is args.budget before conversion? What does argparse
+argparse accepts a conversion callback through type=. Pass the function object
+without parentheses; argparse calls it with argument text and stores its return
+value in the parsed Namespace:
+
+```python
+from decimal import Decimal, InvalidOperation
+
+def parse_amount(text: str) -> Decimal:
+    try:
+        return Decimal(text)
+    except InvalidOperation:
+        raise argparse.ArgumentTypeError(
+            "Enter a numeric amount, for example 500.00"
+        )
+
+parser.add_argument("--budget", required=True, type=parse_amount)
+parser.add_argument("--spent", required=True, type=parse_amount)
+```
+
+args.budget and args.spent are now Decimal values; main need not convert them
+again. This connects function objects to library callbacks: the library controls
+when the supplied function is called.
+
+Catch InvalidOperation specifically rather than using bare except, which also
+catches unrelated failures and interruption exceptions. Translate the conversion
+failure to ArgumentTypeError to expose a useful input message at the CLI boundary.
+argparse also catches TypeError and ValueError from a converter, but normally
+supplies its own generic invalid-value message for those. ArgumentTypeError lets
+our message appear with the offending argument's name.
+
+For invalid text, argparse prints usage and its error message to standard error
+and exits with status 2 instead of showing a traceback. Normal calculation exits
+with status 0. The reusable calculation function remains independent of CLI
+error presentation.
+
+This converter checks parseability, not the complete policy for money:
+Decimal("NaN") and Decimal("Infinity") parse successfully. Finite-value checks
+and budget/spending sign policy remain deferred, not implemented by this handler.
+CLI-specific automated tests are also not yet added.
+
+Revision checks: What type is args.budget without a converter? What does argparse
 provide for --help? Why separate main from the guard? Why is return alone silent
-in a module? Which directory should contain cli.py?
+in a module? Which directory should contain cli.py? Why pass type=parse_amount
+instead of calling it? How does ArgumentTypeError affect error presentation?
 
 ## Git and GitHub
 

@@ -44,6 +44,18 @@ The full engine and persistence/reporting workflow are not yet integrated.
 
 ## Latest verification
 
+Inspected mybudget/cli.py with parse_amount and ran two focused commands using
+the project interpreter. Valid --budget 500.00 --spent 75.25 printed 424.75,
+exit 0. Invalid --budget hello --spent 75.25 printed usage and
+"argument --budget: Enter a numeric amount, for example 500.00", exit 2,
+without a traceback. Converter catches InvalidOperation and raises
+argparse.ArgumentTypeError; both arguments use the callback and main receives
+Decimals directly. Concept guide updated with callbacks, targeted catches,
+error presentation, and status codes. No automated application suite run.
+Next lesson: argparse subcommands, creating a calculate command as a foundation
+for separate future add/report operations. Non-finite inputs and sign policies
+remain deferred; they are familiar validation concepts, not blockers to learning.
+
 Inspected mybudget/cli.py and ran
 .venv/bin/python -m mybudget.cli --budget 500.00 --spent 75.25: exit 0,
 printed 424.75 after learner saved print(main()) in the main guard. main parses
@@ -52,8 +64,7 @@ Earlier --help run exited 0 and listed --budget, --spent, and -h/--help; that wa
 before moving parsing into main, not a separate rerun of the final help command.
 Recorded argparse, CLI/package paths, main guard, and return versus print in the
 concept guide. No full application suite or new CLI tests run for this update.
-Next agreed step: introduce friendly invalid-input handling at the CLI boundary
-instead of a raw traceback. Do not claim that behavior is implemented yet.
+Friendly invalid-text handling was subsequently implemented and verified above.
 
 Inspected exercises/static_methods.py and ran
 .venv/bin/python -m exercises.static_methods: exit 0, printed False for spending
