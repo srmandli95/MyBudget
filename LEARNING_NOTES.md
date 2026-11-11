@@ -20,6 +20,7 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
     - [Polymorphism, duck typing, and classes without instance data](#polymorphism-duck-typing-and-classes-without-instance-data)
     - [Inheritance, overriding, and super](#inheritance-overriding-and-super)
     - [Abstract base classes and required methods](#abstract-base-classes-and-required-methods)
+    - [Class methods and alternative constructors](#class-methods-and-alternative-constructors)
 6. [Dataclasses and special methods](#dataclasses-and-special-methods)
 7. [Decimal and money](#decimal-and-money)
 8. [Collections and loops](#collections-and-loops)
@@ -807,6 +808,62 @@ not been practiced, so keep this lesson focused on overriding.
 Revision checks: What marks write abstract? Why does an empty subclass fail at
 construction? Why is the concrete implementation overriding? Does ABC verify
 that the method prints anything or that its type hints are obeyed?
+
+### Class methods and alternative constructors
+
+@classmethod makes Python supply the class as the first argument, conventionally
+named cls. An instance method receives an instance as self instead. A common use
+is a named alternative creation method that prepares inputs, calls the normal
+constructor, and returns the resulting instance:
+
+```python
+from dataclasses import dataclass
+from decimal import Decimal
+
+@dataclass
+class BudgetConfig:
+    category: str
+    limit: Decimal
+
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            category=data["category"],
+            limit=Decimal(data["limit"]),
+        )
+
+budget = BudgetConfig.from_dict({"category": "Groceries", "limit": "500.00"})
+```
+
+Python passes BudgetConfig as cls. The method reads dictionary values, converts
+the amount string to Decimal, calls cls(...), and returns a BudgetConfig object.
+No existing instance is required. The normal constructor still works:
+BudgetConfig("Groceries", Decimal("500.00")). The class method uses that
+construction path rather than replacing it or bypassing initialization.
+
+Why use it? It gives the class a discoverable, named creation recipe, similar
+to date.fromisoformat(text). Repeated callers can use BudgetConfig.from_dict(data)
+without repeating conversion details. A standalone function is equally valid;
+class methods are optional organization, not a requirement for conversion.
+
+Using cls rather than hardcoding BudgetConfig also lets an inherited factory
+construct the subclass used for the call, provided its constructor accepts the
+supplied arguments. That subclass example was discussed, not exercised.
+
+The factory depends on a working constructor. @dataclass generates __init__ from
+declared fields; removing category and limit means the generated initializer
+does not accept them. Removing @dataclass without writing an appropriate
+initializer also removes that generated behavior. from_dict does not create
+constructor parameters or field definitions automatically.
+
+Distinguish type(budget), the object's class, from type(budget.limit), its field's
+type. Both creation routes can produce equal dataclass values with Decimal limits.
+@classmethod is unrelated to @abstractmethod: one controls class binding; the
+other marks an abstract requirement. They are not alternative forms of each other.
+
+Revision checks: What is cls? Why is no instance needed to call from_dict?
+Does from_dict replace __init__? Could a standalone function do this conversion?
+What happens if the dataclass fields or generated initializer are removed?
 
 ## Dataclasses and special methods
 

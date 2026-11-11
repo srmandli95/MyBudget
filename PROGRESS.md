@@ -37,8 +37,25 @@ The project consists of working standalone exercises, not yet an integrated engi
 - Polymorphism through compatible write methods, duck typing, and optional instance data.
 - Inheritance, overriding, super delegation, and one-instance data versus class methods.
 - Abstract base classes, required abstract methods, and concrete subclass implementations.
+- Class methods, cls binding, and alternative constructors that convert input data.
 
 ## Latest verification
+
+Class-method concept recorded: BudgetConfig.from_dict prepares dictionary data,
+converts the limit to Decimal, calls cls(...), and returns the new instance.
+Earlier mentor run of exercises/class_methods.py exited 0 with matching budget
+representations, equality True, and both object types BudgetConfig. Learner
+subsequently confirmed type(budget.limit) produced Decimal; that revised print
+was not separately run by the mentor.
+During experimentation the learner removed dataclass fields and encountered
+constructor errors. Latest notes-only inspection finds the current file missing
+both @dataclass and field declarations; it is not restored or verified working.
+Before running this exercise again, restore the fields and @dataclass or define
+an appropriate initializer. Explained that the factory uses, not replaces,
+normal construction. A standalone conversion function remains a valid choice.
+Also clarified abstract overrides containing pass count as concrete but perform
+no useful work; that distinction is already covered in the concept guide.
+No tests or exercise execution performed during this notes-only update.
 
 Inspected exercises/abstract_destinations.py and ran
 .venv/bin/python -m exercises.abstract_destinations: exit 0, printed
