@@ -22,6 +22,7 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
     - [Abstract base classes and required methods](#abstract-base-classes-and-required-methods)
     - [Class methods and alternative constructors](#class-methods-and-alternative-constructors)
     - [Static methods versus module functions](#static-methods-versus-module-functions)
+    - [Encapsulation and public, internal, and private naming](#encapsulation-and-public-internal-and-private-naming)
 6. [Dataclasses and special methods](#dataclasses-and-special-methods)
 7. [Decimal and money](#decimal-and-money)
 8. [Collections and loops](#collections-and-loops)
@@ -908,6 +909,68 @@ strictly negative remaining balance.
 Revision checks: What does Python automatically pass to a static method? Could
 the same helper be a module function? Why might it belong on an existing class?
 How do you distinguish spending at the limit from spending over it?
+
+### Encapsulation and public, internal, and private naming
+
+Encapsulation provides a clear public interface while keeping implementation
+details internal. For a tracker, add_transaction can be a public operation and
+_transactions its internal storage. Naming communicates intended use; it is
+not a security boundary.
+
+| Name | Common shorthand | Actual Python behavior |
+| --- | --- | --- |
+| label | Public | Intended for external use |
+| _label | Protected/internal | Convention only; directly accessible |
+| __label | Private | Name mangling; accessible through its mangled name |
+
+Python does not enforce Java-style protected/private attribute access. A caller
+can access tracker._transactions, but should normally depend on the public
+interface instead. Internal implementation may change without preserving those
+details for callers. These conventions also apply to method names.
+
+An attribute __label defined within BudgetTracker is mangled to
+_BudgetTracker__label. tracker.__label normally raises AttributeError, while
+tracker._BudgetTracker__label can access the attribute. Mangling helps prevent
+accidental subclass name collisions, not intentional external access.
+
+```python
+class ReportDestination:
+    def __init__(self):
+        self.__label = "MyBudget"
+
+    def show_label(self):
+        print(self.__label)
+
+class EmailDestination(ReportDestination):
+    def __init__(self):
+        super().__init__()
+        self.__label = "Monthly email"
+```
+
+There is one EmailDestination instance with two differently named attributes:
+_ReportDestination__label and _EmailDestination__label. The base method uses
+the former. Developers can independently choose the same internal name without
+accidentally overwriting each other's state. With a single shared _label name,
+the subclass assignment would overwrite the base assignment on that instance.
+When sharing/customizing the value is intentional, _label is often clearer;
+double underscores are not needed for every internal attribute.
+
+Names such as __init__, with double underscores at both ends, are special
+protocol names, not this private-name convention. Name mangling applies to
+double-leading names without the double-trailing form.
+
+Properties are separate from access naming. @property can expose a computed
+transaction_count through tracker.transaction_count instead of a method call,
+but it does not hide the backing list or make it immutable. A normal method
+could provide the count too.
+
+Common mistakes: treating underscores as enforced permissions, calling mangled
+data inaccessible, assuming inheritance requires reusing all internal names,
+or equating a getter-only property with complete protection of its source data.
+
+Revision checks: Which access rules are conventions? Why can a mangled name
+still be accessed? Why might a base class and subclass independently need the
+same internal name? How do __label and __init__ differ?
 
 ## Dataclasses and special methods
 

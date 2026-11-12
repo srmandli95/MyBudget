@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-11-11.
+Last updated: 2026-11-12.
 
 ## Current milestone
 
@@ -43,6 +43,24 @@ The full engine and persistence/reporting workflow are not yet integrated.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Encapsulation/naming lesson discussed before Milestone 1 closure. Recorded public
+names, _internal (commonly "protected") convention, __private name mangling,
+absence of enforced Java-style access restrictions, and __dunder__ distinction.
+Explained accidental subclass attribute collisions on one instance, intentional
+shared attributes, and properties as separate from hiding data.
+exercises/encapsulation.py exists, but its contents and execution were not reviewed
+during this notes-only update. Do not mark that exercise verified. Milestone 1
+report integration remains pending; no new application tests run in this update.
+
+Milestone 1 closure requested. Ran the required root command
+uv run --locked python -m pytest tests exercises -v: 44 passed, exit 0
+(38 application cases and 6 historical learning cases). Existing monthly demo
+uses shared models and calculations but lives in exercises/monthly_budgets.py;
+CLI currently exposes calculate only. Next learner task: extract reusable report
+formatting into mybudget/reports.py, then connect a fictional-data monthly report
+command to the CLI. Recheck the resulting workflow and update roadmap criteria
+before marking the milestone complete. SQLite remains Milestone 2.
 
 Inspected mybudget/cli.py after subcommand changes and ran three focused commands
 with .venv/bin/python -m mybudget.cli: calculate --budget 500.00 --spent 75.25
