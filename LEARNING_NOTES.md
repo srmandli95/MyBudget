@@ -14,6 +14,7 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
 2. [Statements, expressions, and scope](#statements-expressions-and-scope)
 3. [Functions and type hints](#functions-and-type-hints)
 4. [Objects, references, and copying](#objects-references-and-copying)
+    - [Object lifetime, weak references, and cyclic collection](#object-lifetime-weak-references-and-cyclic-collection)
 5. [Classes, instances, and methods](#classes-instances-and-methods)
     - [Composition, instance methods, and default factories](#composition-instance-methods-and-default-factories)
     - [Properties versus instance methods](#properties-versus-instance-methods)
@@ -506,6 +507,84 @@ Lists and default dataclass instances are mutable. Decimal is immutable: arithme
 produces a result object rather than changing the operand. Python follows references
 to operate on values; **it does not subtract reference addresses** when evaluating
 `budget - spent`.
+
+### Object lifetime, weak references, and cyclic collection
+
+del removes a name binding (or a specified container entry/attribute); it does
+not directly command destruction of the referenced object. Other references may
+keep the object alive. In CPython, reference counting normally reclaims an object
+when its reference count reaches zero. Exact reclamation timing is not a portable
+promise across Python implementations.
+
+```python
+first = Note("Learning memory management")
+second = first
+observer = weakref.ref(first)
+
+del first
+print(observer() is not None)  # True: second still keeps it alive
+del second
+print(observer() is None)      # True in our CPython experiment
+```
+
+A weak reference observes an object without keeping it alive. Calling it returns
+the object if it exists, otherwise None. Our ordinary dataclass Note supports
+weak references; not every Python object supports them. Holding the object
+returned by the observer in another variable would itself keep it alive.
+
+Reference counting alone cannot reclaim every unreachable object. In a cycle,
+objects may reference each other after all outside strong references disappear:
+
+```text
+Rest of program: no strong path to either object
+       A → B → A
+```
+
+The internal references are real, but the group is unreachable from the rest
+of the running program. CPython's cyclic collector detects unreachable cycles
+among tracked objects and can reclaim them despite their nonzero counts.
+Deleting the names did not already delete the objects; it removed the program's
+access paths. Internal references do not make an isolated group reachable.
+
+```python
+import gc
+import weakref
+
+class Node:
+    pass
+
+was_enabled = gc.isenabled()
+gc.disable()
+try:
+    first = Node()
+    second = Node()
+    first.other = second
+    second.other = first
+    observer = weakref.ref(first)
+    del first
+    del second
+    print(observer() is not None)  # True before cyclic collection
+    gc.collect()
+    print(observer() is None)      # True after explicit collection
+finally:
+    if was_enabled:
+        gc.enable()
+```
+
+gc.disable disables automatic cyclic collection, not reference counting.
+gc.collect explicitly requests collection even while automatic collection is
+disabled. Restoring the prior setting makes the experiment self-contained;
+normally leave automatic collection enabled. This cycle example illustrates
+the mechanism; its execution status is tracked in PROGRESS.md.
+
+Reclaimed object memory need not immediately reduce the process's operating-system
+memory footprint, since Python's allocators may retain memory for reuse. Do not
+depend on garbage collection for timely resource cleanup: with remains the right
+tool for files and other resources with defined exit behavior.
+
+Revision checks: What does del remove? Why does a second reference keep an object
+alive? Why does a weak reference not do so? Why can reference counts stay nonzero
+for unreachable objects? What does gc.disable leave enabled?
 
 ## Classes, instances, and methods
 

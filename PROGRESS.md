@@ -44,6 +44,17 @@ The full engine and persistence/reporting workflow are not yet integrated.
 
 ## Latest verification
 
+Recorded CPython reference counting, del versus destruction, weak references,
+and unreachable reference cycles in the concept guide. Inspected and ran
+.venv/bin/python -m exercises.object_lifetime: exit 0, printed True, True, True.
+This verifies that the second strong reference keeps Note alive and removal of
+both bindings permits reclamation in the project interpreter.
+Cycle-collection example was explained and the learner restated the mechanism.
+exercises/reference_cycle.py is not present; no saved cycle experiment was run
+by the mentor. Do not mark that experiment executed. No application tests run
+for this documentation/standalone-exercise update. Milestone 1 report integration
+remains pending; no new hardening work is required before returning to it.
+
 Encapsulation/naming lesson discussed before Milestone 1 closure. Recorded public
 names, _internal (commonly "protected") convention, __private name mangling,
 absence of enforced Java-style access restrictions, and __dunder__ distinction.
