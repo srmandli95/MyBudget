@@ -4,13 +4,13 @@ Last updated: 2026-11-13.
 
 ## Current milestone
 
-Milestone 1: Python budget calculation engine. Phase 1; generator-based timer,
-text-file handling, Transaction JSON round trip, tracker composition, and computed
-property, destination-polymorphism, inheritance, and basic abstract-class exercises complete.
-Most learning examples remain standalone exercises. The application now has its
-first CLI calculation command in mybudget/cli.py, reusing calculations.py.
-A reusable monthly formatter now lives in mybudget/reports.py. Its demonstration
-works; CLI report integration remains pending. Persistence belongs to Milestone 2.
+Milestone 2: SQLite persistence, beginning. Milestone 1's functional criteria are
+met: shared models, configurable in-memory budgets, tested calculations/refunds,
+and CLI calculation/monthly-report integration using explicit fictional data.
+The learner demonstrated concepts throughout the apprenticeship; the final
+optional module-responsibility recap was offered but not answered. Do not treat
+it as completed or block forward learning on another quiz. Remaining Python
+topics and deferred hardening continue alongside the application.
 
 ## Completed learning
 
@@ -44,6 +44,16 @@ works; CLI report integration remains pending. Persistence belongs to Milestone 
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Milestone 1 integration reviewed on 2026-11-13. demo_data is consistently named
+across definition/import/call. Focused CLI runs exited 0: calculate printed
+424.75; October report showed -25.00/100.00/50.00/150.00 remaining; November
+showed full budgets 500.00/200.00/250.00/150.00 because no transactions matched.
+uv run --locked python -m pytest tests exercises -v passed all 44 cases, exit 0.
+These are manual CLI checks plus existing automated calculation/model tests;
+there are no new automated CLI/report tests. Next: first SQLite table exercise.
+exercises/sqlite_basics.py was not present at this checkpoint. No database
+implementation has been verified, and no commit/push was performed.
 
 Reviewed mybudget/reports.py and verified the formatter on a focused fictional
 500.00/40.00 example: returned a November report with 460.00 remaining. Learner

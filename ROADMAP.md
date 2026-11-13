@@ -3,6 +3,19 @@
 Every milestone requires working code, relevant tests, and an explanation by the learner.
 Introduce fundamentals progressively; pause after exercises for review.
 
+## Current checkpoint — 2026-11-13
+
+Milestone 1 functional criteria met: shared in-memory models/calculations,
+configurable fictional budgets, and CLI calculate/report commands. Manual CLI
+checks verified calculation plus October and empty November reports; the required
+locked test command passed all 44 cases. Concepts were discussed throughout;
+the final optional module recap was not answered. Deferred hardening remains in
+PROGRESS.md. Begin Milestone 2: SQLite tables, persisted records, and queries.
+LEARNING_NOTES.md is the concept-based revision guide; implementation status and
+verification belong in PROGRESS.md.
+
+## Historical checkpoints (superseded by the current checkpoint above)
+
 Current checkpoint: milestone 1 in progress. Decimal arithmetic, transaction
 models, validation, exception handling, lists, loops, and category filtering have
 been covered. Category totals were verified for matching, unmatched, and empty
