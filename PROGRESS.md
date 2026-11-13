@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-11-12.
+Last updated: 2026-11-13.
 
 ## Current milestone
 
@@ -9,7 +9,8 @@ text-file handling, Transaction JSON round trip, tracker composition, and comput
 property, destination-polymorphism, inheritance, and basic abstract-class exercises complete.
 Most learning examples remain standalone exercises. The application now has its
 first CLI calculation command in mybudget/cli.py, reusing calculations.py.
-The full engine and persistence/reporting workflow are not yet integrated.
+A reusable monthly formatter now lives in mybudget/reports.py. Its demonstration
+works; CLI report integration remains pending. Persistence belongs to Milestone 2.
 
 ## Completed learning
 
@@ -43,6 +44,22 @@ The full engine and persistence/reporting workflow are not yet integrated.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Reviewed mybudget/reports.py and verified the formatter on a focused fictional
+500.00/40.00 example: returned a November report with 460.00 remaining. Learner
+then moved demonstration data/printing under the main guard. Import verification
+produced no output, exit 0. Final .venv/bin/python -m mybudget.reports run exited
+0 and printed the October header plus remaining amounts Groceries -25.00,
+Restaurants 100.00, Gas 50.00, miscellaneous 150.00. Formatting calls the monthly
+calculation once and returns newline-joined text. This is integration practice
+using existing concepts, not a new lesson. Removed the redundant formatter-specific
+section from LEARNING_NOTES.md at the learner's request; implementation and
+verification stay here. Update concept notes only for new concepts or meaningful
+clarifications, not each application task.
+No full test rerun during this review; latest full baseline remains 44 passing
+cases before report addition. Next: connect a report CLI command using explicit
+fictional demo data, verify the workflow and relevant checks, then close
+Milestone 1 against its in-memory engine criteria. Do not mark it complete yet.
 
 Recorded CPython reference counting, del versus destruction, weak references,
 and unreachable reference cycles in the concept guide. Inspected and ran
