@@ -41,8 +41,9 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
 17. [Environments, dependencies, and uv](#environments-dependencies-and-uv)
 18. [Command-line interfaces and argparse](#command-line-interfaces-and-argparse)
     - [Subcommands and subparsers](#subcommands-and-subparsers)
-19. [Git and GitHub](#git-and-github)
-20. [Quick revision questions](#quick-revision-questions)
+19. [SQLite and relational database basics](#sqlite-and-relational-database-basics)
+20. [Git and GitHub](#git-and-github)
+21. [Quick revision questions](#quick-revision-questions)
 
 ## Python and execution
 
@@ -1462,6 +1463,35 @@ Importing makes names available; calling a class creates an object. Each module
 has its own namespace: importing Transaction doesn't also import the date name
 from its defining file into the caller.
 
+### Built-ins, standard library, and external packages
+
+| Category | Origin and use | Examples |
+| --- | --- | --- |
+| Built-ins | Available without importing | print, len, str, list |
+| Standard library | Distributed with Python; usually imported as needed | decimal, datetime, json, sqlite3 |
+| Third-party package | Distributed separately; installed as a dependency | pytest, FastAPI |
+| Project module/package | Code written within our application | mybudget.models |
+| Internal/private package | Reusable code maintained by our organization and distributed internally | A company finance-utils package |
+
+"Developer library" is not a separate formal category: all these have developers.
+Our own reusable library can be an internal package, or become a third-party
+dependency from another developer's perspective if distributed to them.
+
+JFrog Artifactory can host packages for installation by an application. Separate
+the package, the repository hosting it, and the consuming application's dependency.
+Hosting location does not determine authorship: an internal package hosted in
+Artifactory remains internal, while a mirrored external package remains third-party.
+Private-index configuration and publishing have been discussed conceptually only.
+
+sqlite3 is the exact standard-library module name; sqllite3 is a misspelling.
+No extra package installation was needed in our Python environment. Built-in
+function and standard-library module are different categories even though both
+are supplied with Python.
+
+Revision checks: Why import decimal but not print? Does hosting a package in a
+private repository make externally authored code internal? How does a module
+differ from a package, and how do those differ from a dependency's origin?
+
 ### Import-time execution and the main guard
 
 A first normal import initializes the module by executing its top-level code,
@@ -2161,6 +2191,68 @@ Parser configuration describes allowed input; parse_args actually reads it.
 Revision checks: What is the difference between a command and its subparser?
 Where does the selected name appear? Why call parse_args on the main parser?
 Does naming a command calculate connect it to calculate_remaining automatically?
+
+## SQLite and relational database basics
+
+A relational database stores records in tables. A table groups related records,
+a row represents one record, and a column represents one field. A primary key
+uniquely identifies rows. SQL is the language used to define structures and work
+with data. SQLite is an embedded database engine; Python's sqlite3 module lets
+our program use it without running a separate database server.
+
+```python
+import sqlite3
+
+connection = sqlite3.connect("learning_budget.db")
+try:
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS transactions (
+            id INTEGER PRIMARY KEY,
+            category TEXT NOT NULL,
+            amount TEXT NOT NULL,
+            transaction_date TEXT NOT NULL
+        )
+    """)
+    connection.commit()
+finally:
+    connection.close()
+```
+
+connect opens the database file, creating it if necessary. A relative path uses
+the process's working directory. The table lives inside that database file; it
+is not a separate file or folder. execute sends SQL to SQLite. IF NOT EXISTS
+skips creation when the named table already exists; it does not migrate or
+verify the existing table's structure. NOT NULL disallows SQL NULL, not empty
+strings or all other invalid data.
+
+commit commits any pending transaction; transaction behavior will be explored
+with data changes. close releases the connection. Our try/finally ensures it
+is closed when control leaves the block. A successful schema-only script need
+not print output.
+
+The learning schema stores amounts as decimal strings and dates as ISO strings,
+preserving the explicit conversion approach from JSON. Numeric database querying
+and the eventual money storage strategy require further design; text storage
+does not automatically supply Decimal arithmetic in SQL.
+
+Inspect table names using SQLite's schema catalog:
+
+```python
+tables = connection.execute(
+    "SELECT name FROM sqlite_master WHERE type='table'"
+).fetchall()
+print(tables)  # [('transactions',)]
+```
+
+SELECT retrieves data; here it reads schema metadata rather than transaction
+records. execute returns a cursor, and fetchall retrieves its remaining result
+rows as a list of tuples under the default row configuration. ('transactions',)
+is a one-element tuple; its trailing comma is significant. The query result
+confirms table existence, not that transaction rows have been inserted.
+
+Revision checks: Where is the table stored? Why might creating it print nothing?
+What does a row represent? What does NOT NULL prohibit? What exactly does the
+table-name query prove? Does IF NOT EXISTS update a changed schema?
 
 ## Git and GitHub
 

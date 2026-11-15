@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-11-13.
+Last updated: 2026-11-14.
 
 ## Current milestone
 
@@ -44,6 +44,18 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+SQLite lesson: inspected exercises/sqlite_basics.py; it imports sqlite3, opens
+learning_budget.db, creates transactions with id/category/amount/date columns,
+commits, and closes in finally. Learner reported running the module and showed
+the schema query output [('transactions',)], confirming table existence in their
+session. Mentor did not independently run the database exercise or schema query
+during this notes-only update. No inserted rows or persistence-query workflow
+has yet been verified. Next: parameterized INSERT, commit, and SELECT of a
+fictional transaction. Database integration into the app remains pending.
+Concept guide now covers relational/SQLite basics, result rows, library categories,
+and internal packages hosted in Artifactory. Publishing/private-index setup was
+not performed. No tests run or commit/push during this documentation update.
 
 Milestone 1 integration reviewed on 2026-11-13. demo_data is consistently named
 across definition/import/call. Focused CLI runs exited 0: calculate printed
