@@ -7,6 +7,14 @@ venv/
 .mypy_cache/
 .ruff_cache/
 
+# Local SQLite databases and their journal files
+*.db
+*.sqlite
+*.sqlite3
+*-journal
+*-wal
+*-shm
+
 # Local secrets and machine-specific files
 .env
 .env.*
