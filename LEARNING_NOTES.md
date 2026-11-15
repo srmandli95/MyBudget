@@ -2225,8 +2225,7 @@ skips creation when the named table already exists; it does not migrate or
 verify the existing table's structure. NOT NULL disallows SQL NULL, not empty
 strings or all other invalid data.
 
-commit commits any pending transaction; transaction behavior will be explored
-with data changes. close releases the connection. Our try/finally ensures it
+commit commits any pending transaction. close releases the connection. Our try/finally ensures it
 is closed when control leaves the block. A successful schema-only script need
 not print output.
 
@@ -2249,6 +2248,68 @@ records. execute returns a cursor, and fetchall retrieves its remaining result
 rows as a list of tuples under the default row configuration. ('transactions',)
 is a one-element tuple; its trailing comma is significant. The query result
 confirms table existence, not that transaction rows have been inserted.
+
+### Parameterized inserts and reading rows
+
+CREATE TABLE defines structure; INSERT adds records. Use separate execute calls
+for these statements. A comma between CREATE TABLE and INSERT inside one SQL
+string is invalid SQL; execute expects a single statement.
+
+```python
+connection.execute(
+    """
+    INSERT INTO transactions (category, amount, transaction_date)
+    VALUES (?, ?, ?)
+    """,
+    ("Groceries", "40.00", "2026-11-14"),
+)
+connection.commit()
+
+cursor = connection.execute(
+    "SELECT id, category, amount, transaction_date FROM transactions"
+)
+rows = cursor.fetchall()
+for row in rows:
+    print(row)
+```
+
+Each ? is a value placeholder. Pass a tuple of values separately in matching
+order rather than interpolating values with an f-string. Parameter binding treats
+input as data, handles quotes, and helps prevent SQL injection. It does not
+replace table names or SQL keywords.
+
+The returned cursor provides access to query results. fetchall retrieves the
+remaining rows as a list, normally containing tuples in selected-column order:
+(1, 'Groceries', '40.00', '2026-11-14'). Stored amounts/dates are still strings;
+querying does not automatically reconstruct Decimal, date, or Transaction.
+SELECT without ORDER BY does not guarantee row order.
+
+Each execution of this INSERT creates another row, even with identical values.
+IF NOT EXISTS applies to creating the table, not deduplicating inserted records.
+
+### Generated integer IDs and durable data
+
+In our ordinary SQLite table, id INTEGER PRIMARY KEY aliases the rowid. Omitting
+id from the insert lets SQLite assign it, normally one greater than the largest
+existing ID, starting at 1 for an empty table. AUTOINCREMENT is not required for
+this basic behavior. Deleted IDs can sometimes be reused; IDs are record
+identifiers, not a guaranteed gap-free count.
+
+Our file-based database remains on disk after the application ends. Reopening
+the same path makes previously committed records available to a new process.
+Python objects in memory disappear, but the file persists. Relative paths depend
+on the working directory, so the same filename from another directory may refer
+to a different database. sqlite3.connect(":memory:") instead creates a database
+in memory; that is not the persistence behavior of our file-based example.
+
+Commit changes that should persist; closing is not a substitute for committing
+pending writes. Uncommitted changes may be rolled back. Crash recovery and
+transaction guarantees will be explored separately rather than assuming every
+in-progress operation survives a failure.
+
+Revision checks: How are values bound to placeholders? Why use separate execute
+calls? What does a cursor provide? Why does rerunning the script add another row?
+What assigns the omitted id? What survives an application restart?
 
 Revision checks: Where is the table stored? Why might creating it print nothing?
 What does a row represent? What does NOT NULL prohibit? What exactly does the

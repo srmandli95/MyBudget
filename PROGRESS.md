@@ -45,6 +45,18 @@ topics and deferred hardening continue alongside the application.
 
 ## Latest verification
 
+Reviewed and ran .venv/bin/python -m exercises.sqlite_basics: exit 0, retrieved
+three Groceries rows with amount "40.00" and date "2026-11-14", IDs 1/2/3.
+Mentor execution inserted the third fictional row as expected. A separate Python
+process reopened file:learning_budget.db?mode=ro and retrieved row 3, verifying
+committed data persisted beyond the first process. CREATE and INSERT now use
+separate execute calls; INSERT binds values, commits, then SELECT/fetchall reads
+rows; finally closes the connection. Updated concept guide with SQL operations,
+parameter binding, generated IDs, repeat-insert behavior, and file persistence.
+No application test suite run for this standalone exercise; app storage integration
+remains pending. Next proposed topic: WHERE filtering with bound parameters,
+followed by reconstructing Transaction objects from stored rows.
+
 SQLite lesson: inspected exercises/sqlite_basics.py; it imports sqlite3, opens
 learning_budget.db, creates transactions with id/category/amount/date columns,
 commits, and closes in finally. Learner reported running the module and showed
