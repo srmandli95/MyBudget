@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-11-14.
+Last updated: 2026-11-16.
 
 ## Current milestone
 
@@ -44,6 +44,15 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Inspected and ran .venv/bin/python -m exercises.sqlite_queries: exit 0, returned
+the three Groceries rows with IDs 1/2/3 in ascending order. Script uses a bound
+one-item parameter tuple, WHERE category = ?, ORDER BY id, fetchall, and finally
+connection cleanup; it performs no inserts. Gas/no-match behavior was explained
+but not separately exercised by the mentor. Updated concept guide with filtering,
+ordering, and parameter tuple syntax. No application tests run for this exercise.
+Next: sqlite3.Row for named column access, then reconstruct Transaction objects
+from stored strings. This next behavior is proposed, not yet implemented/verified.
 
 Reviewed and ran .venv/bin/python -m exercises.sqlite_basics: exit 0, retrieved
 three Groceries rows with amount "40.00" and date "2026-11-14", IDs 1/2/3.

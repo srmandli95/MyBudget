@@ -2287,6 +2287,36 @@ SELECT without ORDER BY does not guarantee row order.
 Each execution of this INSERT creates another row, even with identical values.
 IF NOT EXISTS applies to creating the table, not deduplicating inserted records.
 
+### Filtering and ordering query results
+
+WHERE limits returned rows to those matching a condition. Bind filter values
+separately just as with INSERT. ORDER BY requests explicit ordering; without it,
+result order is not guaranteed.
+
+```python
+cursor = connection.execute(
+    """
+    SELECT id, category, amount, transaction_date
+    FROM transactions
+    WHERE category = ?
+    ORDER BY id
+    """,
+    ("Groceries",),
+)
+rows = cursor.fetchall()
+```
+
+ORDER BY id defaults to ascending order. The comma in ("Groceries",) creates a
+one-item tuple; ("Groceries") alone is a string. With no matching records,
+fetchall returns an empty list and a for loop prints nothing; no-match is not an
+exception. This read-only query does not insert another row. SQLite applies
+the filter before returning the result to Python, avoiding loading every row
+and then filtering in application code. This does not itself guarantee an
+efficient database access plan; indexes are a future topic.
+
+Revision checks: Where is filtering performed? What happens with no matches?
+Why include ORDER BY? Why does the parameter tuple need its trailing comma?
+
 ### Generated integer IDs and durable data
 
 In our ordinary SQLite table, id INTEGER PRIMARY KEY aliases the rowid. Omitting
