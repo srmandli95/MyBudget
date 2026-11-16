@@ -45,6 +45,22 @@ topics and deferred hardening continue alongside the application.
 
 ## Latest verification
 
+Verified named-row reconstruction in exercises/sqlite_queries.py: ran with the
+project interpreter, exit 0, printed a list of three Transaction objects with
+category Groceries, Decimal('40.00'), and date(2026, 11, 14). row_factory is
+sqlite3.Row; saved strings are explicitly converted before model construction.
+
+Inspected exercises/sqlite_transactions.py and ran
+.venv/bin/python -m exercises.sqlite_transactions: exit 0, printed []. Confirmed
+both inserts are present: valid Groceries/40.00 followed by None/20.00 violating
+NOT NULL. Handler rolls back, commit is not reached, and finally queries before
+closing the in-memory connection. Earlier invalid-only version was insufficient;
+learner restored the valid first insert. Recorded atomicity, pending changes,
+commit boundaries, targeted SQL errors, and exact :memory: spelling in the guide.
+No application suite run for these standalone experiments. App persistence and
+budget storage remain pending. Next proposed lesson: UPDATE/DELETE with bound
+WHERE conditions, then a reusable application storage boundary.
+
 Inspected and ran .venv/bin/python -m exercises.sqlite_queries: exit 0, returned
 the three Groceries rows with IDs 1/2/3 in ascending order. Script uses a bound
 one-item parameter tuple, WHERE category = ?, ORDER BY id, fetchall, and finally

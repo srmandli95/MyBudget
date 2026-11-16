@@ -2317,6 +2317,86 @@ efficient database access plan; indexes are a future topic.
 Revision checks: Where is filtering performed? What happens with no matches?
 Why include ORDER BY? Why does the parameter tuple need its trailing comma?
 
+### Named rows and domain-object reconstruction
+
+Set connection.row_factory = sqlite3.Row before creating query cursors to obtain
+rows supporting column-name access, such as row["category"], instead of relying
+on positional indexes. This changes Python's presentation of returned rows, not
+the database schema or stored data. A Row is not a Transaction and does not
+automatically convert our stored decimal/date strings.
+
+```python
+connection.row_factory = sqlite3.Row
+# Execute the query and fetch rows using this connection.
+transactions = []
+for row in rows:
+    transactions.append(Transaction(
+        category=row["category"],
+        amount=Decimal(row["amount"]),
+        transaction_date=date.fromisoformat(row["transaction_date"]),
+    ))
+```
+
+The explicit conversions reconstruct application types. Calling Transaction
+also runs its existing initialization/validation. These objects can then feed
+the same calculations as in-memory sample transactions, without SQL code leaking
+into the arithmetic functions. Merely printing named columns leaves strings as
+strings; it is not model reconstruction.
+
+Revision checks: What does row_factory change? Which step restores Decimal?
+When does domain validation run? Can the calculation functions use these objects?
+
+### Transactions, commit, rollback, and atomicity
+
+A database transaction groups changes so they can be committed or rolled back
+together. Atomicity means the grouped changes take effect together or not at all.
+For example, an import may reject an entire batch rather than retain a partial
+batch when one record is invalid.
+
+```python
+try:
+    connection.execute(
+        "INSERT INTO transactions (category, amount) VALUES (?, ?)",
+        ("Groceries", "40.00"),
+    )
+    connection.execute(
+        "INSERT INTO transactions (category, amount) VALUES (?, ?)",
+        (None, "20.00"),
+    )
+    connection.commit()
+except sqlite3.IntegrityError:
+    connection.rollback()
+```
+
+In our Python sqlite3 exercise with its default transaction behavior, the first
+INSERT starts a pending write transaction. The second violates category TEXT
+NOT NULL and raises IntegrityError. The commit line is skipped; rollback undoes
+the first pending insert too. A subsequent SELECT finds no rows. The failing
+statement alone does not automatically roll back all earlier statements in this
+example; the handler explicitly requests that rollback.
+
+Do not commit between the inserts if they must succeed together. A later rollback
+cannot undo a change already committed. Testing only an invalid insert returning
+an empty table does not demonstrate undoing an earlier successful operation;
+the experiment needs both inserts in order.
+
+sqlite3.connect(":memory:") creates a temporary in-memory database. The exact
+spelling matters: ":memory" without the final colon is treated as a filename.
+Use an in-memory database for an isolated experiment; its contents do not survive
+closing that connection. Transaction-control modes and concurrency are future
+topics, so do not assume every connection configuration groups writes identically.
+
+SQL errors also have different causes: OperationalError can indicate malformed
+SQL, while IntegrityError covers a constraint violation such as NOT NULL.
+TRANSACTION is a SQL keyword; use transactions as our unquoted table name.
+Spell INTEGER correctly: SQLite's permissive type declarations can accept a
+misspelling such as INTERGER, but it loses the special INTEGER PRIMARY KEY behavior.
+
+Revision checks: What happens if the second insert fails? What explicitly undoes
+the first? Why must commit follow both inserts? Can rollback undo earlier commits?
+How does ":memory:" differ from a file path? What does an empty final table prove
+when there was only an invalid insert versus a valid insert followed by failure?
+
 ### Generated integer IDs and durable data
 
 In our ordinary SQLite table, id INTEGER PRIMARY KEY aliases the rowid. Omitting
