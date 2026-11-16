@@ -2317,6 +2317,45 @@ efficient database access plan; indexes are a future topic.
 Revision checks: Where is filtering performed? What happens with no matches?
 Why include ORDER BY? Why does the parameter tuple need its trailing comma?
 
+### Updating and deleting rows: CRUD
+
+CRUD names four basic operations: Create (INSERT), Read (SELECT), Update
+(UPDATE), and Delete (DELETE). CREATE TABLE defines structure rather than
+creating a transaction record.
+
+```python
+connection.execute(
+    "UPDATE transactions SET amount = ? WHERE id = ?",
+    ("55.00", 1),
+)
+connection.commit()
+
+connection.execute(
+    "DELETE FROM transactions WHERE id = ?",
+    (2,),
+)
+connection.commit()
+```
+
+SET specifies the field/value to change. WHERE identifies matching rows; using
+the primary key targets at most one row. Without WHERE, UPDATE or DELETE applies
+to every row. Bind values separately, including the ID, instead of interpolating
+SQL strings. A one-value parameter tuple needs its comma: (2,).
+
+Commit makes each change part of the database's committed state. If multiple
+operations must succeed together, use one transaction and commit after the group
+instead of committing each independently. SELECT after a change lets you inspect
+the result; ORDER BY provides a predictable display order.
+
+An in-memory database can be recreated by rerunning setup and inserts. Its data
+disappears when the connection closes; it is not a disk file that must be kept
+between runs. A mistakenly created :memory file from a missing trailing colon
+is different from the special :memory: connection name.
+
+Revision checks: What does SET do? Why include WHERE on updates and deletes?
+What does CRUD's Create mean? How would committing after each operation differ
+from committing the pair together?
+
 ### Named rows and domain-object reconstruction
 
 Set connection.row_factory = sqlite3.Row before creating query cursors to obtain

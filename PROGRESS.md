@@ -45,6 +45,16 @@ topics and deferred hardening continue alongside the application.
 
 ## Latest verification
 
+Inspected exercises/sqlite_updates.py and ran
+.venv/bin/python -m exercises.sqlite_updates: exit 0, printed
+[(1, 'Groceries', '55.00')]. In-memory setup inserts two valid rows; parameterized
+UPDATE targets ID 1 and DELETE targets ID 2 with commits. Final state confirms
+both operations. Script prints the final state only; intermediate stage output
+was not verified separately, and no further drill is required. Concept guide
+updated with CRUD, SET/WHERE, binding, and commit boundaries. No application
+suite run. Next: move learned SQL/model conversion behind an application storage
+module, then connect it to the CLI without mixing SQL into calculation functions.
+
 Verified named-row reconstruction in exercises/sqlite_queries.py: ran with the
 project interpreter, exit 0, printed a list of three Transaction objects with
 category Groceries, Decimal('40.00'), and date(2026, 11, 14). row_factory is
