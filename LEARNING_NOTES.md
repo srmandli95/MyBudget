@@ -38,6 +38,7 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
 14. [Testing and pytest](#testing-and-pytest)
 15. [Fixtures and parametrization](#fixtures-and-parametrization)
 16. [Code organization and refactoring](#code-organization-and-refactoring)
+    - [Dependency injection and connection ownership](#dependency-injection-and-connection-ownership)
 17. [Environments, dependencies, and uv](#environments-dependencies-and-uv)
 18. [Command-line interfaces and argparse](#command-line-interfaces-and-argparse)
     - [Subcommands and subparsers](#subcommands-and-subparsers)
@@ -2009,6 +2010,51 @@ such as models or calculations; introduce validation.py when it becomes a useful
 boundary. Avoid a generic helpers.py collecting unrelated responsibilities.
 Separate modules do not imply separate processes or services.
 
+### Dependency injection and connection ownership
+
+Dependency injection means supplying a dependency to code that needs it rather
+than constructing it inside that code. No framework or special decorator is
+required. Our storage functions receive a sqlite3.Connection argument:
+
+```python
+def save_transaction(
+    connection: sqlite3.Connection,
+    transaction: Transaction,
+) -> None:
+    connection.execute(
+        """INSERT INTO transactions (category, amount, transaction_date)
+           VALUES (?, ?, ?)""",
+        (transaction.category, str(transaction.amount),
+         transaction.transaction_date.isoformat()),
+    )
+```
+
+The caller creates the connection, passes it in, decides when to commit or roll
+back, and closes it. Storage functions execute SQL without owning the connection
+lifetime. This permits multiple operations to share one transaction and lets
+callers use file-backed or in-memory connections without changing those functions.
+
+A storage boundary isolates database access and object conversion from arithmetic
+and presentation. load_transactions returns a list of domain objects; save_transaction
+accepts one domain object. Neither prints. The CLI and a future API can reuse
+this boundary, while calculations remain unaware of SQL. These functions do not
+require a repository class merely to establish that separation.
+
+Each module has its own namespace: imports in a demo do not supply names inside
+the imported storage module. Import sqlite3 and Transaction where their names
+are used in annotations. Connection is the capitalized type name. Python 3.14's
+deferred annotation evaluation can let execution succeed despite unresolved
+annotation names; runtime success alone does not prove type hints resolve.
+
+When reconstructing stored dates, date(year, month, day) expects integers;
+date.fromisoformat(text) parses our saved ISO date string. Constructor conversion
+and model validation still run when loading; storing a row does not make it an
+already-valid Python object automatically.
+
+Revision checks: What is injected? Who commits and closes the connection? Why
+avoid committing inside every save operation? Why are caller imports insufficient
+for the storage module's names? Could the same functions use a temporary database?
+
 ## Environments, dependencies, and uv
 
 A virtual environment isolates a project's installed Python packages. A package
@@ -2355,6 +2401,36 @@ is different from the special :memory: connection name.
 Revision checks: What does SET do? Why include WHERE on updates and deletes?
 What does CRUD's Create mean? How would committing after each operation differ
 from committing the pair together?
+
+### CHECK constraints versus NOT NULL and model validation
+
+NOT NULL rejects SQL NULL but does not reject empty or space-only strings. CHECK
+adds a condition enforced by the database when rows are written:
+
+```sql
+category TEXT NOT NULL CHECK(length(trim(category)) > 0)
+```
+
+trim removes ordinary spaces from both ends by default, and length measures the
+remaining text. This condition rejects an empty string and strings containing
+only ordinary spaces. Unlike Python's str.strip(), SQLite's default trim does
+not remove every whitespace character. Do not assume these two rules are identical.
+Keep NOT NULL too: a CHECK expression evaluating to NULL does not itself reject
+the row in SQLite.
+
+Model validation runs when Python constructs a Transaction. Database constraints
+also protect direct SQL inserts and updates that bypass that model. A violation
+raises sqlite3.IntegrityError. The caller still owns rollback/transaction policy;
+constraints do not automatically impose the application's whole-unit rollback.
+
+Changing the CREATE TABLE IF NOT EXISTS declaration does not update an existing
+table. A fresh in-memory database exercises the new definition; existing files
+need a deliberate schema migration. Do not delete persisted data as a substitute
+for migration in the application.
+
+Revision checks: Can NOT NULL alone reject ""? Which layer protects direct SQL?
+What exception signals a failed CHECK? Why test an edited schema on a fresh
+database? Are SQLite trim and Python strip equivalent for all whitespace?
 
 ### Named rows and domain-object reconstruction
 

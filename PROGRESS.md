@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-11-16.
+Last updated: 2026-11-17.
 
 ## Current milestone
 
@@ -44,6 +44,27 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Application storage boundary implemented in mybudget/storage.py with
+initialize_database, save_transaction, and load_transactions. Caller injects the
+connection and owns commits/rollback/close. Ran exercises/storage_demo with the
+project interpreter: exit 0, saving/loading a Groceries Transaction with
+Decimal('22.45') and date(2026, 10, 11). Reviewed final imports and resolved type
+hints with typing.get_type_hints after correcting sqlite/sqlite3 and Connection
+names. No undefined annotation names remain in those inspected functions.
+
+Reviewed category CHECK(length(trim(category)) > 0) in initialize_database.
+Valid demo still passed. Separate focused in-memory experiment using the actual
+initializer rejected both empty and ordinary-space-only categories with
+sqlite3.IntegrityError. Existing disk schema was not migrated or tested with
+the new rule. Recorded model versus database enforcement, NULL/blank distinction,
+trim/strip difference, and CREATE IF NOT EXISTS limitation in the concept guide.
+Also recorded dependency injection and caller connection ownership as concepts;
+implementation verification belongs here. No full application suite run for
+these changes and no automated storage tests added yet.
+Next proposed new concept: UNIQUE constraints and business uniqueness, using
+category/budget configuration rather than incorrectly rejecting repeated expenses.
+CLI integration, persisted budgets, and relationships remain pending.
 
 Inspected exercises/sqlite_updates.py and ran
 .venv/bin/python -m exercises.sqlite_updates: exit 0, printed
