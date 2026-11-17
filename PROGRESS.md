@@ -45,6 +45,17 @@ topics and deferred hardening continue alongside the application.
 
 ## Latest verification
 
+Reviewed exercises/sqlite_unique.py after learner edits and ran
+.venv/bin/python -m exercises.sqlite_unique: exit 0, printed
+"UNIQUE constraint failed: category.name" followed by [(1, 'Groceries')].
+Current table is named category consistently. Two identical bound inserts are
+attempted; the first is committed, the second rejected and caught, rollback
+leaves the first committed row. Explained that catching/printing IntegrityError
+avoids a traceback without making the rejected insert succeed. Concept guide
+updated with business uniqueness and distinction from row identity/NOT NULL.
+No application tests run for this standalone experiment. Next proposed topic:
+foreign keys and relationships connecting transaction rows to category records.
+
 Application storage boundary implemented in mybudget/storage.py with
 initialize_database, save_transaction, and load_transactions. Caller injects the
 connection and owns commits/rollback/close. Ran exercises/storage_demo with the

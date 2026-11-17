@@ -2432,6 +2432,47 @@ Revision checks: Can NOT NULL alone reject ""? Which layer protects direct SQL?
 What exception signals a failed CHECK? Why test an edited schema on a fresh
 database? Are SQLite trim and Python strip equivalent for all whitespace?
 
+### UNIQUE constraints and business uniqueness
+
+A primary key uniquely identifies a row, while UNIQUE can enforce a business
+rule on another field, such as allowing each category name only once:
+
+```sql
+CREATE TABLE category (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE
+)
+```
+
+Two different IDs do not allow duplicate names under this rule. The second
+INSERT of "Groceries" raises sqlite3.IntegrityError. A handler can catch and
+print that error without a traceback:
+
+```python
+except sqlite3.IntegrityError as error:
+    connection.rollback()
+    print(error)
+```
+
+Catch the exception class without parentheses; as error binds the exception
+instance. Catching/printing a failure does not mean the rejected write succeeded.
+If the first insert was committed before attempting the duplicate, rollback
+after the duplicate leaves that first row intact. A uniqueness experiment needs
+two inserts with the same value, not just one successful insert.
+
+With this default text comparison, "Groceries" and "groceries" are distinct.
+Case handling and multi-column uniqueness are separate policies not yet
+practiced. SQLite UNIQUE by itself also allows multiple NULL values; NOT NULL
+provides the separate missing-value restriction for this name column.
+
+Choose uniqueness according to domain meaning. Repeated expense records can
+legitimately share category, amount, and date, so do not blindly make those
+fields unique. A category catalog has different rules from transaction history.
+
+Revision checks: How does UNIQUE differ from a primary key? Why does the first
+row survive our rejected duplicate? Why is a printed error without a traceback
+still a failed insert? Which repeated values are legitimate in expense history?
+
 ### Named rows and domain-object reconstruction
 
 Set connection.row_factory = sqlite3.Row before creating query cursors to obtain
