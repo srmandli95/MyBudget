@@ -4,6 +4,13 @@ Last updated: 2026-11-18.
 
 ## Current milestone
 
+Latest teaching direction (2026-11-18): prioritize new concepts and fast forward
+progress, with depth when unfamiliar. One focused example/exercise per new idea;
+skip repeated validation/conversion drills and defer routine standards/hardening
+to application work. Learner identified money conversion as familiar validation,
+not a new topic. Next new lesson: database indexes and EXPLAIN QUERY PLAN.
+Do not require bounds/rounding helpers or more money-validation drills first.
+
 Milestone 2: SQLite persistence, beginning. Milestone 1's functional criteria are
 met: shared models, configurable in-memory budgets, tested calculations/refunds,
 and CLI calculation/monthly-report integration using explicit fictional data.
@@ -619,18 +626,18 @@ common mistakes, and recall questions. Update relevant concept sections as we
 learn; do not append a new entry per test/day. This supersedes the earlier
 chronological-lesson convention. Session history is preserved in
 learnings/SESSION_HISTORY.md; daily files are archives. Verification and next tasks
-stay in this progress file. Iterator/generator basics and text-file handling have
-been covered along with basic JSON and object-to-data conversion. Next proposed
-step: reusable conversion functions and saving a collection of transactions.
+stay in this progress file. Update the latest teaching direction near the top
+as the active lesson changes; older proposed next steps below it are historical.
 
 ## Session recovery and teaching preferences
 
 Read LEARNING_MASTER_PROMPT.md, LEARNING_NOTES.md, ROADMAP.md, and this checkpoint.
 Inspect actual files before assuming prior changes exist. Mentor first: let the
 learner implement core code. Skip familiar material on request; pause at unfamiliar
-concepts. When confused, use one change and one check at a time. Function decorators
-and generator basics have been practiced; concurrency, GIL, databases, and web
+concepts. When confused, use one change and one check at a time. SQL basics and
+storage boundaries are now being learned in Milestone 2. Concurrency, GIL, and web
 development remain future lessons. Mentioning a topic does not mean it was mastered.
+Prefer concept breadth and pace over repeated practice of known mechanics.
 
 ## Repository
 

@@ -67,6 +67,19 @@ These must be configurable rather than hardcoded into application logic.
 Use fictional test transactions instead of real bank data during early development.
 
 4. Our Learning Philosophy
+Current pacing clarification (2026-11-18; takes precedence over earlier drill or
+hardening expectations): prioritize learning new concepts quickly, while pausing
+for depth at genuinely unfamiliar ideas. Use one focused example or small
+exercise per new concept and advance once understanding is demonstrated.
+Do not repackage familiar validation, conversion, refactoring, or CRUD practice
+as a new concept. State the new idea before assigning work. Apply routine
+standards, edge-case coverage, and production hardening during application
+development as needed; track deferred work without blocking the curriculum on
+it. Review actual results and correct meaningful errors, but avoid repetitive
+drills, compulsory recap quizzes, and polish as prerequisites for advancing.
+Learning notes remain a concept revision guide; implementation status belongs
+in PROGRESS.md.
+
 Follow these principles throughout the project.
 Principle 1: Understand before implementing
 Before introducing a new concept or technology, explain:

@@ -15,6 +15,15 @@ Use focused verification for changed behavior; introduce more testing when it
 teaches a new idea or protects an important change. Track deferred hardening in
 PROGRESS.md without calling it complete or repeatedly blocking learning on it.
 
+Latest pacing preference: learn new concepts quickly, with depth when needed.
+Use one focused example or small exercise per new idea; once it is understood,
+move forward. Do not present another validation rule, conversion helper,
+refactor, or familiar CRUD variant as a new concept. Explain what is new before
+assigning work. Skip redundant drills, quizzes, polish, and routine hardening;
+apply those standards during application development when useful. Correct errors
+that prevent understanding or execution, but do not turn every lesson into a
+production-readiness checklist. Keep the active next topic in PROGRESS.md.
+
 Maintain **LEARNING_NOTES.md** as a single concept-based revision guide, not a
 chronological diary. Update the relevant topic with definitions, mechanisms,
 focused examples, distinctions, common mistakes, and revision questions. Add a
