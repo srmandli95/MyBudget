@@ -45,6 +45,16 @@ topics and deferred hardening continue alongside the application.
 
 ## Latest verification
 
+Reviewed updated exercises/sqlite_money.py and ran it with the project
+interpreter: exit 0, printed 0.00 before inserts and 45.00 afterward. Empty-table
+query uses COALESCE(SUM(amount_cents), 0). Populated-table query still uses plain
+SUM; suggested using the same safe expression there, but that follow-up has not
+been verified. Normal query work is now inside try and finally only closes,
+resolving the earlier cleanup-structure issue. Concept guide updated with
+NULL/None versus zero, first-non-NULL fallback, and aggregate behavior.
+No application tests run. App storage still uses text amounts; precision policy
+and deliberate migration remain pending before integer storage integration.
+
 Inspected exercises/sqlite_money.py and ran it with the project interpreter:
 exit 0, printed 45.00. In-memory table stores 2000 and 2500 cents, SQL SUM returns
 4500, and Python converts through Decimal before division/display. Concept guide

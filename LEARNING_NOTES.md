@@ -2678,6 +2678,36 @@ Revision checks: In which unit does SUM operate? Why construct Decimal before
 division? What does fetchone()[0] select? Why is int(amount * 100) insufficient
 without a precision policy? What does SUM return for an empty set?
 
+### COALESCE and empty aggregate results
+
+SQL SUM returns NULL when there are no non-NULL values to sum, unlike Python's
+sum([]), which returns 0. sqlite3 presents SQL NULL as None, so attempting
+Decimal(None) fails. Choose the report's intended fallback explicitly:
+
+```sql
+SELECT COALESCE(SUM(amount_cents), 0) FROM transactions
+```
+
+COALESCE returns its first non-NULL argument. A real sum such as 4500 is retained;
+a missing sum becomes integer 0. This is a query-result expression, not a change
+to stored rows. It checks NULL, not truthiness: a genuine numeric zero remains
+zero. It can also supply fallbacks in joined/grouped summaries when missing
+aggregate results should mean no spending.
+
+```python
+total_cents = cursor.fetchone()[0]
+total_amount = Decimal(total_cents) / 100
+print(f"{total_amount:.2f}")
+```
+
+With an empty table the safe aggregate displays 0.00; after inserting 2000 and
+2500 cents it displays 45.00. Using the same safe expression for both cases
+avoids having separate assumptions about whether records exist.
+
+Revision checks: How does SQL SUM on no rows differ from Python sum([])? Does
+COALESCE replace a genuine zero? Does it update stored data? Why is None not
+automatically a suitable amount for a budget calculation?
+
 ### Named rows and domain-object reconstruction
 
 Set connection.row_factory = sqlite3.Row before creating query cursors to obtain
