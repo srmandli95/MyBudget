@@ -2523,6 +2523,42 @@ Revision checks: What does each key identify/reference? Why is this one-to-many?
 When and where must enforcement be enabled? What happens for category 999?
 Does a foreign key automatically return the category name with each transaction?
 
+### INNER JOIN and table aliases
+
+A join combines related rows in a query result. A transaction stores a category
+ID; joining to categories retrieves the corresponding name without duplicating
+that name in every stored transaction.
+
+```sql
+SELECT t.id, c.name, t.amount
+FROM transactions AS t
+INNER JOIN categories AS c
+    ON t.category_id = c.id
+ORDER BY t.id
+```
+
+FROM names the starting table, INNER JOIN introduces the related table, and ON
+specifies the matching condition. SELECT chooses result columns. AS t and AS c
+define temporary aliases within the query; they do not create or rename tables.
+Qualified names such as t.id identify which table supplies a column.
+
+INNER JOIN returns matched row combinations. A category with no transactions
+does not appear in this query; other join types are future topics. Several
+transactions can match the same category row in this one-to-many relationship.
+Joining reads data and does not change the stored records.
+
+A foreign key enforces referential integrity; a join retrieves related data.
+SQL can join tables without a declared foreign key, but the join itself does
+not prevent invalid references from being stored.
+
+For a multiline SQL statement in Python, use a triple-quoted string. Ordinary
+single/double quotes cannot directly span physical lines; a resulting
+unterminated-string SyntaxError occurs before SQL execution.
+
+Revision checks: What does ON match? What are aliases? Does joining change the
+tables? Can one category appear in several joined rows? Why is a foreign key
+different from a join?
+
 ### Named rows and domain-object reconstruction
 
 Set connection.row_factory = sqlite3.Row before creating query cursors to obtain

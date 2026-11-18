@@ -50,6 +50,10 @@ except sqlite3.IntegrityError as error:
     print(error)
    
 finally:
-    print(connection.execute("SELECT * FROM transactions").fetchall())
+    print(connection.execute(""" SELECT t.id, c.name, t.amount
+FROM transactions AS t
+INNER JOIN categories AS c
+    ON t.category_id = c.id
+ORDER BY t.id """).fetchall())
     connection.close()
 

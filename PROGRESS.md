@@ -45,6 +45,16 @@ topics and deferred hardening continue alongside the application.
 
 ## Latest verification
 
+Inspected updated exercises/sqlite_relationships.py and ran
+.venv/bin/python -m exercises.sqlite_relationships: exit 0, printed
+"FOREIGN KEY constraint failed" and [(1, 'Groceries', '20.00')]. This independently
+verifies the corrected foreign-key experiment as well as the INNER JOIN using
+aliases t/c and ON t.category_id = c.id. Learner corrected multiline SQL from
+ordinary quotes to triple quotes after a Python SyntaxError. Concept guide now
+covers joins, aliases, matched results, and retrieval versus enforcement.
+No application suite run for this standalone lesson. Next proposed new concept:
+LEFT JOIN, to include categories that have no transactions, then grouped summaries.
+
 Foreign-key lesson: reviewed exercises/sqlite_relationships.py with categories
 and transactions tables and PRAGMA foreign_keys = ON before writes. Initial
 mentor run failed with OperationalError because INSERT used category instead
