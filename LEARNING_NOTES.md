@@ -2754,6 +2754,39 @@ Revision checks: What extra structure is maintained? Why can reads improve while
 writes get slower? Does EXPLAIN execute the SELECT for its records? What makes
 an index covering? Why are the numeric plan fields not timing measurements?
 
+### Composite indexes and column order
+
+A composite index includes multiple columns, ordered first by the first column,
+then by the next column within equal first-column values:
+
+```sql
+CREATE INDEX idx_category_date
+ON transactions(category, transaction_date);
+```
+
+For WHERE category = ? AND transaction_date >= ?, SQLite can seek into the
+matching category near the requested date and then read forward through the
+matching range. It does not need to scan each category first. Think of a phone
+book ordered by surname and then first name: the ordering supports a direct
+search near a complete pair of values.
+
+This index generally supports category-only lookups and category-plus-date
+lookups. A date-only query lacks the leading category filter, so it generally
+cannot use the same simple narrow seek: dates are not globally ordered across
+all categories. Planner alternatives such as skip-scan exist, so inspect actual
+plans rather than treating missing-leading-column use as absolutely impossible.
+Choose index column order for the workload; index order is not a promise of
+query result ordering without ORDER BY.
+
+The exercise's first plan reported SEARCH USING COVERING INDEX idx_category_date
+(category=? AND transaction_date>?), demonstrating both columns participate.
+The abbreviated plan's >? wording does not change the original SQL >= condition;
+the boundary date remains included. EXPLAIN still describes strategy, not speed.
+
+Revision checks: How are dates ordered within the index? Does searching one
+category require scanning every category? Why is date-only filtering different?
+Does index ordering remove the need for ORDER BY when result order matters?
+
 ### Named rows and domain-object reconstruction
 
 Set connection.row_factory = sqlite3.Row before creating query cursors to obtain

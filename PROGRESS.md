@@ -10,8 +10,9 @@ skip repeated validation/conversion drills and defer routine standards/hardening
 to application work. Learner identified money conversion as familiar validation,
 not a new topic. Next new lesson: database indexes and EXPLAIN QUERY PLAN.
 Do not require bounds/rounding helpers or more money-validation drills first.
-Index/query-plan lesson now covered; next proposed new concept: composite indexes
-and why column order matters, then schema migrations when integrating storage.
+Index/query-plan and composite-index lessons now covered. Next proposed new
+concept: schema migrations when integrating storage; no repeated index drill
+is required once the access strategy is understood.
 
 Milestone 2: SQLite persistence, beginning. Milestone 1's functional criteria are
 met: shared models, configurable in-memory budgets, tested calculations/refunds,
@@ -53,6 +54,16 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Inspected exercises/sqlite_composite_indexes.py and ran it with the project
+interpreter: exit 0, SEARCH transactions USING COVERING INDEX idx_category_date
+(category=? AND transaction_date>?). Confirmed first query uses both columns.
+Saved script at review time had only the category/date query, no date-only
+comparison, and did not explicitly close the connection; suggested both changes,
+but neither was independently rechecked. Learner understood category-first/date-
+within-category ordering after clarifying direct seeking versus scanning every
+category. Concept guide updated with column order and leading-column lookup.
+No performance benchmark or application suite run; do not imply measured speedup.
 
 Index lesson: learner supplied EXPLAIN QUERY PLAN output showing SCAN transactions
 before indexing and SEARCH transactions USING COVERING INDEX
