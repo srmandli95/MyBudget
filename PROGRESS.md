@@ -10,6 +10,8 @@ skip repeated validation/conversion drills and defer routine standards/hardening
 to application work. Learner identified money conversion as familiar validation,
 not a new topic. Next new lesson: database indexes and EXPLAIN QUERY PLAN.
 Do not require bounds/rounding helpers or more money-validation drills first.
+Index/query-plan lesson now covered; next proposed new concept: composite indexes
+and why column order matters, then schema migrations when integrating storage.
 
 Milestone 2: SQLite persistence, beginning. Milestone 1's functional criteria are
 met: shared models, configurable in-memory budgets, tested calculations/refunds,
@@ -51,6 +53,17 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Index lesson: learner supplied EXPLAIN QUERY PLAN output showing SCAN transactions
+before indexing and SEARCH transactions USING COVERING INDEX
+idx_transactions_category (category=?) afterward. exercises/sqlite_indexes.py
+exists, but mentor did not inspect/run it during this notes-only update. This is
+learner-provided output, not a measured performance benchmark. Consulted official
+SQLite docs/source to explain node/parent IDs and implementation-specific third
+cost field. Recorded index storage/write-maintenance trade-offs, covering index,
+and plans versus actual timing. Learner correctly summarized retrieval benefits
+and asked about write overhead; no repeated timing drill is required.
+No application tests run or commit/push performed.
 
 Reviewed updated exercises/sqlite_money.py and ran it with the project
 interpreter: exit 0, printed 0.00 before inserts and 45.00 afterward. Empty-table

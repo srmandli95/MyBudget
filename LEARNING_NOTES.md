@@ -2708,6 +2708,52 @@ Revision checks: How does SQL SUM on no rows differ from Python sum([])? Does
 COALESCE replace a genuine zero? Does it update stored data? Why is None not
 automatically a suitable amount for a budget calculation?
 
+### Indexes, query plans, and read/write trade-offs
+
+An index is an additional search structure maintained alongside a table. A
+suitable index can help locate matching rows without scanning the entire table,
+especially as data grows. It does not change the query's logical result or
+guarantee every query becomes faster.
+
+```sql
+CREATE INDEX idx_transactions_category ON transactions(category);
+
+EXPLAIN QUERY PLAN
+SELECT id, category FROM transactions WHERE category = ?;
+```
+
+EXPLAIN QUERY PLAN describes the chosen access strategy rather than retrieving
+the SELECT's data or measuring its execution time. The experiment's descriptions
+changed from SCAN transactions to SEARCH transactions USING COVERING INDEX
+idx_transactions_category (category=?). A covering index supplies all the values
+needed by the query without a separate table lookup.
+
+Raw result rows describe plan steps: node ID, parent ID, an internal auxiliary
+value, and descriptive text. The IDs organize a plan tree; they are not record
+IDs. Current SQLite implementation uses an encoded estimated loop cost in that
+third position for these scans. Values such as 216 and 56 are not milliseconds,
+actual rows, or evidence of a measured speedup. This debug output is not a stable
+application interface; focus on the strategy description.
+
+An index consumes extra storage (disk space in a file database). SQLite must
+also maintain it during writes: insert adds index entries, delete removes them,
+and updating an indexed value adjusts the entries. Updating unrelated columns
+generally does not require changing that index. This can increase write time;
+the overhead depends on the workload and number of indexes. SQLite maintains
+the index automatically, not through extra manual application updates.
+
+Choose indexes for useful query patterns instead of indexing every column.
+The planner may choose another access path. Inspecting a simple plan on an empty
+table demonstrates the mechanism but does not benchmark real workload performance.
+
+Sources: [SQLite query-plan guide](https://www.sqlite.org/eqp.html),
+[plan-generation implementation](https://github.com/sqlite/sqlite/blob/master/src/wherecode.c),
+[internal cost fields](https://github.com/sqlite/sqlite/blob/master/src/whereInt.h).
+
+Revision checks: What extra structure is maintained? Why can reads improve while
+writes get slower? Does EXPLAIN execute the SELECT for its records? What makes
+an index covering? Why are the numeric plan fields not timing measurements?
+
 ### Named rows and domain-object reconstruction
 
 Set connection.row_factory = sqlite3.Row before creating query cursors to obtain
