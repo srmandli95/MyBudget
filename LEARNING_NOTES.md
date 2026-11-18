@@ -2559,6 +2559,39 @@ Revision checks: What does ON match? What are aliases? Does joining change the
 tables? Can one category appear in several joined rows? Why is a foreign key
 different from a join?
 
+### LEFT JOIN and unmatched rows
+
+LEFT JOIN preserves every row from the left table. Matching right-side rows
+produce matching combinations; when none match, the result still includes the
+left row with SQL NULL values for the right-side columns.
+
+```sql
+SELECT c.name, t.id, t.amount
+FROM categories AS c
+LEFT JOIN transactions AS t
+    ON t.category_id = c.id
+ORDER BY c.id, t.id
+```
+
+With Groceries and Gas categories but only a Groceries transaction, the result
+can contain ('Groceries', 1, '20.00') and ('Gas', None, None). Python's sqlite3
+maps returned SQL NULL to None. The join has not inserted a Gas transaction;
+the missing right-side values exist in the query result only.
+
+INNER JOIN returns matching combinations; LEFT JOIN also keeps unmatched
+left-side rows. Put categories on the left when a report must include categories
+with no spending. Putting transactions on the left would preserve transactions,
+not all categories.
+
+Preserving left rows does not guarantee one result row per category: a category
+with three matching transactions produces three combinations. A category with
+no matches produces one result row with missing transaction values. Grouping
+these combinations into category summaries is a separate aggregation step.
+
+Revision checks: Which table must go on the left to include unused categories?
+What does None represent here? Does the join create a missing transaction?
+How many result rows can one category with several matches produce?
+
 ### Named rows and domain-object reconstruction
 
 Set connection.row_factory = sqlite3.Row before creating query cursors to obtain

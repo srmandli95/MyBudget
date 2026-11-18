@@ -45,6 +45,15 @@ topics and deferred hardening continue alongside the application.
 
 ## Latest verification
 
+LEFT JOIN lesson discussed; learner correctly restated that all left rows are
+preserved with matching right-side rows. Clarified SQL NULL maps to Python None
+for unmatched columns, table order matters, and several matches produce several
+result combinations. Learner reported completing the exercise, but mentor has
+not inspected or executed the updated LEFT JOIN script. Record conceptual
+understanding separately from unverified saved output. Concept guide updated;
+no tests run during this notes-only update. Next: grouped aggregation, beginning
+with transaction counts per category and COUNT behavior on unmatched rows.
+
 Inspected updated exercises/sqlite_relationships.py and ran
 .venv/bin/python -m exercises.sqlite_relationships: exit 0, printed
 "FOREIGN KEY constraint failed" and [(1, 'Groceries', '20.00')]. This independently

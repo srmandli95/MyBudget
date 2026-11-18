@@ -28,6 +28,10 @@ try:
     "INSERT INTO categories (name) VALUES (?)",
     ("Groceries",),
     )
+    connection.execute(
+        "INSERT INTO categories (name) VALUES (?)",
+        ("Gas",),
+    )
 
     connection.commit()
 
@@ -50,10 +54,11 @@ except sqlite3.IntegrityError as error:
     print(error)
    
 finally:
-    print(connection.execute(""" SELECT t.id, c.name, t.amount
-FROM transactions AS t
-INNER JOIN categories AS c
-    ON t.category_id = c.id
-ORDER BY t.id """).fetchall())
+    print(connection.execute(""" 
+            SELECT c.name, t.id, t.amount
+        FROM categories AS c
+        LEFT JOIN transactions AS t
+            ON t.category_id = c.id
+        ORDER BY c.id, t.id """).fetchall())
     connection.close()
 
