@@ -2592,6 +2592,43 @@ Revision checks: Which table must go on the left to include unused categories?
 What does None represent here? Does the join create a missing transaction?
 How many result rows can one category with several matches produce?
 
+### GROUP BY and counting related records
+
+Aggregation summarizes several rows. GROUP BY forms groups, and an aggregate
+such as COUNT produces a result for each group:
+
+```sql
+SELECT c.name, COUNT(t.id) AS transaction_count
+FROM categories AS c
+LEFT JOIN transactions AS t
+    ON t.category_id = c.id
+GROUP BY c.id, c.name
+ORDER BY c.id
+```
+
+This returns one summary per category. Group by its ID and displayed name;
+AS transaction_count labels the calculated result column. LEFT JOIN preserves
+categories with no transactions so their summary can report zero.
+
+COUNT(*) counts every joined row. COUNT(t.id) counts non-NULL transaction IDs.
+An unmatched category still produces one joined row with NULL transaction
+columns, so COUNT(*) would report 1 there, while COUNT(t.id) reports 0.
+
+A category-name UNIQUE constraint does not prohibit several transactions from
+referencing the same category ID. Insert one Groceries category and multiple
+transactions referencing it to increase its transaction count. Creating a category
+named Grocery instead creates a different group: those are distinct strings,
+not duplicate Groceries records. This connects uniqueness to a one-to-many
+relationship rather than imposing uniqueness on the foreign-key column.
+
+Money sums are not yet covered by this count exercise. Our current amount
+column contains text; choose the intended money representation before relying
+on SQL arithmetic for financial totals.
+
+Revision checks: What does GROUP BY combine? Why use COUNT(t.id) with LEFT JOIN?
+How can a unique category name still have many transactions? Does inserting a
+similar but different category name increase the original category's count?
+
 ### Named rows and domain-object reconstruction
 
 Set connection.row_factory = sqlite3.Row before creating query cursors to obtain

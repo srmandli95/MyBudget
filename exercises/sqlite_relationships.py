@@ -44,7 +44,7 @@ try:
 
     connection.execute(
         "INSERT INTO transactions (category_id, amount) VALUES (?, ?)",
-        (999, "20.00"),
+        (1, "23.00"),
     )
 
     connection.commit()
@@ -55,10 +55,11 @@ except sqlite3.IntegrityError as error:
    
 finally:
     print(connection.execute(""" 
-            SELECT c.name, t.id, t.amount
-        FROM categories AS c
-        LEFT JOIN transactions AS t
-            ON t.category_id = c.id
-        ORDER BY c.id, t.id """).fetchall())
+            SELECT c.name, COUNT(t.id) AS transaction_count
+FROM categories AS c
+LEFT JOIN transactions AS t
+    ON t.category_id = c.id
+GROUP BY c.id, c.name
+ORDER BY c.id """).fetchall())
     connection.close()
 

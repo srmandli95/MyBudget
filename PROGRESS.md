@@ -45,6 +45,19 @@ topics and deferred hardening continue alongside the application.
 
 ## Latest verification
 
+Reviewed grouped query in exercises/sqlite_relationships.py and ran it with the
+project interpreter: exit 0, printed expected foreign-key error followed by
+[('Groceries', 1), ('Gas', 0), ('Grocery', 0)]. This verifies LEFT JOIN includes
+unused categories and COUNT(t.id)/GROUP BY produces correct counts. Learner
+initially added Grocery as a category rather than another Groceries transaction;
+explained distinct names under UNIQUE and multiple children referencing one
+category ID. Learner then reported the revised multi-transaction version worked;
+that final edit was not independently rerun by the mentor. Concept guide updated
+with aggregation and COUNT(*) versus non-NULL-column counting. No application
+suite run. Next proposed new concept: exact money storage as integer minor units
+before SQL SUM/grouped monetary reports. Application schema migration is not yet
+implemented and text amounts must not be silently reinterpreted as integers.
+
 LEFT JOIN lesson discussed; learner correctly restated that all left rows are
 preserved with matching right-side rows. Clarified SQL NULL maps to Python None
 for unmatched columns, table order matters, and several matches produce several
