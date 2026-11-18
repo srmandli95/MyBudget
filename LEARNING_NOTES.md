@@ -2473,6 +2473,56 @@ Revision checks: How does UNIQUE differ from a primary key? Why does the first
 row survive our rejected duplicate? Why is a printed error without a traceback
 still a failed insert? Which repeated values are legitimate in expense history?
 
+### Foreign keys, relationships, and referential integrity
+
+A primary key identifies a row in its own table. A foreign key references a key
+in another table, connecting records and enforcing referential integrity: a
+transaction cannot reference a nonexistent category.
+
+```sql
+CREATE TABLE categories (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE transactions (
+    id INTEGER PRIMARY KEY,
+    category_id INTEGER NOT NULL,
+    amount TEXT NOT NULL,
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+);
+```
+
+One category can be referenced by many transactions: a one-to-many relationship.
+The transaction stores category_id rather than duplicating the category name.
+The foreign key does not automatically include the category name in query results;
+combining related records requires a join, which is the next proposed topic.
+
+For our SQLite connections, explicitly enable enforcement immediately after
+connecting and before beginning a transaction:
+
+```python
+connection.execute("PRAGMA foreign_keys = ON")
+```
+
+This setting is per connection; changing it inside an active transaction does
+not take effect as intended. Declaring a foreign key without ensuring enforcement
+is enabled does not establish the protection demonstrated by this exercise.
+
+Insert the category first, then reference its ID. With only category 1 present,
+inserting a transaction with category_id 999 raises sqlite3.IntegrityError.
+If a valid transaction was committed before that attempt, rolling back the
+rejected insert leaves the committed transaction in place. Deletion policies
+and cascading behavior have not yet been practiced.
+
+Column names in INSERT must match the schema: categories has name, not category.
+Bind ("Groceries",) as a one-item tuple. Catching/printing the expected constraint
+error demonstrates a rejected write; lack of a traceback does not mean success.
+
+Revision checks: What does each key identify/reference? Why is this one-to-many?
+When and where must enforcement be enabled? What happens for category 999?
+Does a foreign key automatically return the category name with each transaction?
+
 ### Named rows and domain-object reconstruction
 
 Set connection.row_factory = sqlite3.Row before creating query cursors to obtain

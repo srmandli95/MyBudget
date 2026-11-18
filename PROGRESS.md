@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-11-17.
+Last updated: 2026-11-18.
 
 ## Current milestone
 
@@ -44,6 +44,18 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Foreign-key lesson: reviewed exercises/sqlite_relationships.py with categories
+and transactions tables and PRAGMA foreign_keys = ON before writes. Initial
+mentor run failed with OperationalError because INSERT used category instead
+of the schema's name column. Explained correcting it to name, binding a one-item
+tuple, and printing caught IntegrityError. Learner subsequently confirmed the
+expected foreign-key error/result after editing; the corrected script was not
+rerun by the mentor in this notes-only update. Record the successful result as
+learner-confirmed, not independently verified. Concept guide covers one-to-many
+relationships, primary versus foreign keys, per-connection enforcement, and
+referential integrity. No application tests run. Next: JOIN to retrieve category
+names alongside transaction data; cascade/deletion policies remain future work.
 
 Reviewed exercises/sqlite_unique.py after learner edits and ran
 .venv/bin/python -m exercises.sqlite_unique: exit 0, printed
