@@ -2629,6 +2629,55 @@ Revision checks: What does GROUP BY combine? Why use COUNT(t.id) with LEFT JOIN?
 How can a unique category name still have many transactions? Does inserting a
 similar but different category name increase the original category's count?
 
+### Exact money units and SQL SUM
+
+For a chosen two-decimal currency, integer minor units represent money exactly:
+20.00 dollars is 2000 cents. An amount_cents INTEGER column permits integer SQL
+arithmetic instead of converting stored decimal text to approximate floating
+point. This is a representation choice, not a universal rule for all currencies.
+
+```sql
+SELECT SUM(amount_cents) FROM transactions
+```
+
+SUM aggregates the values into one result row. With inserted amounts 2000 and
+2500, the result is 4500 cents. execute returns a cursor, fetchone retrieves one
+row tuple, and [0] extracts its first column:
+
+```python
+total_cents = cursor.fetchone()[0]
+total_amount = Decimal(total_cents) / 100
+print(f"{total_amount:.2f}")  # 45.00
+```
+
+Sum in integer units first, then convert the result to Decimal dollars. Avoid
+dividing Python integers directly into a float when the intended result is
+Decimal. Formatting :.2f controls display; it does not define a validation or
+rounding policy for stored amounts. SUM with no non-NULL input values returns
+SQL NULL, not zero; that empty-input behavior still needs handling in app code.
+
+Converting a Decimal to cents via int(amount * 100) is only appropriate after
+checking the allowed precision: int truncates a fractional result, so 15.257
+must not silently become 1525. Explicit currency scale, reject/round policy,
+and bounds remain pending. Negative integer amounts can represent refunds.
+SQLite integer sums have a finite range, so this is exact within range rather
+than arbitrary-precision arithmetic. Ordinary non-STRICT SQLite type declarations
+also do not by themselves guarantee only integers can be stored.
+
+Do not reinterpret existing text amounts as cents without a deliberate schema
+and data migration. The application still uses text amount storage; the integer
+representation has only been explored in a separate exercise.
+
+Debugging distinction: a trailing comma after the final CREATE TABLE column is
+invalid SQL. If a query in finally runs after setup fails, its no-such-table error
+can obscure that earlier failure. Put normal query work inside try and reserve
+finally for reliable resource cleanup; a failure before close in finally can
+otherwise prevent the close call too.
+
+Revision checks: In which unit does SUM operate? Why construct Decimal before
+division? What does fetchone()[0] select? Why is int(amount * 100) insufficient
+without a precision policy? What does SUM return for an empty set?
+
 ### Named rows and domain-object reconstruction
 
 Set connection.row_factory = sqlite3.Row before creating query cursors to obtain

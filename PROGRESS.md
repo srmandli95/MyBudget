@@ -45,6 +45,18 @@ topics and deferred hardening continue alongside the application.
 
 ## Latest verification
 
+Inspected exercises/sqlite_money.py and ran it with the project interpreter:
+exit 0, printed 45.00. In-memory table stores 2000 and 2500 cents, SQL SUM returns
+4500, and Python converts through Decimal before division/display. Concept guide
+updated with minor-unit representation, aggregate result extraction, truncation
+policy, empty SUM, integer range, and application migration still pending.
+Current saved script still performs normal query work inside finally; suggested
+moving it into try so failures do not mask setup errors or skip close. That
+organizational correction is not saved/verified and should not be called complete.
+No application tests run; app storage schema remains text amounts. Next proposed
+concept: explicit amount precision policy and empty-summary handling before
+integrating integer amounts into application storage.
+
 Reviewed grouped query in exercises/sqlite_relationships.py and ran it with the
 project interpreter: exit 0, printed expected foreign-key error followed by
 [('Groceries', 1), ('Gas', 0), ('Grocery', 0)]. This verifies LEFT JOIN includes
