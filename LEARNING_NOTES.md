@@ -2787,6 +2787,41 @@ Revision checks: How are dates ordered within the index? Does searching one
 category require scanning every category? Why is date-only filtering different?
 Does index ordering remove the need for ORDER BY when result order matters?
 
+### Schema migrations and preserving existing records
+
+A schema migration explicitly changes an existing database structure as the
+application evolves. Editing CREATE TABLE IF NOT EXISTS does not change an
+already-present table; use an appropriate migration instead.
+
+```sql
+ALTER TABLE transactions ADD COLUMN merchant TEXT;
+```
+
+This adds a nullable merchant column while preserving existing rows. Their new
+field initially contains SQL NULL, returned as None by sqlite3. Supplying values
+afterward is a separate data change:
+
+```python
+connection.execute(
+    "UPDATE transactions SET merchant = ? WHERE id = ?",
+    ("Costco", 1),
+)
+connection.commit()
+```
+
+Parameter order follows placeholder order: merchant first, ID second. execute
+returns a cursor; fetchall retrieves records to display. Schema changes and
+data backfills are different steps that may be coordinated in a migration.
+
+An in-memory experiment restarts with a fresh schema each run. A persistent
+application instead needs migration tracking to avoid trying to add the same
+column repeatedly. Version tracking is the next lesson; migration of the actual
+application database has not been implemented by this example.
+
+Revision checks: Why doesn't IF NOT EXISTS update the table? What happens to
+existing rows when this nullable column is added? How is ALTER TABLE different
+from UPDATE? Why must persistent applications track applied schema changes?
+
 ### Named rows and domain-object reconstruction
 
 Set connection.row_factory = sqlite3.Row before creating query cursors to obtain

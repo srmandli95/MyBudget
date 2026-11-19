@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-11-18.
+Last updated: 2026-11-19.
 
 ## Current milestone
 
@@ -10,9 +10,9 @@ skip repeated validation/conversion drills and defer routine standards/hardening
 to application work. Learner identified money conversion as familiar validation,
 not a new topic. Next new lesson: database indexes and EXPLAIN QUERY PLAN.
 Do not require bounds/rounding helpers or more money-validation drills first.
-Index/query-plan and composite-index lessons now covered. Next proposed new
-concept: schema migrations when integrating storage; no repeated index drill
-is required once the access strategy is understood.
+Index/query-plan, composite-index, and basic schema-migration lessons covered.
+Next new concept: migration version tracking with PRAGMA user_version. Avoid
+repeated CRUD or cleanup drills as prerequisites to learning the mechanism.
 
 Milestone 2: SQLite persistence, beginning. Milestone 1's functional criteria are
 met: shared models, configurable in-memory budgets, tested calculations/refunds,
@@ -54,6 +54,17 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Reviewed exercises/sqlite_migrations.py and ran it with the project interpreter:
+exit 0, printed [(1, 'Groceries', 2000, None)] followed by
+[(1, 'Groceries', 2000, 'Costco')]. ALTER TABLE adds a nullable merchant column
+without losing the row; UPDATE backfills the merchant. Corrected extra string
+quote, parameter ordering, and cursor versus fetched rows through learner edits.
+Last reviewed script lacked explicit close; learner later said done, but that
+cleanup was not reinspected. Record it as unverified, not a learning blocker.
+Concept guide updated only for migration/schema-versus-data concepts. No app
+suite run. Application database migrations remain unimplemented. Next: version
+tracking to skip changes already applied to a persistent database.
 
 Inspected exercises/sqlite_composite_indexes.py and ran it with the project
 interpreter: exit 0, SEARCH transactions USING COVERING INDEX idx_category_date
