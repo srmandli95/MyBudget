@@ -8,12 +8,13 @@ Latest teaching direction (2026-11-18): prioritize new concepts and fast forward
 progress, with depth when unfamiliar. One focused example/exercise per new idea;
 skip repeated validation/conversion drills and defer routine standards/hardening
 to application work. Learner identified money conversion as familiar validation,
-not a new topic. Next new lesson: database indexes and EXPLAIN QUERY PLAN.
+not a new topic. Index/query-plan lessons have since been covered.
 Do not require bounds/rounding helpers or more money-validation drills first.
 Index/query-plan, composite-index, and basic schema-migration lessons covered.
-Migration-version tracking now discussed; next new concept: ACID guarantees,
-with atomicity already practiced and isolation to deepen later. Avoid
-repeated CRUD or cleanup drills as prerequisites to learning the mechanism.
+Migration-version tracking, ACID overview, and basic two-connection isolation
+now covered. Next proposed new concept: SQLite write locking and contention,
+followed by journal modes/snapshots as useful. Avoid repeated CRUD or cleanup
+drills as prerequisites to learning the mechanism.
 
 Milestone 2: SQLite persistence, beginning. Milestone 1's functional criteria are
 met: shared models, configurable in-memory budgets, tested calculations/refunds,
@@ -55,6 +56,30 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Revision-guide rewrite requested on 2026-11-19. Reorganized LEARNING_NOTES.md
+from 3,086 lines into concise question-and-answer entries grouped by concept.
+Each answer begins directly, with limited examples/tables and essential caveats;
+removed repeated quizzes, lesson walkthroughs, exercise-specific status, and stale
+future-topic claims. Retained coverage of Python/OOP, testing/tools, SQL/storage,
+indexes, migrations, and ACID/isolation. Updated AGENTS.md and the master prompt
+to preserve this style in future sessions. This is a documentation change, not
+a new learning milestone or implementation task. Active next topic remains
+SQLite write locking/contention and journal-mode behavior. Validated all 21
+contents links, syntax of 12 illustrative Python snippets, Markdown fence balance,
+and whitespace checks. These checks do not execute the examples. No app code changed
+and no application tests run for the notes rewrite; no commit/push performed.
+
+Reviewed exercises/sqlite_isolation.py and ran it with the project interpreter:
+exit 0, printed "before first commit", [(1, 100)], "after first commit",
+[(1, 300)]. One dedicated file is reset to a committed 100; first connection
+updates to 300, second reads before and after first.commit(), then both close.
+Corrected initial commit-before-only-read arrangement through learner edits;
+final sequence independently verifies hiding pending writes and fresh-read
+visibility after commit. Concept guide updated with ACID and assumptions.
+No app suite or crash/concurrency benchmark run. Long-running read transactions,
+WAL/snapshots, and write contention have not yet been demonstrated. This is a
+standalone lesson, not application storage integration or completed concurrency.
 
 Migration-version lesson: inspected exercises/sqlite_migration_versions.py at
 the troubleshooting stage; it had no version branch or printed messages and
@@ -667,10 +692,11 @@ learning tests in exercises/, with shared fixtures in tests/conftest.py.
 
 ## Learning-record convention
 
-User requests **one concept-based revision guide**: LEARNING_NOTES.md. It is now
-organized by concept with a contents list, explanations, focused examples,
-common mistakes, and recall questions. Update relevant concept sections as we
-learn; do not append a new entry per test/day. This supersedes the earlier
+User requests **one concise interview-style revision guide**: LEARNING_NOTES.md.
+Group questions by concept, lead with a direct answer, and keep supporting
+explanations/examples short. No chronological lesson narratives or separate quiz
+lists. Update existing answers for meaningful clarifications; add questions for
+new concepts only. Implementation/verification stays here. This supersedes earlier
 chronological-lesson convention. Session history is preserved in
 learnings/SESSION_HISTORY.md; daily files are archives. Verification and next tasks
 stay in this progress file. Update the latest teaching direction near the top

@@ -79,6 +79,11 @@ it. Review actual results and correct meaningful errors, but avoid repetitive
 drills, compulsory recap quizzes, and polish as prerequisites for advancing.
 Learning notes remain a concept revision guide; implementation status belongs
 in PROGRESS.md.
+Revision format clarification (2026-11-19): LEARNING_NOTES.md should give concise,
+interview-ready answers. Use question headings with the direct answer first,
+then a short mechanism/distinction or minimal example if needed. Avoid long
+lesson narratives, repetitive caveats, exercise histories, and standalone quiz
+lists. Update existing topic answers rather than appending implementation entries.
 
 Follow these principles throughout the project.
 Principle 1: Understand before implementing

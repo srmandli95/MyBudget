@@ -24,11 +24,16 @@ apply those standards during application development when useful. Correct errors
 that prevent understanding or execution, but do not turn every lesson into a
 production-readiness checklist. Keep the active next topic in PROGRESS.md.
 
-Maintain **LEARNING_NOTES.md** as a single concept-based revision guide, not a
-chronological diary. Update the relevant topic with definitions, mechanisms,
-focused examples, distinctions, common mistakes, and revision questions. Add a
-new topic when learned and update the contents. Do not append an entry for every
-test case, day, or tiny code change. Session state, verification results, and
+Maintain **LEARNING_NOTES.md** as a single concise interview-style revision guide,
+not a chronological diary or a transcript of explanations. Use a question heading
+and a direct answer in the first sentence. Usually follow with only one to three
+short explanatory sentences; use a small example or comparison table only when
+it materially clarifies the concept. Preserve essential qualifications without
+adding long caveat lists, repeated definitions, exercise walkthroughs, or separate
+unanswered revision quizzes. Update existing answers for meaningful clarifications;
+add a new question only for a new concept, and keep the contents current.
+Do not append an entry for every test case, day, or tiny code change.
+Session state, verification results, and
 pending work belong in PROGRESS.md. Previous daily records and SESSION_HISTORY.md
 in learnings/ are archives, not instructions for the current notes format.
 Do not mark unverified work as tested.

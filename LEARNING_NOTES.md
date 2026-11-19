@@ -1,12 +1,6 @@
-# MyBudget: concepts for revision
+# MyBudget: interview and revision notes
 
-A study guide to the concepts we have covered, grouped by topic. Read in order
-for a refresher or use the contents to jump to a concept. Examples explain ideas;
-they are not a log of daily activities or individual test results.
-
-Keep extending the relevant sections as we learn. Current work and verification
-belong in [PROGRESS.md](PROGRESS.md). The original chronological journal is
-preserved in the [session history archive](learnings/SESSION_HISTORY.md).
+Direct answers to concepts covered so far. Read the first sentence for quick revision; use the example or distinction when you need more depth. These notes describe concepts, not which features or tests are complete. Current status belongs in [PROGRESS.md](PROGRESS.md).
 
 ## Contents
 
@@ -14,16 +8,7 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
 2. [Statements, expressions, and scope](#statements-expressions-and-scope)
 3. [Functions and type hints](#functions-and-type-hints)
 4. [Objects, references, and copying](#objects-references-and-copying)
-    - [Object lifetime, weak references, and cyclic collection](#object-lifetime-weak-references-and-cyclic-collection)
 5. [Classes, instances, and methods](#classes-instances-and-methods)
-    - [Composition, instance methods, and default factories](#composition-instance-methods-and-default-factories)
-    - [Properties versus instance methods](#properties-versus-instance-methods)
-    - [Polymorphism, duck typing, and classes without instance data](#polymorphism-duck-typing-and-classes-without-instance-data)
-    - [Inheritance, overriding, and super](#inheritance-overriding-and-super)
-    - [Abstract base classes and required methods](#abstract-base-classes-and-required-methods)
-    - [Class methods and alternative constructors](#class-methods-and-alternative-constructors)
-    - [Static methods versus module functions](#static-methods-versus-module-functions)
-    - [Encapsulation and public, internal, and private naming](#encapsulation-and-public-internal-and-private-naming)
 6. [Dataclasses and special methods](#dataclasses-and-special-methods)
 7. [Decimal and money](#decimal-and-money)
 8. [Collections and loops](#collections-and-loops)
@@ -32,355 +17,114 @@ preserved in the [session history archive](learnings/SESSION_HISTORY.md).
 11. [Modules, packages, and imports](#modules-packages-and-imports)
 12. [Exceptions and validation](#exceptions-and-validation)
 13. [Context managers and with](#context-managers-and-with)
-    - [Text files and persistence](#text-files-and-persistence)
-    - [JSON serialization and text encoding](#json-serialization-and-text-encoding)
-    - [Converting domain objects to JSON data and back](#converting-domain-objects-to-json-data-and-back)
-14. [Testing and pytest](#testing-and-pytest)
-15. [Fixtures and parametrization](#fixtures-and-parametrization)
-16. [Code organization and refactoring](#code-organization-and-refactoring)
-    - [Dependency injection and connection ownership](#dependency-injection-and-connection-ownership)
-17. [Environments, dependencies, and uv](#environments-dependencies-and-uv)
-18. [Command-line interfaces and argparse](#command-line-interfaces-and-argparse)
-    - [Subcommands and subparsers](#subcommands-and-subparsers)
-19. [SQLite and relational database basics](#sqlite-and-relational-database-basics)
-20. [Git and GitHub](#git-and-github)
-21. [Quick revision questions](#quick-revision-questions)
+14. [Text files and JSON](#text-files-and-json)
+15. [Testing and pytest](#testing-and-pytest)
+16. [Fixtures and parametrization](#fixtures-and-parametrization)
+17. [Code organization and dependency injection](#code-organization-and-dependency-injection)
+18. [Environments, dependencies, and uv](#environments-dependencies-and-uv)
+19. [Command-line interfaces and argparse](#command-line-interfaces-and-argparse)
+20. [SQLite and relational databases](#sqlite-and-relational-databases)
+21. [Git and GitHub](#git-and-github)
 
 ## Python and execution
 
-**Python is a language; CPython is software implementing that language.** CPython
-is the interpreter we use, written primarily in C. `python3` launches the installed
-interpreter; a `.py` file supplies source code for it to process.
+### What is Python, and what is CPython?
 
-```sh
-python3 budget.py
-```
+**Python is a programming language; CPython is its most widely used implementation, written mainly in C.** The `python3` executable launches the installed interpreter. A `.py` file contains source code for it to process.
 
-Here, `python3` names an executable and `budget.py` is an argument. The shell
-searches PATH to find the executable. A relative source path is resolved from
-the current working directory.
+### What happens when you run `python3 app.py`?
 
-An **executable** is a launchable program file on disk. A **process** is a running
-instance, with memory and CPU time managed by the operating system. One application
-can run several processes. Closing an application does not delete its executable.
+**The shell finds the executable, the OS starts a process, and CPython compiles the source to bytecode and executes it.** Both compilation and execution happen through this one command. Bytecode is interpreter instructions, not native CPU machine code; the CPU runs the interpreter underneath.
 
-For an ordinary CPython script:
+### Is Python interpreted or compiled?
 
-```text
-Shell finds Python → OS starts process → Python reads source
-    → tokenization and parsing → compilation to bytecode → execution
-```
+**In ordinary CPython execution, it is both: source is compiled to bytecode, then that bytecode is interpreted.** Execution is not simply reading and executing each source line independently. One source line can produce multiple bytecode instructions.
 
-Bytecode is an intermediate instruction format for Python's interpreter, not
-native CPU machine code. CPython's evaluation machinery carries out its operations;
-the CPU executes the interpreter's machine instructions underneath. One source
-line can produce several bytecode instructions.
+### How do syntax errors differ from runtime errors?
 
-Syntax checking happens during source processing/compilation. The script must
-compile before its top-level code runs, so a syntax error at the end can prevent
-an earlier print from executing. A runtime error occurs when an executed operation
-fails after compilation. Python is called interpreted, but CPython still compiles
-to bytecode. **One command performs both stages.**
+**Syntax errors prevent compilation; runtime errors occur when an executed operation fails.** A syntax error near the end of a script can prevent an earlier `print` from running. A `NameError` may occur after earlier valid operations have executed.
 
-`python3` without a filename normally opens an interactive session in a terminal.
-`python3 missing.py` instead reports that the requested file cannot be opened.
+### What is an executable versus a process?
+
+**An executable is a launchable program file; a process is a running instance with its own runtime state.** Python and Chrome have executables. Closing a process does not delete its executable. The shell normally locates commands through `PATH`.
 
 ## Statements, expressions, and scope
 
-An **expression evaluates to a value**. A **statement performs an instruction**
-and may contain expressions.
+### What is an expression versus a statement?
 
-```python
-remaining = budget - spent
-```
+**An expression evaluates to a value; a statement performs an instruction and can contain expressions.** In `remaining = budget - spent`, subtraction is an expression and the whole assignment is a statement. `transaction.category == category` is a boolean expression.
 
-`budget - spent` is an expression; the whole assignment is a statement. Python
-evaluates the right side and binds the left-hand name to the result. `=` assigns;
-`==` compares.
+### What is scope?
 
-```python
-if transaction.category == category:
-    total += transaction.amount
-```
+**Scope determines where a name can be accessed directly.** For ordinary function name lookup, remember LEGB: Local, Enclosing function, Global module, Built-ins. Function parameters and assignments are normally local; `if`, `for`, and `with` do not create separate variable scopes.
 
-The comparison produces True or False. The `if`, colon, and body form a compound
-statement. Indentation defines the body. `and` requires both conditions; `or`
-requires at least one. Parentheses clarify the intended grouping:
+### How do scope and object lifetime differ?
 
-```python
-not (1 <= month <= 12)    # Negates the whole valid range.
-month < 1 or month > 12   # Expresses the invalid cases directly.
-```
+**Scope concerns access to a name; lifetime concerns how long an object exists.** A function's local name disappears after the call, but a returned object can remain alive through another reference.
 
-**Scope is where a name can be accessed directly.** Parameters and assignments
-inside a function are normally local to that call. Functions can read module-level
-names. A function's local name is not directly accessible outside it.
+### How should you express an invalid range?
 
-```python
-def calculate():
-    total = 100
-    return total
-
-answer = calculate()
-# answer is accessible here; calculate's local name total is not.
-```
-
-`if`, `for`, and `with` blocks do not introduce separate variable scopes. A name
-assigned there can remain accessible afterward if assignment occurred. Scope is
-not object lifetime: another reference can keep an object reachable after one
-local name disappears.
+**Reject values outside the full valid interval.** For months, use `not (1 <= month <= 12)` or `month < 1 or month > 12`. Negating only part of a compound condition changes its meaning.
 
 ## Functions and type hints
 
-**A function names an operation and provides a reusable interface.** Parameters
-are names in the definition; arguments are supplied by the caller.
+### What is a function?
 
-```python
-from decimal import Decimal
+**A function is a reusable callable that accepts arguments and performs an operation, optionally returning a result.** Parameters are names in its definition; arguments are values supplied by a caller. `def` creates the function; a call executes its body.
 
+### How do `return` and `print` differ?
 
-def calculate_remaining(budget: Decimal, spent: Decimal) -> Decimal:
-    return budget - spent
+**`return` sends a value to the caller and ends the call; `print` displays text.** A function with no explicit return returns `None`. Ordinary scripts do not automatically display returned values; `print(main())` displays the result of `main()`.
 
+### Are Python type hints enforced?
 
-remaining = calculate_remaining(Decimal("500.00"), Decimal("75.00"))
-```
+**Ordinary Python execution does not enforce type hints or convert values from them.** `amount: Decimal = "hello"` still binds a string. Hints support documentation, editors, and static checkers; validation and conversion need executable code.
 
-`def` creates a function. The body runs on a call. `return` ends that call
-immediately and sends a value back. Reaching the end without returning produces
-None. `-> None` describes no useful return value, such as a validation function.
-
-**Return data from calculations; print where results are displayed.** Printing
-shows text but does not return that text as the calculation result.
-
-| Annotation | Intended value |
+| Hint | Intended value |
 | --- | --- |
 | `Decimal` | A Decimal instance |
-| `list[Transaction]` | A list of Transaction instances |
-| `dict[str, Decimal]` | A dictionary mapping strings to Decimal values |
+| `list[Transaction]` | A list of Transaction objects |
+| `dict[str, Decimal]` | String keys mapped to Decimal values |
+| `-> None` | No useful returned result |
 
-Hints document contracts for people, editors, and static checkers. **Ordinary
-Python execution does not enforce them or convert inputs automatically.**
+### What do `*args` and `**kwargs` do?
 
-```python
-amount: Decimal = "hello"  # A hint does not turn this string into money.
-amount = Decimal("49.99")  # A constructor call creates a Decimal object.
-```
+**In a definition they collect arguments; in a call they unpack values into arguments.** The names `args` and `kwargs` are conventions.
 
-Function composition combines operations by calling existing functions. Our
-monthly summary uses category spending and remaining-budget functions instead
-of copying their rules.
-
-### Variable positional arguments: *args
-
-An asterisk on a function parameter collects positional arguments into a tuple:
-
-```python
-def total_expenses(*amounts):
-    return sum(amounts, Decimal("0.00"))
-
-total_expenses(Decimal("10.00"), Decimal("20.00"))
-total_expenses()  # amounts is an empty tuple; result is Decimal zero.
-```
-
-args is a conventional name, not a keyword: *amounts provides the same collection
-behavior. A tuple is an ordered collection whose elements cannot be replaced,
-added, or removed. It can still refer to mutable objects; immutability of the
-container does not recursively make its contents immutable.
-
-sum defaults to integer zero if no starting value is supplied. Giving Decimal
-zero preserves the intended result type for empty inputs.
-
-### Argument collection versus unpacking
-
-The position of * or ** determines its role:
-
-| Syntax | In a function definition | In a function call |
+| Syntax | Definition | Call |
 | --- | --- | --- |
-| `*args` | Collect extra positional arguments into a tuple | Unpack iterable items into positional arguments |
-| `**kwargs` | Collect extra keyword arguments into a dictionary | Unpack mapping entries into keyword arguments |
-
-args and kwargs are conventional names, not special keywords. *amounts and
-**details work the same way.
+| `*args` | Extra positional arguments → tuple | Iterable items → positional arguments |
+| `**kwargs` | Extra keyword arguments → dict | String-keyed mapping → keyword arguments |
 
 ```python
-def show(*args):
-    print(args)
-
 values = [10, 20, 30]
-show(*values)  # Equivalent to show(10, 20, 30); prints (10, 20, 30).
+show(*values)          # One call: show(10, 20, 30)
+show_budget(**data)   # Mapping entries become named arguments
 ```
 
-This makes one call with three arguments, not three calls. The body prints the
-tuple once; use a loop inside the function to print each value separately.
-Without the star, show(values) receives one argument: the list itself.
+Unpacking does not make multiple calls. Unexpected, missing, or duplicate arguments can still raise `TypeError`.
+
+### What does it mean that functions are objects?
+
+**Functions can be assigned, passed as arguments, and returned like other objects.** `operation = calculate_remaining` passes the function; `operation = calculate_remaining(...)` calls it and assigns its result. This enables callbacks, closures, and decorators.
+
+### What is a closure?
+
+**A closure is a function that retains access to bindings from an enclosing function after that outer call has returned.** It captures bindings, not necessarily frozen copies of values.
 
 ```python
-def show_budget(**details):
-    print(details)
-
-settings = {"category": "Groceries", "limit": 500}
-show_budget(**settings)  # Equivalent to category="Groceries", limit=500.
-```
-
-At the call, the dictionary supplies named arguments. At the definition, those
-arguments are collected into details. With explicit named parameters as well,
-only the extra keyword arguments are collected by **kwargs.
-
-** is not an exception-handling safety net. The mapping's keyword keys must be
-strings, and the receiving signature must accept the resulting arguments.
-Unexpected names without **kwargs, missing required arguments, or duplicate
-values for a parameter can still raise TypeError.
-
-These two directions let a generic decorator collect its caller's arguments and
-then unpack them when forwarding to the original function, without knowing its
-specific parameter names in advance.
-
-### Functions as objects
-
-Defining a function creates a function object and binds its name. Referring to
-the name retrieves the object; parentheses call it:
-
-```python
-operation = calculate_remaining  # Existing function; no calculation yet.
-result = operation(Decimal("500.00"), Decimal("75.00"))
-```
-
-operation and calculate_remaining refer to the same object. Assignment does not
-itself mean object creation: the right-hand expression might create an instance,
-retrieve an existing object, or call a function and produce its returned value.
-Calling a class normally constructs an instance; calling a function executes its
-body. Both use parentheses, but the callable determines what happens.
-
-A function can receive another function as an argument:
-
-```python
-def run_calculation(operation, budget, spent):
-    return operation(budget, spent)
-
-result = run_calculation(calculate_remaining, Decimal("500.00"), Decimal("75.00"))
-```
-
-Pass the function without parentheses to let the receiver call it. Passing
-calculate_remaining(...) instead evaluates that call first and passes its result,
-which is a Decimal rather than the intended operation. Receiving a function lets
-an operation's behavior be supplied by its caller. Returning functions and closures
-will build on this to explain decorators.
-
-### Nested functions and closures
-
-A function can define and return another function. A **closure** lets the inner
-function retain access to an enclosing function's local bindings, even after
-the outer call finishes:
-
-```python
-def make_category_checker(category):
-    def checker(transaction):
-        return transaction.category == category
+def make_checker(limit):
+    def checker(amount):
+        return amount <= limit
     return checker
 
-is_grocery = make_category_checker("Groceries")
+within_budget = make_checker(500)
+within_budget(400)  # Inner function still accesses limit
 ```
 
-Calling make_category_checker creates and returns a checker function. Calling
-is_grocery(transaction) later runs that inner function with its retained category.
-Return checker without parentheses to return behavior for later execution;
-return checker(...) would execute it immediately and return its result instead.
+### What is a decorator?
 
-The captured name belongs to the **outer** function, not the inner function's
-own local scope. Python retains bindings through closure cells; the returned
-function keeps those cells reachable. It does not keep the entire outer call
-running or manually copy every local variable. A closure retains access to a
-binding, not necessarily a frozen snapshot of a value.
-
-Separate calls can create independently configured functions, such as a grocery
-checker and a gas checker. This is useful for callbacks and for decorators that
-retain the function they wrap. In contrast, using only an inner function's own
-parameters/locals does not require capturing an enclosing variable.
-
-Optional inspection: function.__code__.co_freevars names captured variables;
-function.__closure__ holds their cells, whose cell_contents exposes the binding.
-Recognition matters more than memorizing inspection attributes: look for an
-inner function using an enclosing function's local name.
-
-### Function decorators: wrapping behavior
-
-A decorator receives a function and returns a function to use in its place.
-Our first example adds messages around an existing calculation:
-
-```python
-def announce(operation):
-    def wrapper(budget, spent):
-        print("Starting calculation")
-        result = operation(budget, spent)
-        print("Calculation finished")
-        return result
-    return wrapper
-
-calculate = announce(calculate_remaining)
-result = calculate(Decimal("500.00"), Decimal("75.00"))
-```
-
-Applying announce creates the wrapper without running the calculation. Calling
-the returned wrapper later runs before/after behavior and the original operation.
-The wrapper retains operation through a closure. The original function object
-still exists; the wrapper delegates to it rather than modifying its body.
-
-Return the original result so callers receive the same useful value. To perform
-work afterward, store the value before returning; return operation(...) would
-exit immediately. In this basic example, if operation raises, the after message
-is skipped; guaranteed cleanup/timing would require a deliberate try/finally.
-
-### Decorator application with @
-
-```python
-@announce
-def calculate(budget, spent):
-    return calculate_remaining(budget, spent)
-```
-
-This means: define calculate, then rebind it with calculate = announce(calculate).
-The decorator receives the newly defined calculate function, not the separate
-calculate_remaining function it calls. announce returns wrapper; calculate then
-refers to that wrapper. A later calculate(...) call invokes wrapper, which calls
-the original calculate through its retained operation reference. That original
-body delegates to calculate_remaining. Decoration and calculation happen at
-different times: applying the decorator does not execute the calculation.
-
-Decorators are useful for reusable surrounding behavior such as timing, logging,
-caching, or retries. They add indirection, so prefer a plain call when wrapping
-does not provide useful reuse or consistency. The first wrapper accepts only
-budget/spent; use argument collection/unpacking to generalize it.
-
-### Generic argument forwarding in decorators
-
-```python
-def announce(operation):
-    def wrapper(*args, **kwargs):
-        print("Starting operation")
-        result = operation(*args, **kwargs)
-        print("Finished operation")
-        return result
-    return wrapper
-```
-
-The wrapper definition collects positional arguments into args and keyword
-arguments into kwargs. The operation call unpacks them, preserving how the
-caller supplied inputs. The wrapper need not name budget/spent/category itself.
-
-For calculate(Decimal("500.00"), spent=Decimal("75.00")), args contains one
-Decimal and kwargs maps spent to the other. The same wrapper also accepts a
-category-only function. It forwards arguments; it does not make invalid arguments
-valid or silence errors raised by the original function.
-
-Returning result preserves the original function's output. Metadata preservation
-requires another step; flexible forwarding alone does not supply it.
-
-### Function metadata and functools.wraps
-
-Functions expose descriptive attributes such as __name__ and __doc__. A docstring
-is a string placed first in the function body. Rebinding a decorated function's
-name to a wrapper normally exposes the wrapper's name/documentation instead.
+**A decorator takes a function or class and returns the object that will be bound in its place, often adding behavior.** For a function, `@announce` above its definition is equivalent to `calculate = announce(calculate)`. The replacement is commonly a wrapper that calls the original.
 
 ```python
 from functools import wraps
@@ -388,2646 +132,705 @@ from functools import wraps
 def announce(operation):
     @wraps(operation)
     def wrapper(*args, **kwargs):
-        return operation(*args, **kwargs)
+        print("Starting")
+        result = operation(*args, **kwargs)
+        print("Finished")
+        return result
     return wrapper
 ```
 
-wraps copies useful original metadata onto the wrapper, including name and
-docstring, and supplies __wrapped__ pointing to the original callable. The
-wrapper still executes and remains a different object; its body is not replaced.
+Use `try/finally` when after-work must run even on failure. Preserve the original result unless intentionally changing the interface.
 
-After decorating calculate, calculate.__name__ describes the original function;
-calculate.__code__.co_name still identifies the wrapper's compiled code name.
-calculate.__wrapped__ accesses the original function. The wrapper's previous
-metadata is not separately saved automatically; inspect or save it before copying
-if needed. A missing original docstring produces None, which is expected.
+### Why use `functools.wraps`?
 
-Metadata helps inspection, documentation, and tooling represent a decorated
-function meaningfully. It does not enforce types, validate arguments, or preserve
-business behavior automatically; the wrapper must still forward and return correctly.
+**`wraps` preserves descriptive metadata such as the original name and docstring on a wrapper and adds `__wrapped__`.** It does not turn the wrapper into the original function. Copied `__name__` can differ from the wrapper's underlying `__code__.co_name`.
 
-### Measuring elapsed time with a decorator
+### How do you time an operation?
 
-time.perf_counter() supplies a high-resolution elapsed-time reading in seconds.
-Its absolute value is not a calendar timestamp; subtract two readings to obtain
-a duration. The elapsed interval includes waiting as well as execution.
-
-```python
-start = perf_counter()
-result = operation(*args, **kwargs)
-elapsed = perf_counter() - start
-print(f"{operation.__name__} took {elapsed:.6f} seconds")
-return result
-```
-
-Place this inside a generic wrapper with wraps(operation) to retain descriptive
-metadata. :.6f controls displayed decimal places, not measurement accuracy.
-The decorator adds its own overhead. Tiny operations and single samples cannot
-establish a reliable benchmark or an application's capacity.
-
-This simple form reports time only when the operation returns normally. If it
-raises, subsequent timing/printing is skipped. Use try/finally to report on exit:
-
-```python
-start = perf_counter()
-try:
-    result = operation(*args, **kwargs)
-finally:
-    elapsed = perf_counter() - start
-    print(f"{operation.__name__} took {elapsed:.6f} seconds")
-return result
-```
-
-On success, finally reports time and the function returns result. On failure,
-finally still reports time and the original exception continues outward; the
-return after the block is not reached. The wrapper preserves failure semantics
-instead of turning errors into normal-looking results.
-
-### Preserving the wrapped function's result
-
-A decorator can inspect a calculation's result and report status without
-replacing its return value:
-
-```python
-def report_status(operation):
-    def wrapper(budget, spent):
-        balance = operation(budget, spent)
-        print("Within budget" if balance >= 0 else "Over budget")
-        return balance
-    return wrapper
-```
-
-Returning a status string instead would change the calculation's interface: a
-caller expecting Decimal could no longer use its result in arithmetic. Printing
-the status and returning balance are separate responsibilities. Zero means
-exactly at the limit and belongs with the within-budget case.
+**Subtract two `time.perf_counter()` readings to measure elapsed duration.** Place the end reading in `finally` to measure failed calls too. Elapsed time includes waiting; `:.6f` changes display precision, not measurement accuracy. A tiny single call is not a reliable benchmark.
 
 ## Objects, references, and copying
 
-An **object** has a type, identity, and associated value/state. A **reference**
-lets Python reach it. Names refer to objects; the name is not the object itself.
+### What is an object, and what does assignment do?
 
-```python
-other = purchase
-```
+**An object has identity, type, and state/value; assignment binds a name to an object.** `second = first` does not copy the object. Both names refer to it. `=` does not mean every assignment creates a new object or a new memory location.
 
-No copy occurs. Both names refer to the same instance: **aliasing**. Changing
-that instance's attribute through one name is visible through the other.
+### What is `is` versus `==`?
 
-```text
-purchase ──┐
-           ├──→ one Transaction instance
-other ─────┘
-```
+**`is` compares identity; `==` invokes value-equality behavior defined by the type.** Two separately created dataclass instances can be equal without being the same object. `id(obj)` identifies an object during its lifetime; CPython uses its memory address, but that is not a portable Python guarantee.
 
-Assignment binds a name to the right-hand expression's result. That expression
-might supply an existing object or create a new one. Function parameters refer
-to supplied objects too; passing arguments does not automatically copy them.
+### What is mutable versus immutable?
 
-| Operation | Meaning |
-| --- | --- |
-| `a is b` | Both references identify the same object |
-| `a == b` | Equality under the type's rules |
-| `id(a)` | Identity of the object while it exists |
+**A mutable object can change in place; an immutable object's value cannot.** Lists and dictionaries are mutable; strings, integers, and Decimal values are immutable. A tuple is immutable but can contain references to mutable objects.
 
-Dataclasses normally compare field values for the same class. Separate instances
-can be equal while `is` is false. In CPython, id is the memory address; other
-implementations need not use addresses. IDs can differ between runs and be reused
-after objects are destroyed.
+### What is a shallow copy?
 
-```python
-from copy import copy
+**A shallow copy creates a new outer object while retaining references to its nested objects.** Changing a shared nested list can affect both copies. Independent outer identity does not imply independent contents.
 
-another = copy(purchase)
-```
+### How can Decimal objects be subtracted if variables contain references?
 
-For our Transaction this creates a separate instance, but it is a **shallow copy**:
-attribute references are copied, not recursively duplicated objects. Independent
-outer objects do not guarantee independent nested mutable data.
+**Python follows the references and invokes the objects' subtraction behavior.** It subtracts their numeric values, not memory addresses, and produces a result object.
 
-Lists and default dataclass instances are mutable. Decimal is immutable: arithmetic
-produces a result object rather than changing the operand. Python follows references
-to operate on values; **it does not subtract reference addresses** when evaluating
-`budget - spent`.
+### What does `del` do?
 
-### Object lifetime, weak references, and cyclic collection
+**`del name` removes a name binding, not necessarily the object.** Other references can keep the object alive. Removing an attribute or container item similarly removes that particular reference.
 
-del removes a name binding (or a specified container entry/attribute); it does
-not directly command destruction of the referenced object. Other references may
-keep the object alive. In CPython, reference counting normally reclaims an object
-when its reference count reaches zero. Exact reclamation timing is not a portable
-promise across Python implementations.
+### How does CPython reclaim objects?
 
-```python
-first = Note("Learning memory management")
-second = first
-observer = weakref.ref(first)
+**CPython primarily uses reference counting, supplemented by cyclic garbage collection.** Objects are normally reclaimed when their reference count reaches zero. The cyclic collector can reclaim unreachable groups that still reference each other. Internal references within an isolated cycle do not make it reachable from the rest of the program.
 
-del first
-print(observer() is not None)  # True: second still keeps it alive
-del second
-print(observer() is None)      # True in our CPython experiment
-```
+### What is a weak reference?
 
-A weak reference observes an object without keeping it alive. Calling it returns
-the object if it exists, otherwise None. Our ordinary dataclass Note supports
-weak references; not every Python object supports them. Holding the object
-returned by the observer in another variable would itself keep it alive.
+**A weak reference observes an object without keeping it alive.** Calling `weakref.ref(obj)` returns an observer; calling that observer returns the object if it remains alive, otherwise `None`. Not every type supports weak references.
 
-Reference counting alone cannot reclaim every unreachable object. In a cycle,
-objects may reference each other after all outside strong references disappear:
+### What do `gc.disable()` and `gc.collect()` do?
 
-```text
-Rest of program: no strong path to either object
-       A → B → A
-```
-
-The internal references are real, but the group is unreachable from the rest
-of the running program. CPython's cyclic collector detects unreachable cycles
-among tracked objects and can reclaim them despite their nonzero counts.
-Deleting the names did not already delete the objects; it removed the program's
-access paths. Internal references do not make an isolated group reachable.
-
-```python
-import gc
-import weakref
-
-class Node:
-    pass
-
-was_enabled = gc.isenabled()
-gc.disable()
-try:
-    first = Node()
-    second = Node()
-    first.other = second
-    second.other = first
-    observer = weakref.ref(first)
-    del first
-    del second
-    print(observer() is not None)  # True before cyclic collection
-    gc.collect()
-    print(observer() is None)      # True after explicit collection
-finally:
-    if was_enabled:
-        gc.enable()
-```
-
-gc.disable disables automatic cyclic collection, not reference counting.
-gc.collect explicitly requests collection even while automatic collection is
-disabled. Restoring the prior setting makes the experiment self-contained;
-normally leave automatic collection enabled. This cycle example illustrates
-the mechanism; its execution status is tracked in PROGRESS.md.
-
-Reclaimed object memory need not immediately reduce the process's operating-system
-memory footprint, since Python's allocators may retain memory for reuse. Do not
-depend on garbage collection for timely resource cleanup: with remains the right
-tool for files and other resources with defined exit behavior.
-
-Revision checks: What does del remove? Why does a second reference keep an object
-alive? Why does a weak reference not do so? Why can reference counts stay nonzero
-for unreachable objects? What does gc.disable leave enabled?
+**`gc.disable()` disables automatic cycle collection, not reference counting; `gc.collect()` explicitly requests collection.** Exact collection timing is implementation-dependent. Reclaimed memory may stay in Python's allocator for reuse rather than immediately return to the OS. Use `with` for timely resource cleanup.
 
 ## Classes, instances, and methods
 
-**A class keeps related data and operations on that data together.** An instance
-is one object of that class. Attributes hold data; methods express behavior.
+### When should you use a class instead of a function?
 
-```python
-class Transaction:
-    def __init__(self, category, amount):
-        self.category = category
-        self.amount = amount
-```
+**Use a class when related state and operations benefit from a meaningful type and interface; use a function for an operation that does not need an instance.** A dictionary can also group data. Classes can provide data, behavior, or both; instance attributes are not mandatory.
 
-Calling the class creates an instance and calls its initializer. `self` is that
-instance and is supplied automatically in this call pattern. `amount` is a local
-parameter; `self.amount` is an attribute that remains on the instance afterward.
+### What are `self` and instance attributes?
 
-```python
-purchase = Transaction("Groceries", Decimal("40.00"))
-print(purchase.amount)
-```
+**`self` refers to the instance receiving a method call; `self.amount` is an attribute on that instance.** A plain `amount` parameter is local to the call. Methods normally live on classes and are found through lookup; they are not copied into each instance.
 
-Each instance has its own instance attributes. Behavior can mean validating data,
-changing a category, or calculating with attributes. Validation is one kind of
-behavior, not its entire meaning.
+### What is composition?
 
-### When to choose a class or function
+**Composition builds an object using other objects: a “has-a” relationship.** A BudgetTracker has Transaction objects. Appending a transaction to its list stores a reference, not a copy. Multiple independent trackers do not require multiple class definitions.
 
-- Use a class to represent related information and responsibilities: a transaction
-  or budget.
-- Use a standalone function for an operation on supplied inputs: calculating totals
-  across transactions.
-- A method is a function associated with a class. Business logic can live in either
-  place; choose where the responsibility fits.
-- Dictionaries can group data too. A class provides a specific type and a place
-  for its construction rules. A class can also primarily hold data.
-- Do not create an otherwise meaningless calculator instance just to house a
-  straightforward function.
+### Why use `field(default_factory=list)`?
 
-An object is not automatically a database record or HTTP request. Later, code
-will validate request data, construct objects, and persist records. Classes alone
-do not provide user isolation or authorization.
+**It creates a fresh empty list for each dataclass instance when no value is supplied for that field.** The default is `[]`, not `0`. Explicitly passing the same list to two instances still makes them share it; the factory does not copy supplied arguments.
 
-### Composition, instance methods, and default factories
+### What is a property, and why use it instead of a method?
 
-Composition builds an object using other objects: a BudgetTracker **has
-transactions**. The tracker keeps a list of references to Transaction instances;
-adding a transaction does not copy it. One class can create many independent
-tracker instances; separate class definitions are unnecessary.
+**A property provides attribute-style access backed by code.** A computed `tracker.total_spent` runs a getter; `tracker.calculate_total()` can compute the same result. The choice is an interface decision, not a calculation advantage. A property can preserve attribute syntax while controlling or computing the value.
 
-```python
-from dataclasses import dataclass, field
+A getter-only property rejects normal assignment but does not freeze the object. Properties do not automatically cache values; avoid hiding surprising or expensive work behind them.
 
-@dataclass
-class BudgetTracker:
-    transactions: list[Transaction] = field(default_factory=list)
+### What is polymorphism?
 
-    def add_transaction(self, transaction: Transaction) -> None:
-        self.transactions.append(transaction)
-```
+**Polymorphism lets different objects be used through the same operation while each supplies its own behavior.** `destination.write(report)` can print through ConsoleDestination or save through FileDestination. Matching method names alone are insufficient if their interfaces or meaning are incompatible.
 
-add_transaction is an instance method. In first.add_transaction(transaction),
-self refers to first. The method changes that instance's list; -> None indicates
-it returns no result. A dataclass still supports methods you define: generated
-initialization and custom operations work together.
+### What is duck typing?
 
-default_factory=list tells the generated initializer to call list() when no
-transactions argument is supplied. The default is a fresh empty list [], not
-the integer 0. Each such instance receives a different list:
+**Duck typing uses an object according to the operations it supports rather than requiring a particular class.** `deliver_report` needs a suitable `write(report)`, not a specific destination type. A shared parent class is optional; unsupported operations fail when used.
 
-```python
-first = BudgetTracker()
-second = BudgetTracker()
-first.add_transaction(transaction)
+### What is inheritance?
 
-print(first.transactions is second.transactions)  # False
-print(first.transactions[0] is transaction)        # True
-```
+**Inheritance defines a class using another class's behavior: an “is-a” relationship.** A labeled console destination is a kind of console destination; a tracker has transactions through composition. Inheritance should fit substitutability, not merely save lines.
 
-Passing an explicit list bypasses the factory for that field. BudgetTracker(items)
-stores that list reference; it does not copy items. Passing the same list to two
-trackers makes them share it, so additions through either tracker are visible
-through both. The factory does not guarantee independence for supplied lists.
+### What is method overriding?
 
-Use field(default_factory=list), passing the callable list rather than calling
-list() there. The callable creates each default when an instance needs it.
-Dataclasses reject a direct list default such as transactions = [] for this field.
+**Overriding means a subclass defines its own version of an inherited method.** It can replace behavior, extend it, or delegate unchanged behavior. Even a body containing only `pass` counts as an override. The base class itself remains unchanged.
 
-Revision checks: What does self refer to during a method call? What is composed
-inside a tracker? When does the factory run? Why can lists be distinct while a
-contained transaction is the same object?
+### Is `super()` required for overriding?
 
-### Properties versus instance methods
-
-A property provides attribute-style access backed by code. @property decorates
-a getter method; reading the attribute invokes that getter without parentheses:
-
-```python
-# Inside BudgetTracker:
-@property
-def total_spent(self) -> Decimal:
-    return sum(
-        (transaction.amount for transaction in self.transactions),
-        Decimal("0.00"),
-    )
-
-# Caller:
-print(tracker.total_spent)
-```
-
-tracker.transactions reads a stored list attribute; tracker.total_spent executes
-the getter to compute a value. This getter sums the current list on each access.
-property does not cache the result or store a separate running total. Appending
-another transaction changes the result of the next access.
-
-An ordinary instance method calculate_total() can use exactly the same code.
-There is no calculation or performance advantage inherent in choosing property.
-For our tracker either interface is reasonable; property is optional.
-
-| Interface | What it presents to callers |
-| --- | --- |
-| tracker.calculate_total() | An operation to perform |
-| tracker.total_spent | A value associated with the object |
-
-A property is useful when you want attribute access while calculating or
-controlling the value. It can also preserve an existing attribute-style interface
-if implementation changes from stored data to a calculation. Prefer ordinary
-methods for actions, work requiring caller-supplied arguments, or surprising or
-expensive operations such as network requests. A total over a very large list
-may also warrant a method or a different implementation to make its cost clear.
-
-A getter-only property rejects normal assignment such as
-tracker.total_spent = Decimal("0.00") with AttributeError. This does not freeze
-the tracker or its transactions: changing the source list still affects the
-computed total. Setter/deleter behavior is a separate topic, not yet practiced.
-
-Common mistakes: assuming a property is required whenever a method returns
-data, assuming it caches its value, calling this Decimal-valued property with
-parentheses, or treating a getter-only property as full object immutability.
-
-Revision checks: Can a method compute the same total? What executes on each
-property read? Why might attribute-style access be useful? What remains mutable
-when a computed property has no setter?
-
-### Polymorphism, duck typing, and classes without instance data
-
-Polymorphism lets different objects respond to a shared operation with their
-own behavior. In our example, objects of different classes are interchangeable
-at the call site because each supports write(report):
-
-```python
-class ConsoleDestination:
-    def write(self, report: str) -> None:
-        print(report)
-
-class FileDestination:
-    def write(self, report: str) -> None:
-        with open("polymorphism_report.txt", "w", encoding="utf-8") as file:
-            file.write(report)
-
-def deliver_report(destination, report: str) -> None:
-    destination.write(report)
-
-deliver_report(ConsoleDestination(), "Remaining budget: 424.75")
-deliver_report(FileDestination(), "Remaining budget: 424.75")
-```
-
-deliver_report stays the same; the receiving object's method supplies the
-behavior. Merely giving unrelated methods the same name is not the full idea:
-the caller must be able to use them through a compatible operation. Here both
-accept a report string. Python does not require a common parent class for this
-example. Duck typing means using an object according to the operations it
-supports rather than checking its exact class first.
-
-This helps callers work with interchangeable implementations without adding
-branches for each destination type. A new destination supporting write(report)
-could be supplied without editing deliver_report. For tiny tasks a conditional
-or a standalone function can also be reasonable; these classes demonstrate
-the mechanism rather than being required just to print or save text.
-
-Instance attributes are optional. ConsoleDestination provides behavior without
-storing data on self; report is a method parameter, and self still refers to
-the instance. A class can provide data, behavior, or both. If each file destination
-needed a configurable filename, an initializer could store self.filename so
-different instances remember different paths. A dataclass is not required when
-there are no data fields to initialize here.
-
-Common mistakes: assuming all classes require instance attributes, thinking
-polymorphism requires inheritance, or assuming matching names alone guarantee
-compatible parameters and behavior.
-
-Revision checks: Which object selects the write implementation? What does
-deliver_report need to know about its destination? Why is report not an instance
-attribute? When might a file destination need instance state?
-
-### Inheritance, overriding, and super
-
-Inheritance defines a class as a specialized kind of another class. Composition
-expresses a has-a relationship (a tracker has transactions); inheritance expresses
-an is-a relationship (a labeled console destination is a console destination).
-Use inheritance when that substitutability fits, not merely to avoid a few lines.
+**No. Defining the subclass method creates the override; `super()` optionally delegates to the next implementation in the method resolution order.** In our single-inheritance examples that is the base method, running on the same instance—not a separate parent object.
 
 ```python
 class LabeledConsoleDestination(ConsoleDestination):
-    def write(self, report: str) -> None:
+    def write(self, report):
         super().write(f"MyBudget: {report}")
 ```
 
-ConsoleDestination is the base class; LabeledConsoleDestination is the subclass.
-The class declaration establishes inheritance. The subclass can use inherited
-methods, override them, or add new methods. Overriding means defining a method
-with the same name to customize behavior. It can do work before and after a
-super call or replace the behavior entirely.
+A subclass inherits an initializer when it does not define one. If it defines its own, base initialization is not automatic; call `super().__init__(...)` when required.
 
-super() does not establish inheritance or create a parent instance. It provides
-access to the next implementation in the method resolution order. In this
-single-inheritance example, super().write invokes ConsoleDestination.write with
-the same subclass instance as self. Multiple inheritance and its lookup order
-have not yet been practiced.
+### How does overriding differ from overloading?
 
-Instance data belongs to that one instance. Methods are normally stored on the
-classes and found through attribute lookup, not copied into every instance.
-Calling an inherited method does not switch to another object's data.
+**Overriding customizes inherited behavior; overloading usually selects among same-named operations by signature.** Repeating a method definition in one Python class does not create Java-style overload dispatch—the later definition replaces the earlier binding. Advanced dispatch alternatives have not been covered.
 
-```python
-class FileDestination:
-    def __init__(self, filename):
-        self.filename = filename
+### What is an abstract base class?
 
-class LabeledFileDestination(FileDestination):
-    def __init__(self, filename, label):
-        super().__init__(filename)
-        self.label = label
-```
+**An abstract base class declares requirements that must have concrete implementations before instances can be created.** Use `ABC` and `@abstractmethod`. A subclass that still has abstract methods cannot be instantiated and raises `TypeError`.
 
-The base initializer assigns filename on the same instance on which the subclass
-initializer assigns label. If a subclass defines no initializer, it inherits the
-base initializer. When it defines its own initializer, the base initializer is
-not automatically called; super().__init__(...) explicitly delegates that work.
-This initializer example was explained, not exercised in the destination script.
+A non-abstract override containing `pass` satisfies this mechanism but does nothing. ABC does not verify useful behavior, matching type hints, or compatible signatures. Inheriting `ABC` alone without remaining abstract methods does not prevent instantiation.
 
-Common mistakes: calling super a mechanism that creates inheritance, imagining
-a separate parent instance, assuming methods are copied into each instance, or
-forgetting required base initialization when overriding __init__.
+### How do instance, class, and static methods differ?
 
-Revision checks: Which line establishes inheritance? Can a subclass inherit a
-method without super? What instance receives a super call? Where are methods
-normally stored? How does initialization create inherited instance data?
-
-### Abstract base classes and required methods
-
-An abstract base class can declare operations that concrete subclasses must
-provide before their instances can be created. It represents a general concept
-such as a report destination without choosing where the report is written.
-
-```python
-from abc import ABC, abstractmethod
-
-class ReportDestination(ABC):
-    @abstractmethod
-    def write(self, report: str) -> None:
-        pass
-
-class ConsoleDestination(ReportDestination):
-    def write(self, report: str) -> None:
-        print(report)
-
-destination = ConsoleDestination()
-destination.write("MyBudget report")
-```
-
-ABC supplies the abstract-class machinery; @abstractmethod marks write as a
-requirement. pass is just an empty body and does not enforce anything itself.
-ReportDestination cannot be instantiated while it has an abstract method.
-A subclass containing only pass inherits the unimplemented abstract requirement
-and also cannot be instantiated: creating it raises TypeError.
-
-The concrete ConsoleDestination overrides write with a non-abstract method,
-so object creation is allowed. No super call is required to fulfill this
-requirement. If a subclass inherits a concrete implementation, it need not
-override that method again merely to be instantiable. Inheriting ABC alone,
-without any remaining abstract methods, does not prohibit instantiation.
-
-This check ensures that an abstract requirement has a non-abstract implementation,
-not that the implementation behaves correctly. An ordinary override whose body
-is only pass satisfies this mechanism but does nothing. Parameter types and
-compatible signatures are not automatically enforced by ABC either.
-
-| Approach | Failure point for a missing implementation |
-| --- | --- |
-| Duck typing | Calling an unsupported operation fails at runtime |
-| Abstract base class | Instantiating a subclass with remaining abstract methods raises TypeError |
-
-An ABC is an optional explicit contract within an inheritance hierarchy; duck
-typing remains valid without that hierarchy.
-
-**Overriding versus overloading:** our exercise is overriding. A subclass defines
-its own version of the inherited write method, making an abstract requirement
-concrete. Overloading usually refers to multiple versions selected by parameter
-signature. Repeating def write in one Python class does not create that dispatch;
-the later definition replaces the earlier binding. Advanced alternatives have
-not been practiced, so keep this lesson focused on overriding.
-
-Revision checks: What marks write abstract? Why does an empty subclass fail at
-construction? Why is the concrete implementation overriding? Does ABC verify
-that the method prints anything or that its type hints are obeyed?
-
-### Class methods and alternative constructors
-
-@classmethod makes Python supply the class as the first argument, conventionally
-named cls. An instance method receives an instance as self instead. A common use
-is a named alternative creation method that prepares inputs, calls the normal
-constructor, and returns the resulting instance:
-
-```python
-from dataclasses import dataclass
-from decimal import Decimal
-
-@dataclass
-class BudgetConfig:
-    category: str
-    limit: Decimal
-
-    @classmethod
-    def from_dict(cls, data):
-        return cls(
-            category=data["category"],
-            limit=Decimal(data["limit"]),
-        )
-
-budget = BudgetConfig.from_dict({"category": "Groceries", "limit": "500.00"})
-```
-
-Python passes BudgetConfig as cls. The method reads dictionary values, converts
-the amount string to Decimal, calls cls(...), and returns a BudgetConfig object.
-No existing instance is required. The normal constructor still works:
-BudgetConfig("Groceries", Decimal("500.00")). The class method uses that
-construction path rather than replacing it or bypassing initialization.
-
-Why use it? It gives the class a discoverable, named creation recipe, similar
-to date.fromisoformat(text). Repeated callers can use BudgetConfig.from_dict(data)
-without repeating conversion details. A standalone function is equally valid;
-class methods are optional organization, not a requirement for conversion.
-
-Using cls rather than hardcoding BudgetConfig also lets an inherited factory
-construct the subclass used for the call, provided its constructor accepts the
-supplied arguments. That subclass example was discussed, not exercised.
-
-The factory depends on a working constructor. @dataclass generates __init__ from
-declared fields; removing category and limit means the generated initializer
-does not accept them. Removing @dataclass without writing an appropriate
-initializer also removes that generated behavior. from_dict does not create
-constructor parameters or field definitions automatically.
-
-Distinguish type(budget), the object's class, from type(budget.limit), its field's
-type. Both creation routes can produce equal dataclass values with Decimal limits.
-@classmethod is unrelated to @abstractmethod: one controls class binding; the
-other marks an abstract requirement. They are not alternative forms of each other.
-
-Revision checks: What is cls? Why is no instance needed to call from_dict?
-Does from_dict replace __init__? Could a standalone function do this conversion?
-What happens if the dataclass fields or generated initializer are removed?
-
-### Static methods versus module functions
-
-@staticmethod places a function on a class without supplying an automatic first
-argument. It receives neither self nor cls and uses only the explicit arguments:
-
-```python
-class BudgetMath:
-    @staticmethod
-    def is_over_budget(budget: Decimal, spent: Decimal) -> bool:
-        return spent > budget
-
-BudgetMath.is_over_budget(Decimal("500.00"), Decimal("550.00"))  # True
-```
-
-| Method kind | Automatic first argument | Typical reason |
+| Method | Automatic argument | Purpose |
 | --- | --- | --- |
-| Instance method | self, the instance | Work with instance state |
-| Class method | cls, the class | Work with the class, often through an alternative constructor |
-| Static method | None | Group a closely related function under a class without using instance/class state |
+| Instance method | `self`: receiving instance | Work with instance state/behavior |
+| `@classmethod` | `cls`: receiving class | Class-related behavior, often alternative construction |
+| `@staticmethod` | None | Related function grouped on a class |
 
-A static method adds no calculation capability. A module-level function can do
-the same work. Prefer a static method when the function belongs closely to an
-existing class and that location makes it easier to find and understand. General
-helpers can remain module functions, such as mybudget.calculations functions.
-Do not create utility classes merely because helpers need a place to live:
-modules already group related functions in Python. Our BudgetMath class is an
-exercise in the mechanism, not a recommendation to move all calculations there.
+### Why use a class method?
 
-Compared with the traditional Java utility-class pattern, a common Python
-equivalent is a module of functions. That organizational difference does not
-mean every helper needs a static method in Python.
+**A class method can provide a named creation recipe before any instance exists.** `BudgetConfig.from_dict(data)` converts input, calls `cls(...)`, and returns a new instance; it uses the normal constructor rather than replacing it. An inherited factory can create the receiving subclass if its constructor is compatible. A standalone factory function is also valid.
 
-Returning a comparison directly is sufficient for a boolean result. Over budget
-means spent > budget; equality is exactly at the limit, not over it. A condition
-budget - spent <= 0 incorrectly includes equality; use spent > budget or a
-strictly negative remaining balance.
+### When should a helper be a static method?
 
-Revision checks: What does Python automatically pass to a static method? Could
-the same helper be a module function? Why might it belong on an existing class?
-How do you distinguish spending at the limit from spending over it?
+**Use a static method when association with an existing class makes a function easier to find and understand, but it needs neither `self` nor `cls`.** General helpers can remain module functions. Python does not require Java-style utility classes to contain functions.
 
-### Encapsulation and public, internal, and private naming
+### What is encapsulation in Python?
 
-Encapsulation provides a clear public interface while keeping implementation
-details internal. For a tracker, add_transaction can be a public operation and
-_transactions its internal storage. Naming communicates intended use; it is
-not a security boundary.
+**Encapsulation exposes a clear public interface while treating implementation details as internal.** Python mostly uses conventions and name mangling rather than Java-style enforced access modifiers.
 
-| Name | Common shorthand | Actual Python behavior |
+| Name | Common label | Actual behavior |
 | --- | --- | --- |
-| label | Public | Intended for external use |
-| _label | Protected/internal | Convention only; directly accessible |
-| __label | Private | Name mangling; accessible through its mangled name |
+| `label` | Public | Intended for callers |
+| `_label` | Protected/internal | Convention; still directly accessible |
+| `__label` | Private | Name-mangled; accessible through the mangled name |
 
-Python does not enforce Java-style protected/private attribute access. A caller
-can access tracker._transactions, but should normally depend on the public
-interface instead. Internal implementation may change without preserving those
-details for callers. These conventions also apply to method names.
+### Why does Python mangle double-leading-underscore names?
 
-An attribute __label defined within BudgetTracker is mangled to
-_BudgetTracker__label. tracker.__label normally raises AttributeError, while
-tracker._BudgetTracker__label can access the attribute. Mangling helps prevent
-accidental subclass name collisions, not intentional external access.
-
-```python
-class ReportDestination:
-    def __init__(self):
-        self.__label = "MyBudget"
-
-    def show_label(self):
-        print(self.__label)
-
-class EmailDestination(ReportDestination):
-    def __init__(self):
-        super().__init__()
-        self.__label = "Monthly email"
-```
-
-There is one EmailDestination instance with two differently named attributes:
-_ReportDestination__label and _EmailDestination__label. The base method uses
-the former. Developers can independently choose the same internal name without
-accidentally overwriting each other's state. With a single shared _label name,
-the subclass assignment would overwrite the base assignment on that instance.
-When sharing/customizing the value is intentional, _label is often clearer;
-double underscores are not needed for every internal attribute.
-
-Names such as __init__, with double underscores at both ends, are special
-protocol names, not this private-name convention. Name mangling applies to
-double-leading names without the double-trailing form.
-
-Properties are separate from access naming. @property can expose a computed
-transaction_count through tracker.transaction_count instead of a method call,
-but it does not hide the backing list or make it immutable. A normal method
-could provide the count too.
-
-Common mistakes: treating underscores as enforced permissions, calling mangled
-data inaccessible, assuming inheritance requires reusing all internal names,
-or equating a getter-only property with complete protection of its source data.
-
-Revision checks: Which access rules are conventions? Why can a mangled name
-still be accessed? Why might a base class and subclass independently need the
-same internal name? How do __label and __init__ differ?
+**Name mangling reduces accidental collisions between base-class and subclass internals; it is not security.** `Base.__label` and `Child.__label` become `_Base__label` and `_Child__label` on the same instance. Intentional shared/customizable state often uses a single underscore instead. `__init__` has double underscores at both ends and is a special protocol name, not this private-name convention.
 
 ## Dataclasses and special methods
 
-A dataclass is an ordinary class with methods generated from declared fields.
+### What does `@dataclass` generate?
+
+**It generates methods such as `__init__`, `__repr__`, and `__eq__` from declared fields on an ordinary class.** Custom instance methods still work. It does not enforce type hints or validate values automatically.
 
 ```python
-from dataclasses import dataclass
-from decimal import Decimal
-
-
 @dataclass
 class Budget:
     category: str
     limit: Decimal
-
-    def __post_init__(self):
-        if not self.category.strip():
-            raise ValueError("Category must not be blank")
 ```
 
-`@dataclass` is a class decorator: conceptually Python applies
-`Budget = dataclass(Budget)` after the definition. It generates initialization,
-representation, and equality behavior. General decorator implementation is a
-future lesson; using the syntax is not mastery of all decorator mechanics.
+Removing these field declarations means the generated initializer no longer accepts them. A factory method does not recreate missing constructor parameters.
 
-| Method | Purpose |
-| --- | --- |
-| `__init__` | Initializes an instance |
-| `__post_init__` | Hook called by the dataclass-generated initializer |
-| `__repr__` | Developer-facing text representation |
-| `__eq__` | Equality behavior for `==` |
-| `__sub__` | Part of subtraction behavior for `-` |
+### What is `__post_init__`?
 
-Names must match exactly: `__postinit__` is not the recognized hook. Generated
-assignment does not validate or convert fields automatically. Default dataclass
-instances are mutable unless configured otherwise.
+**It is a hook called after field assignment by a dataclass-generated initializer.** Use it for additional initialization or validation. Its name must be exact; `__postinit__` is not the same hook.
 
-`repr(budget)` gives a representation such as
-`Budget(category='Groceries', limit=Decimal('500.00'))`. `print(budget)` uses string
-conversion; without a custom `__str__`, it falls back to the representation.
-This describes the object without changing it.
+### What are dunder methods?
+
+**Dunder methods are specially named hooks that integrate classes with Python operations.** `__repr__` supplies a developer-facing representation, `__eq__` supports equality, `__sub__` supports subtraction, and `__enter__`/`__exit__` support `with`. They can be called directly, but ordinary code usually uses the corresponding operation.
 
 ## Decimal and money
 
-Binary floats approximate many decimal fractions:
+### Why use Decimal instead of float for our money calculations?
 
-```python
-0.1 + 0.2  # 0.30000000000000004
-```
+**Decimal represents decimal inputs directly and supports explicit decimal precision/rounding rules; binary floats approximate many decimal fractions.** Construct from strings: `Decimal("0.1")`, not `Decimal(0.1)`, which receives an already-approximated float. Decimal arithmetic is still subject to context precision and rounding.
 
-Construct Decimal from decimal strings for our monetary calculations:
+### Is every Decimal a valid money amount?
 
-```python
-Decimal("0.1") + Decimal("0.2")  # Decimal('0.3')
-```
+**No. Decimal supports NaN and infinity, and currency values also need scale and range policies.** `isinstance` checks type; `amount.is_finite()` checks finiteness. Call the method—`amount.is_finite` without parentheses is just a method reference.
 
-`Decimal(0.1)` receives an already-approximated float. Integer minor units, such
-as cents, are another valid representation with different trade-offs. Decimal
-still has precision/rounding rules; it is not unlimited exact arithmetic for
-every operation. A currency precision/rounding policy is future work.
+### What are our spending and refund conventions?
 
-### Valid type versus valid value
+**Positive transactions are spending; negative transactions are refunds.** Each affects its own dated month. A later refund does not rewrite the purchase month, so a refund-only month can have remaining funds above the budget limit. Budget limits follow a separate nonnegative-value rule.
 
-```python
-if not isinstance(amount, Decimal):
-    raise TypeError("Amount must be a Decimal")
-if not amount.is_finite():
-    raise ValueError("Amount must be finite")
-```
+### How do integer cents represent money?
 
-Check type before calling a Decimal method. Decimal supports NaN and positive/
-negative infinity: valid Decimal objects but invalid monetary values for us.
-Finite zero and negative values pass is_finite().
+**For a two-decimal currency, store the amount in integer minor units: 15.25 dollars becomes 1525 cents.** SQL can sum integers, then Python converts using `Decimal(total_cents) / 100`. This avoids floating-point summation within the integer range; currency scale, Decimal context, overflow, and rounding still need explicit policies.
 
-Our domain conventions:
+### Why not blindly use `int(amount * 100)`?
 
-- Positive transaction amounts mean spending; negative ones mean refunds.
-- Budget limits allow zero and reject negative values.
-- Each transaction affects its own dated month. A later refund does not rewrite
-  the original purchase month. A refund-only month can have remaining funds above
-  the configured budget limit.
-
-These rules differ by entity. Do not reject refunds because budget limits must
-be nonnegative. Future bank providers may use different signs and need translation.
+**`int` truncates fractional results, so it can silently discard fractions of a cent.** Choose rejection or rounding first. Extra trailing zeroes such as `15.250` do not introduce fractional cents. `:.2f` controls display; it is not a storage-validation policy. Existing decimal-text data needs deliberate migration before changing representation.
 
 ## Collections and loops
 
-| Collection | Role | MyBudget example |
+### How do lists, tuples, dictionaries, and sets differ?
+
+| Type | Main use | Key distinction |
 | --- | --- | --- |
-| List | Ordered items; duplicates allowed | Transactions or Budget objects |
-| Dictionary | Unique keys mapped to values | Category → remaining amount |
-| Set | Unique values and membership checks | Previously seen category names |
+| List | Ordered sequence | Mutable; duplicates allowed |
+| Tuple | Fixed sequence | Immutable container; contents may reference mutable objects |
+| Dict | Key → value mapping | Keys are unique; retains insertion order |
+| Set | Unique values/membership | No positional indexing or guaranteed iteration order |
 
-Containers hold references to objects. A loop binds its variable to each object,
-not a copy. This accumulator pattern belongs inside a calculation function:
+### How do you accumulate a filtered total correctly?
 
-```python
-total = Decimal("0.00")
-for transaction in transactions:
-    if transaction.category == category:
-        total += transaction.amount
-return total
-```
+**Initialize before the loop, add each matching item's amount, and return after the loop.** Returning inside the loop stops at the first item. Starting with `Decimal("0.00")` preserves a Decimal zero for empty input. Add `transaction.amount`, not the entire Transaction object.
 
-Initialize before the loop; add inside; return afterward. Initializing inside
-loses previous results; returning inside stops early. Empty input leaves Decimal
-zero unchanged. `range(9, 11)` yields the numbers 9 and 10: its stop is excluded.
-See the next section for how iterators supply loop values.
-
-### List comprehensions
-
-A list comprehension builds a new list from an iterable, optionally filtering
-items or transforming each value. It is useful for simple operations that read
-more clearly than separate initialization, loop, and append statements.
+### How do comprehension forms differ?
 
 ```python
-grocery_amounts = [
-    transaction.amount
-    for transaction in transactions
-    if transaction.category == "Groceries"
-]
+[x.amount for x in transactions if x.category == "Gas"]  # Eager list + filter
+["over" if x < 0 else "within" for x in balances]          # Choose a value
+{k: v for k, v in pairs}                                 # Eager dict
+(x.amount for x in transactions)                         # Lazy generator
 ```
 
-The expression comes first; for describes traversal; the trailing if decides
-which items to include. Nonmatching items contribute no entry.
+**A trailing `if` filters items; an `if/else` before `for` chooses the output value.** Parentheses alone do not create a generator—the generator-expression syntax does.
 
-To choose between two values rather than skip an item, put the conditional
-expression before for:
+### Why does `mapping[key] += value` sometimes raise KeyError?
 
-```python
-amounts_or_zero = [
-    transaction.amount if transaction.category == "Groceries" else Decimal("0.00")
-    for transaction in transactions
-]
-```
+**`+=` first reads the existing value, so the key must already exist.** Plain assignment creates/replaces an entry. For accumulation, initialize first or use `mapping[key] = mapping.get(key, zero) + value`. `get` supplies a fallback without inserting it.
 
-This includes one entry per input, replacing nonmatching amounts with zero.
-A comprehension creates the full result list immediately. It consumes a generator
-source if given one; it is not lazy merely because its source is a generator.
-Use ordinary loops for multi-step logic, side effects, or complex error handling.
-The main benefit is clarity for simple transformations, not making everything one line.
+### How do you detect duplicates using a set?
 
-### Dictionary comprehensions and generated pairs
-
-```python
-limits = {budget.category: budget.limit for budget in budgets}
-pairs = ((budget.category, budget.limit) for budget in budgets)
-```
-
-The dictionary comprehension eagerly builds a mapping. The generator expression
-produces two-element tuples (key, value) on demand. dict(pairs) consumes those
-pairs and builds the mapping in memory. There is no separate lazy dictionary
-comprehension form. Repeated keys overwrite earlier values; validation is needed
-when duplicates should be rejected rather than replaced.
-
-### Dictionary lookup and assignment
-
-```python
-remaining[category] = amount   # Create or replace a value.
-remaining[category] += amount  # Read existing value, add, then store.
-category in remaining         # Check keys.
-```
-
-Reading an absent ordinary-dictionary key raises KeyError. defaultdict can supply
-a default, but isn't necessary when assigning a complete result once. items()
-provides key/value pairs; values() provides values. Lists have neither method.
-
-When both operands are strings, `category in transaction.category` checks a
-substring. Use `==` for our exact category matching, which is case sensitive.
-
-### Duplicate detection with a set
-
-```python
-seen = set()
-for budget in budgets:
-    if budget.category in seen:
-        raise ValueError("Duplicate budget category")
-    seen.add(budget.category)
-```
-
-Check before adding. The first occurrence is accepted; the second is rejected.
-This avoids silent dictionary overwrites. Duplicate budget categories and duplicate
-bank transactions are different problems.
-
-One scan of n transactions takes O(n) time. Dictionary/set membership is average
-O(1) for suitable keys, not a worst-case guarantee. Our summary scans transactions
-for each budget: roughly O(b × n). Deeper complexity/algorithm study remains ahead;
-optimization should address measured needs.
+**Track seen values; reject a value already present, then add new ones.** A set provides convenient membership checks. Category-name comparison is case-sensitive unless an explicit normalization policy changes it.
 
 ## Iterables and iterators
 
-An **iterable** can provide an iterator through `iter(...)`. An **iterator**
-maintains progress and supplies its next item through `next(...)`.
-A list stores items; its iterator tracks a traversal through those items.
+### What is an iterable versus an iterator?
 
-```python
-amounts = [Decimal("40.00"), Decimal("20.00"), Decimal("10.00")]
-cursor = iter(amounts)
-print(next(cursor))  # 40.00
+**An iterable can supply an iterator through `iter()`; an iterator tracks progress and supplies items through `next()`.** A list is iterable but is not itself an iterator. `iter(list)` normally creates a fresh list iterator; `iter(iterator)` returns that iterator itself.
 
-for amount in cursor:
-    print(amount)   # 20.00, then 10.00
+### How does a for loop work?
 
-for amount in cursor:
-    print(amount)   # Nothing: this iterator is exhausted.
+**It calls `iter(source)`, repeatedly requests `next(iterator)`, and stops at `StopIteration`.** It does not need to guess whether the source is a list or generator. Repeating a loop over a list starts a fresh traversal; repeating it over an exhausted iterator yields nothing.
 
-for amount in amounts:
-    print(amount)   # 40.00, 20.00, 10.00: a fresh list iterator.
-```
+### What is a generator?
 
-A for loop obtains an iterator once, repeatedly asks for its next item, and
-stops on StopIteration. A manual next call on an exhausted iterator raises that
-exception instead of quietly printing nothing.
+**A generator is an iterator produced by a function containing `yield` or by a generator expression.** Calling a generator function creates the generator object; its body starts when advanced. `yield` produces a value and suspends execution while preserving state. The consumer resumes it; repeated `next` calls do not call the function again.
 
-An iterator is itself iterable: `iter(cursor)` returns that same cursor, not a
-reset copy. Consequently a new for loop over an exhausted iterator does not
-restart it. A list can supply a fresh independent iterator on each traversal.
-Do not assume every iterable can be restarted: iterators are iterables too.
+### Why is a generator both iterable and iterator?
 
-The loop always asks through iter(...); it does not need a separate type check.
-An object's __iter__ defines what iterator it supplies. Lists supply fresh list
-iterators; an iterator's __iter__ returns itself. The iterator's __next__ supplies
-the next item. A list is iterable but not itself an iterator, so next(a_list)
-raises TypeError; next(iter(a_list)) is valid.
+**It supplies items with `next` and returns itself from `iter`.** These are two protocol roles on one object, not an extra iterator wrapped around another. Its progress is shared across consumers of that same generator.
 
-Consuming a list iterator does not remove items from its source list. Exhaustion
-belongs to that iterator's progress, not the list's contents. Creating another
-iterator with `iter(amounts)` starts a new traversal.
+### Why use generators?
 
-This matters for MyBudget: a reusable list of transactions and a one-pass stream
-cannot always be processed with the same repeated-loop assumptions. Generators
-produce such streams on demand.
+**They can produce items on demand without retaining every produced object.** They are usually single-pass and do not automatically reset. Constructing a whole list inside a generator before yielding still allocates that list. Generators control suspension, not automatic background or asynchronous execution.
 
-### Generators and yield
+### What happens with `list(generator)`?
 
-A function containing yield is a **generator function**. Calling it creates a
-**generator object**, which is an iterator. Its body starts when a consumer asks
-for the next value, not when that object is created.
+**The list constructor consumes the generator and stores references to every yielded item.** The generator becomes exhausted; the resulting list can be traversed repeatedly. This gives up streaming memory benefits. In `calculate(list(generator))`, list construction finishes before `calculate` is called because arguments are evaluated first.
 
-```python
-def sample_amounts():
-    print("Preparing first amount")
-    yield Decimal("20.00")
-    print("Preparing second amount")
-    yield Decimal("50.00")
+### Why can repeated category scans break a generator-based calculation?
 
-cursor = sample_amounts()  # No preparation messages yet.
-first = next(cursor)      # Runs to first yield, returns 20.00, and pauses.
-for amount in cursor:    # Resumes and consumes the remaining value.
-    print(amount)
-```
-
-yield is a keyword, not an iterator itself. It supplies a value and suspends
-execution, preserving position and local state. return ends the generator;
-reaching the end also exhausts it. Further next calls raise StopIteration, which
-a for loop handles automatically. Create a new generator for a new traversal.
-
-The consumer drives execution through next or a loop. Generators do not produce
-continuously in the background and are not inherently async or parallel.
-This is lazy, incremental production: a file reader can parse a record, yield
-an amount, and resume when another is requested. A running total avoids storing
-every amount. Using list(...) to collect all results retains them in memory again.
-
-### Generator expressions
-
-A generator expression is a compact way to produce values lazily:
-
-```python
-grocery_amounts = (
-    transaction.amount
-    for transaction in transactions
-    if transaction.category == "Groceries"
-)
-total = sum(grocery_amounts, Decimal("0.00"))
-```
-
-The same comprehension with square brackets builds a list eagerly. Parentheses
-around an expression containing for create a generator expression; parentheses
-around an ordinary calculation do not. A generator expression is already an
-iterator and has the same one-pass consumption behavior as a generator function.
-
-sum consumes the matching amounts incrementally without creating an intermediate
-amount list. Summing the same exhausted generator again returns the supplied
-starting value. A source list still occupies memory; avoiding one intermediate
-list does not make the entire program a stream. Printing a generator displays
-its representation, not all its values.
-
-Use a generator expression for a simple transformation consumed once. Use a list
-comprehension when the result needs repeated traversal, indexing, or storage.
-
-### Producing objects incrementally
-
-Yielding from a prebuilt list is different from producing objects incrementally:
-
-```python
-def generate_transactions(count):
-    for _ in range(count):
-        yield Transaction("Groceries", Decimal("10.00"), date(2026, 10, 5))
-```
-
-Each request resumes the loop, constructs one Transaction, and yields it. In
-contrast, building a list of transactions inside the generator creates every
-listed object when that list-building statement is first executed. Lazy start
-alone does not guarantee incremental production or low memory use.
-
-The consumer can print each object and add its amount to a Decimal total without
-retaining all previously yielded transactions. Producing more items than a fixed
-prebuilt list contains would also fail if using indexed access; direct generation
-avoids that unnecessary limit. `_` conventionally names a value not used by the body.
-
-One-pass streams need care: a calculation that loops through its transaction
-input repeatedly for different budgets may exhaust a generator on its first pass.
-Review consumption patterns before replacing reusable lists with generators.
-
-### Consumers and materializing a stream
-
-list(source) is also a consumer of the iteration protocol. Conceptually, it gets
-iter(source), repeatedly requests items, and stores references to each yielded
-object until exhaustion:
-
-```python
-transactions = list(generate_transactions(3))
-```
-
-The generator function is called once to create a generator object. Item requests
-resume that object; they do not call the generator function again. An internal
-producer loop preserves its position across yields while an external consumer
-loop requests values. Yield one Transaction per request, not a list containing
-transactions, when the receiving calculation expects individual transactions.
-
-After materialization the generator is exhausted, but the list can supply fresh
-iterators for repeated traversals. This retains all objects and gives up the
-incremental-memory advantage. list(an_exhausted_generator) is empty. Storing
-references in the list does not itself copy the yielded objects.
-
-In our per-budget calculation, the first category scan consumes every transaction,
-including nonmatching ones. A second scan of the same generator has nothing left.
-Materializing a fresh generator into a list restores correct repeated traversal.
-An alternative is redesigning the calculation to accumulate category totals in
-one pass, retaining only those totals.
-
-### One-pass aggregation and Iterable inputs
-
-Iterable[Transaction] describes an input that can supply transactions to a loop.
-It accepts reusable collections such as lists and one-pass sources such as
-generators. It does not promise indexing, length, or a fresh traversal. Iterator
-is the narrower concept: an object with next-item behavior. A generator is both.
-
-To total a stream by category, loop over transactions once and update a dictionary:
-
-```python
-totals = {}
-for transaction in transactions:
-    if transaction.category not in totals:
-        totals[transaction.category] = transaction.amount
-    else:
-        totals[transaction.category] += transaction.amount
-```
-
-Alternatively, get(key, default) supplies a starting value without inserting it:
-
-```python
-totals[transaction.category] = (
-    totals.get(transaction.category, Decimal("0.00")) + transaction.amount
-)
-```
-
-Both forms preserve the same accumulation rule. This visits n transactions once
-and retains k category totals: average O(n) time for dictionary operations and
-O(k) additional storage, rather than retaining all n transaction references.
-Each category's total can later be combined with its budget without rereading
-the exhausted stream. This example totals across all dates; monthly filtering
-must be included explicitly when applying it to a monthly report.
+**The first scan consumes every item, including nonmatches, leaving no items for later categories.** Materialize once if repeated traversal is required, or redesign as one-pass aggregation. Category totals can be accumulated in average O(n) time and O(k) extra storage for n transactions and k categories. `Iterable[Transaction]` does not promise indexing or restartability.
 
 ## Dates and monthly reporting
 
-```python
-from datetime import date
+### How do you construct and serialize dates?
 
-purchased_on = date(2026, 10, 5)
-in_selected_period = purchased_on.year == 2026 and purchased_on.month == 10
-```
+**`date(year, month, day)` takes integers; `date.fromisoformat(text)` parses an ISO string.** `date.isoformat()` produces text such as `"2026-11-14"`. Date attributes `.year`, `.month`, and `.day` are integer values, not conversion functions.
 
-The constructor takes year/month/day and rejects impossible calendar dates.
-The instance's year, month, and day are integer attributes, not conversion
-functions such as `date.day("10")`. Match both year and month so October in
-another year is excluded.
+### What makes a monthly filter correct?
 
-Period validation must happen before processing data, even with no budgets or
-transactions. A helper inside an empty loop never runs. Date-only values have no
-time-of-day or timezone; converting provider timestamps to a reporting date is
-a separate future decision.
+**Match both year and month and validate the period before iteration.** Month-only filtering mixes years. Validation hidden inside an empty loop never runs. Date-only objects have no time-of-day or timezone; timestamp-to-reporting-date policy is separate.
 
 ## Modules, packages, and imports
 
-| Term | Meaning |
-| --- | --- |
-| Module | Importable unit of code, often a .py file |
-| Package | Organizes modules/subpackages; our regular package has __init__.py |
-| Library | General term for reusable code |
-| Standard library | Code supplied with Python |
+### What is a module, package, or library?
 
-```python
-from decimal import Decimal  # Module → class
-from copy import copy        # Module → function
-import decimal              # Use decimal.Decimal(...)
-```
+**A module is an importable unit, often a `.py` file; a package organizes modules; library is a general term for reusable code.** Our regular `mybudget` package contains `__init__.py`. In `from decimal import Decimal`, `decimal` is the module and `Decimal` is the class.
 
-Importing makes names available; calling a class creates an object. Each module
-has its own namespace: importing Transaction doesn't also import the date name
-from its defining file into the caller.
+### How do built-ins and library categories differ?
 
-### Built-ins, standard library, and external packages
-
-| Category | Origin and use | Examples |
+| Category | Meaning | Example |
 | --- | --- | --- |
-| Built-ins | Available without importing | print, len, str, list |
-| Standard library | Distributed with Python; usually imported as needed | decimal, datetime, json, sqlite3 |
-| Third-party package | Distributed separately; installed as a dependency | pytest, FastAPI |
-| Project module/package | Code written within our application | mybudget.models |
-| Internal/private package | Reusable code maintained by our organization and distributed internally | A company finance-utils package |
+| Built-in | Available without import | `print`, `len`, `list` |
+| Standard library | Distributed with Python; usually imported | `decimal`, `json`, `sqlite3` |
+| Third-party | Distributed separately and installed | pytest, FastAPI |
+| Project/internal | Code we or our organization maintain | `mybudget.models`, a private company package |
 
-"Developer library" is not a separate formal category: all these have developers.
-Our own reusable library can be an internal package, or become a third-party
-dependency from another developer's perspective if distributed to them.
+**JFrog Artifactory is a repository hosting packages, not a distinct kind of library.** An internal package stays internal; mirroring externally authored code does not change its origin. `sqlite3` needs no extra install in our environment; `sqllite3` is a misspelling.
 
-JFrog Artifactory can host packages for installation by an application. Separate
-the package, the repository hosting it, and the consuming application's dependency.
-Hosting location does not determine authorship: an internal package hosted in
-Artifactory remains internal, while a mirrored external package remains third-party.
-Private-index configuration and publishing have been discussed conceptually only.
+### Does importing one function execute the whole module?
 
-sqlite3 is the exact standard-library module name; sqllite3 is a misspelling.
-No extra package installation was needed in our Python environment. Built-in
-function and standard-library module are different categories even though both
-are supplied with Python.
+**The first normal import executes the module's top-level code, then retrieves the requested name.** Definitions create objects; unguarded calls, sample data, and prints also execute. Modules are normally cached after import. Function bodies run when called, not merely when defined.
 
-Revision checks: Why import decimal but not print? Does hosting a package in a
-private repository make externally authored code internal? How does a module
-differ from a package, and how do those differ from a dependency's origin?
+### Why use the main guard?
 
-### Import-time execution and the main guard
+**`if __name__ == "__main__":` runs demonstration/entry-point code only when the module is executed as the program.** Normal imports use the module name and skip that block, preventing unwanted output, exceptions, or sample execution.
 
-A first normal import initializes the module by executing its top-level code,
-even when requesting only one function. Assignments and calls run. def creates
-a function without executing its body. Class bodies execute to build classes.
-Imported modules are normally cached afterward.
+### Why can an imported module not use the caller's imports?
 
-```python
-def calculate():
-    return 42
+**Each module has its own namespace.** Importing Decimal in a demo does not define Decimal inside storage.py. Python 3.14 defers annotation evaluation, so unresolved hint names may fail when inspected even if a demo initially runs.
 
-if __name__ == "__main__":
-    print(calculate())
-```
+### Why run `python -m mybudget.cli` from the project root?
 
-Direct execution sets __name__ to __main__, so the demonstration runs. Importing
-uses the module name and skips that guarded block. This prevents sample creation,
-printing, and intentionally invalid construction during test imports.
-
-### Finding modules
-
-`from mybudget.models import Transaction` names models inside mybudget. Python
-uses its module search path, not merely adjacent files. For our layout, run from
-the project root:
-
-```sh
-uv run python -m exercises.monthly_budgets
-uv run python -m pytest tests -v
-```
-
-`python -m` includes the current directory in the module search path for this
-workflow. Launching an installed command directly may set the path differently.
+**`-m` locates and executes a module through Python's import system; this invocation includes the current directory in the module search path.** Running a nested file directly can produce a different search path. Correct working directory does not fix a missing or unsaved module.
 
 ## Exceptions and validation
 
-An exception signals that an operation cannot complete normally. It interrupts
-the current path and searches for a handler. If it escapes initialization, the
-constructor does not return a successfully initialized instance.
+### What is raising versus handling an exception?
 
-```python
-try:
-    purchase = Transaction(category, amount, transaction_date)
-except ValueError as error:
-    print("Invalid transaction:", error)
-```
-
-Later lines inside try are skipped on failure. After handling, execution continues
-after the handler; it never resumes the interrupted block. `as error` names the
-exception object. Catch the expected type rather than hiding all programming bugs.
+**Raising signals failure and interrupts normal execution; handling catches a matching failure with `except`.** Execution does not resume at the failed statement. Model validation may raise an error; a CLI or caller decides how to report it.
 
 | Exception | Typical meaning |
 | --- | --- |
-| SyntaxError | Invalid source structure |
-| NameError | Name isn't defined |
-| AttributeError | Object lacks the requested attribute |
-| TypeError | Wrong kind of input or unsupported operation |
-| ValueError | Allowed type, unacceptable value |
-| KeyError | Dictionary key doesn't exist |
-| AssertionError | Asserted expectation is false |
+| `NameError` | Undefined name |
+| `AttributeError` | Unsupported/missing attribute |
+| `TypeError` | Wrong type, signature, or unsupported operation |
+| `ValueError` | Suitable type but unacceptable value |
+| `KeyError` | Missing dictionary key |
+| `AssertionError` | Failed assertion |
 
-`.strip()` returns text without surrounding whitespace; it doesn't modify the
-stored string. Empty text is false, so `if not category.strip():` rejects empty
-and whitespace-only categories. It assumes the input is a string; a broader input
-policy is separate work.
+### Why catch specific exceptions?
 
-Put rules where their inputs/state belong. Budget's initializer knows its category
-and limit, not a separately supplied reporting month. A shared validate_month
-function suits the current calculation entry points. A ReportPeriod class is a
-possible future design, not necessary just to obtain a post-init hook.
+**Specific catches handle expected failures without hiding unrelated bugs.** Bare `except:` also catches interruption exceptions. `except ValueError as error` binds the exception instance; `except ValueError():` incorrectly uses an instance as the catch target.
 
-### try/finally and exit work
+### When do constructor argument errors occur?
 
-except handles a matching exception. finally performs exit work whenever control
-leaves the try block, whether normally, through return, or through an exception.
-It does not by itself catch the exception. Keep returns out of finally when they
-would replace an earlier result or suppress an error. If finally itself raises,
-it can also replace the outward failure; keep cleanup/reporting deliberate.
+**Argument expressions are evaluated before the constructor is called.** A failing `date.fromisoformat(...)` prevents Transaction construction and its `__post_init__` validation. Keyword names must match exactly; type hints do not fix misspelled names.
 
-For `print(calculate(...))`, arguments are evaluated before print is called. If
-calculate raises, its own finally can run, but the outer print never receives a
-value and is not called. These are two separate output locations.
+### What is finally for?
 
-### Standard output, standard error, and buffering
+**`finally` runs on exit from its associated try, including normal completion, return, and exceptions.** Use it for cleanup. It does not itself catch or suppress a failure. A new error in finally can obscure the original failure and skip later cleanup statements.
 
-print normally writes to stdout; an unhandled-exception traceback is written to
-stderr. Buffering and how streams are merged can make a traceback appear before
-an earlier print. Display order across these streams does not necessarily reflect
-the order the Python statements executed.
+### Why can output appear after a traceback?
 
-For a terminal experiment, `uv run python -u -m exercises.timing_decorator` uses
-unbuffered Python stdout/stderr. `print(..., flush=True)` can explicitly flush a
-particular stdout message. This affects output delivery, not try/finally semantics.
+**Normal prints use stdout, while tracebacks use stderr; buffering can make their displayed order surprising.** `python -u` disables standard-stream buffering for debugging. An outer `print(f())` is never called if evaluating `f()` raises.
 
 ## Context managers and with
 
-**with is a statement. A context manager is the object supplying entry and exit
-behavior around its block.**
+### What is a context manager?
+
+**A context manager defines entry and exit behavior around a block; `with` is the statement that uses it.** It helps reliably release resources or perform exit checks when a block finishes or raises. A file object and `pytest.raises` provide different examples of that protocol.
+
+### How do `__enter__` and `__exit__` work?
+
+**After evaluating the manager, `with` calls entry, runs the body, and calls exit after successful entry.** `as value` receives the result of `__enter__`, which can be `self` or another value. If entry itself raises, its exit is not automatically called.
+
+`__exit__(self, exc_type, exc_value, traceback)` receives exception details, or three None values on normal exit. A truthy return suppresses the exception; false/None allows propagation. Suppression does not resume interrupted statements inside the body.
+
+### Why use `self.start` in a class-based timer?
+
+**Separate methods need shared instance state.** A plain `start` local in `__enter__` is not accessible in `__exit__`. Returning self does not copy method locals into attributes.
+
+### What does `@contextmanager` do?
+
+**It adapts a generator function into a factory for context manager objects.** On entry the manager advances to the single `yield`; the generator pauses while the with body runs; on exit the manager resumes it or delivers the body's exception at the yield point.
 
 ```python
-with open("notes.txt", "w") as file:
-    file.write("Learning Python")
-# File is closed when control leaves the block.
-```
-
-After successful entry, exit behavior runs when leaving the block, including
-when it raises. File closing is reliable even when writing fails. Other managers
-release locks, manage database transactions, or check expected test exceptions.
-
-Python uses __enter__ and __exit__. `as file` binds the result of entry, which
-need not always be the manager itself. Exit receives exception information, or
-None values if no exception occurred. Returning a truthy value can suppress an
-exception; otherwise it can propagate.
-
-```python
-with pytest.raises(ValueError):
-    operation_expected_to_fail()
-```
-
-Here pytest supplies the manager. It verifies the expected exception occurred.
-No exception means failure; an unexpected error also fails the test. Suppressing
-an expected exception does not execute skipped lines inside the block.
-
-**Managed context is not variable scope.** Names assigned inside with can remain
-accessible afterward, although the resource may be closed. Ordinary arithmetic
-doesn't need a with block.
-
-### Building a context manager with a class
-
-```python
-from time import perf_counter
-
-class Timer:
-    def __enter__(self):
-        self.start = perf_counter()
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.elapsed = perf_counter() - self.start
-        print(f"Elapsed: {self.elapsed:.6f} seconds")
-        return False
-```
-
-For `with Timer() as timer:`, Timer() first creates the instance, then Python
-calls its entry method. The value returned by __enter__ is bound to timer.
-Returning self supplies the same instance, not a copy. It is optional: another
-return value would be bound instead, and no return would provide None.
-
-The keyword implements the context-manager protocol; a variable named timer is
-not itself special. Normal start/stop methods would require explicit calls, but
-the recognized dunder methods let with coordinate entry and exit. Special methods
-can be called directly, but prefer the associated language operation for normal use.
-
-On exit, Python supplies the exception class, exception instance, and traceback
-object, or three None values for normal completion. Returning False lets any
-exception propagate; it does not mean cleanup failed. Returning True suppresses
-the exception, without resuming interrupted statements inside the block.
-
-State shared between methods belongs on the instance: self.start is created in
-entry and read in exit. Plain start would be local to __enter__; exit cannot
-access it by that name. Reading self.start without first assigning it raises
-AttributeError. Each Timer instance has its own attributes. Returning self alone
-does not copy local variables into the instance.
-
-The method names use double underscores, often pronounced dunder: dunder enter,
-dunder exit. Python invokes these specific protocol hooks, not arbitrary method
-names. The same principle connects iter/next and arithmetic to their special methods.
-
-### How with, context managers, and decorators relate
-
-These names describe different parts of one entry → work → exit pattern:
-
-| Term | Role |
-| --- | --- |
-| Context manager | Object that defines entry and exit behavior around a block |
-| `with` | Statement that uses that object and coordinates entry, body, and exit |
-| `__enter__` / `__exit__` | Methods for implementing that behavior in a class |
-| `@contextmanager` | Standard-library decorator that adapts a generator function into a factory for context managers |
-| A function decorator such as `@timed` | Wraps a function call; useful when the entire call should receive the extra behavior |
-
-Choose either the class implementation or the generator implementation; they
-provide the same protocol to `with`. You do not need to implement both for one
-timer. Use a class when explicit instance state or additional methods help. A
-generator-based manager is convenient for a short setup/cleanup sequence.
-
-`with` can surround several statements chosen by the caller. A timing decorator
-surrounds calls to the decorated function. Direct start/stop method calls are
-also possible, but the caller must arrange reliable cleanup with `try/finally`.
-`with` packages that responsibility for reuse. Exit is arranged after successful
-entry, including when the body raises; if entry itself fails, its exit method
-is not automatically called.
-
-### Building a context manager with a generator
-
-```python
-from contextlib import contextmanager
-from time import perf_counter
-
 @contextmanager
 def timer():
     start = perf_counter()
     try:
         yield
     finally:
-        elapsed = perf_counter() - start
-        print(elapsed)
-
-with timer():
-    print("Doing budget calculations")
+        print(perf_counter() - start)
 ```
 
-The sequence is:
+The generator retains local `start` across suspension. `yield` does not call the function again or run the with body itself; the manager coordinates execution. The generator must yield exactly once.
 
-1. `timer()` creates a context manager through the decorator.
-2. On entry, the manager advances the generator: record start, then pause at yield.
-3. Python runs the indented **with body** while the generator is suspended.
-4. On exit, the manager resumes the generator. Its finally block reports elapsed
-   time; an exception from the body is delivered back at the yield point, so
-   finally also runs on that path.
+### How do these mechanisms relate?
 
-`yield` does not call timer or execute the with body itself. It provides a pause
-point; the context manager handles advancing and resuming the generator. This
-generator must yield exactly once. Bare yield supplies None; yielding a value
-would make that value available through `with timer() as value`.
-
-The generator retains its local start across suspension. In the class version,
-separate methods shared self.start instead. The try/finally structure ensures
-cleanup; yield alone does not guarantee it. With no exception handler suppressing
-the body's error, that error propagates after cleanup.
-
-Revision checks: Who calls timer? Who advances its generator? What runs while
-the generator is paused? Why is yield inside try? When would a function decorator
-be more convenient than a with block?
-
-### Text files and persistence
-
-Objects in memory ordinarily disappear when the process ends. A file stores
-information on disk for later runs. Text is encoded as bytes; encoding="utf-8"
-explicitly selects that representation. Saving display text does not preserve
-the Python object's type or automatically reconstruct it when read.
-
-```python
-remaining = calculate_remaining(Decimal("500.00"), Decimal("75.25"))
-
-with open("budget_note.txt", "w", encoding="utf-8") as file:
-    file.write(f"Remaining budget: {remaining}\n")
-
-with open("budget_note.txt", "r", encoding="utf-8") as file:
-    content = file.read()
-
-print(content)
-```
-
-open returns a file object. Its context-manager entry supplies the object bound
-to file; exit closes it, including when the body raises. This behavior is built
-in; no custom context manager is needed.
-
-- "w" creates a file if needed, or truncates an existing file when opened.
-- "r" opens an existing file for reading; a missing file raises FileNotFoundError.
-- write(text) writes a string; the f-string converts our Decimal into display text.
-- read() without a size reads the remaining contents into a string in memory.
-- `\n` is a newline. print adds another newline by default, so printing content
-  that already ends in one can display an extra blank line.
-
-A relative path such as budget_note.txt is resolved against the process's
-current working directory, not automatically the script's directory. Running
-our module from the MyBudget root creates the file there.
-
-Closing the file does not delete its saved contents or the content string in
-memory. The with block introduces no variable scope: content remains accessible
-afterward, while further reads through the closed file object fail.
-
-Common mistakes: accidentally overwriting existing contents with "w", expecting
-read to return a Decimal, or assuming paths follow the source file's location.
-
-Revision checks: Why use with for files? When does "w" erase previous contents?
-What remains after closing the file? Where are relative paths resolved?
-
-### JSON serialization and text encoding
-
-Serialization converts data into a representation that can be stored or sent.
-Deserialization reads that representation back into usable data. JSON is a text
-format for structured values such as objects, arrays, strings, numbers, booleans,
-and null. Python's json module maps dictionaries to JSON objects and lists to
-arrays; loading reconstructs corresponding Python values, not arbitrary classes.
-
-```python
-import json
-from decimal import Decimal
-
-remaining = Decimal("424.75")
-data = {"category": "Groceries", "remaining": str(remaining)}
-
-with open("budget.json", "w", encoding="utf-8") as file:
-    json.dump(data, file)
-
-with open("budget.json", "r", encoding="utf-8") as file:
-    loaded = json.load(file)
-
-amount = Decimal(loaded["remaining"])
-```
-
-| Function | Input/output |
+| Mechanism | Role |
 | --- | --- |
-| json.dump(data, file) | Writes JSON text to a file object |
-| json.dumps(data) | Returns JSON text as a Python string |
-| json.load(file) | Reads JSON from a file object and returns Python data |
-| json.loads(text) | Parses JSON text from a string and returns Python data |
+| `with` | Uses a context manager around a chosen block |
+| `__enter__` / `__exit__` | Class-based implementation of the protocol |
+| `@contextmanager` | Alternative generator-based implementation |
+| A regular function decorator | Commonly wraps a whole function call |
+| `try/finally` | Explicit exit/cleanup logic without a reusable manager |
 
-Remember the s as "string." Passing a file as a second positional argument to
-dumps raises TypeError; use dump for the file operation.
+**Choose a class or generator implementation; both are not required for one manager.** `with` creates a managed lifetime, not a new variable scope. Values read inside may remain usable after the resource closes.
 
-The default JSON encoder does not support Decimal: attempting to serialize one
-raises TypeError. We explicitly store its decimal string to preserve the value
-without converting through a binary float. On loading, it remains a string
-until our code calls Decimal. JSON does not know that the remaining field means
-money or that its string should become a Decimal.
+## Text files and JSON
 
-Serialization and character encoding perform different conversions:
+### How do you read and write text files?
 
-```text
-Python dictionary → JSON text → UTF-8 bytes on disk
-                  serialize     encode
-
-Bytes on disk → JSON text → Python dictionary
-               decode      deserialize
-```
-
-json.dump supplies JSON text; the file object opened with encoding="utf-8"
-encodes that text into bytes. Reading reverses those steps. UTF-8 describes how
-characters are represented as bytes, not how dictionaries are structured; it
-also applies to ordinary text files. JSON may escape characters in its textual
-representation; those escapes are separate from the file's character encoding.
-
-Common mistakes: confusing dump with dumps, expecting Decimal to serialize
-automatically, assuming loaded strings regain their original Python types, or
-treating serialization and encoding as the same operation.
-
-Revision checks: What does load return for our saved dictionary? Why explicitly
-convert the amount twice? How does JSON serialization differ from UTF-8 encoding?
-Which function would produce JSON text without opening a file?
-
-### Converting domain objects to JSON data and back
-
-A domain object such as Transaction groups application data and rules. The
-default JSON encoder cannot directly serialize that custom object, Decimal, or
-date. Explicitly convert its attributes into supported values:
+**Use `open` to obtain a file object and `with` to close it reliably.** `"w"` creates/truncates, `"r"` reads an existing file, `write` accepts text, and `read()` returns remaining text. Relative paths use the working directory, not automatically the script's directory.
 
 ```python
-transaction_dict = {
-    "category": transaction.category,
-    "amount": str(transaction.amount),
-    "transaction_date": transaction.transaction_date.isoformat(),
-}
+with open("budget_note.txt", "w", encoding="utf-8") as file:
+    file.write("Remaining: 424.75\n")
 ```
 
-date.isoformat() produces text such as "2026-10-05". After dumping this dictionary
-and loading it, reconstruct the domain object explicitly:
+Closing does not delete the file or text already read into memory. `print` adds a newline by default, so printing text already ending in one can add a blank line.
 
-```python
-restored = Transaction(
-    category=loaded["category"],
-    amount=Decimal(loaded["amount"]),
-    transaction_date=date.fromisoformat(loaded["transaction_date"]),
-)
-```
+### What is serialization versus encoding?
 
-The round trip is Transaction → dictionary with strings → JSON text → loaded
-dictionary → new Transaction. json.load does not call Transaction or restore
-Python-specific types. The constructor restores the object and runs its existing
-__post_init__ validation; the explicit conversions can also raise errors first.
+**Serialization represents structured data as a storable/transmittable format; encoding represents text characters as bytes.** Our write path is dictionary → JSON text → UTF-8 bytes. Reading reverses it: bytes → decoded text → Python data. UTF-8 knows characters, not dictionary structure.
 
-For this dataclass, restored == transaction compares field values and is True
-when the round trip preserves them. They are distinct instances; equality does
-not mean that loading recovered the same in-memory object.
+### What do JSON's dump/load functions do?
 
-Common mistakes:
+| Function | Purpose |
+| --- | --- |
+| `json.dump(data, file)` | Write JSON text to a file object |
+| `json.dumps(data)` | Return JSON text as a string |
+| `json.load(file)` | Read JSON and return Python data |
+| `json.loads(text)` | Parse JSON from a string |
 
-- dictionary[category] looks up the variable category; dictionary["category"]
-  uses a literal string key. An undefined unquoted name raises NameError.
-- Convert transaction.amount, not transaction.category, for the amount field.
-  Decimal("Groceries") raises decimal.InvalidOperation because it is not numeric.
-- Access the date through transaction.transaction_date before calling isoformat.
-- Constructor keyword names must match exactly: transaction_date and
-  transation_date are different names; the latter raises TypeError here.
-- After correcting conversion code, rerun the writing step so the saved file
-  contains the corrected data.
+**Remember the `s` as string.** JSON objects become dictionaries and arrays become lists; loading does not reconstruct arbitrary Python classes.
 
-Revision checks: What type does json.load return here? Which step reconstructs
-the date? When does model validation run? Why can == be True for separate objects?
+### How do you save Decimal, date, and custom objects as JSON?
+
+**Explicitly convert unsupported values into supported data, then reconstruct their types after loading.** Store Decimal as a decimal string and date as ISO text. Convert loaded fields through `Decimal`, `date.fromisoformat`, and the model constructor; model validation then runs. A reconstructed dataclass can compare equal without being the same object.
 
 ## Testing and pytest
 
-A test states expected behavior and compares the actual result. Good inputs
-should distinguish correct behavior from a plausible incorrect implementation.
+### What does a useful unit test check?
 
-```python
-def test_remaining_budget_when_over_limit():
-    actual = calculate_remaining(Decimal("500.00"), Decimal("525.00"))
-    assert actual == Decimal("-25.00")
-```
+**It checks externally meaningful behavior against an expected result, using inputs that distinguish correct from plausible incorrect implementations.** Arrange inputs, Act by calling the operation, Assert the result. Use focused tests instead of duplicating implementation details or repeating familiar patterns indefinitely.
 
-Arrange–Act–Assert means prepare inputs, call the operation, check the result.
-Pytest discovers test_*.py files and test_* functions. Names should describe
-expected behavior; negative cases don't need a special naming convention.
+### What does assert do?
 
-`assert` raises AssertionError for a false condition. Python optimization can
-disable assertions, so they are development checks rather than input validation.
-Integer zero equals Decimal zero; use isinstance when result type matters too.
+**A false assertion raises AssertionError.** Assertions support development checks, not production input validation, because Python optimization can disable them. Equality alone may not prove the returned type: integer zero can equal Decimal zero.
 
-### Expected exceptions
+### How does `pytest.raises` work?
+
+**It passes when the expected exception occurs inside the with body and fails if none occurs or an unexpected exception escapes.** Put the operation expected to fail inside the block; an exception during fixture setup occurs before that block can catch it.
 
 ```python
 with pytest.raises(ValueError):
-    Budget("Groceries", Decimal("-1.00"))
+    Transaction("", Decimal("10.00"), date(2026, 1, 1))
 ```
 
-Here the exception means validation succeeded. A bare try/except that catches
-it would not detect the absence of an error. Keep setup outside the block and
-only the intended failing operation inside it.
+### What is TDD?
 
-### Test-first work and testing judgment
+**Test-driven development follows a failing behavioral test, a minimal implementation that passes, then refactoring.** Import/collection errors differ from a failed behavior assertion; interpret the reason before treating a failure as the intended test signal.
 
-Write an expectation, observe a failure for the expected reason, implement the
-behavior, then refactor while tests pass. Collection errors and assertion failures
-occur at different stages. Tests can also document existing intended behavior.
-
-Remember:
-
-- Empty input differs from nonempty input with no matches.
-- Test allowed boundaries as well as values just outside them.
-- Filtering tests need excluded items, not only matches.
-- Non-finite-value tests need Decimal objects, not strings rejected by a type check.
-- A failing test may contain an incorrect input or expectation itself.
-- Passing calculation tests don't establish correct demonstration output/imports.
-- Move on once a concept is understood; repeat tests when a new idea or meaningful
-  behavior/risk warrants them, not merely to repeat a familiar pattern.
+### How do you run tests or one selected test?
 
 ```sh
 uv run --locked python -m pytest tests exercises -v
-uv run --locked python -m pytest tests -v
-uv run --locked python -m pytest tests/test_refunds.py -v
-uv run --locked python -m pytest tests/test_refunds.py::test_refund_reduces_monthly_spending -v
+uv run --locked python -m pytest tests/test_monthly_budgets.py::test_remaining_budget_when_under_limit -v
 ```
 
-`-v` means verbose output, not different selection. Collection prepares test
-cases; fixture setup happens before the test body; assertions run during the test.
+**`-v` means verbose output.** Application tests live in tests/; historical learning tests remain in exercises/. Test names should describe behavior; negative tests do not need a special naming prefix.
 
 ## Fixtures and parametrization
 
-**Fixtures: one setup definition → reused by many tests.**
+### What is a pytest fixture?
 
-```python
-@pytest.fixture
-def sample_amount():
-    return Decimal("40.00")
+**A fixture supplies reusable test setup/data through a test function's named parameter.** Default scope is per test function; returning a freshly built list gives each test independent data. Pytest resolves the fixture rather than requiring the test to call it manually.
 
-def test_amount_is_positive(sample_amount):
-    assert sample_amount > 0
-```
+### What is parametrization?
 
-Pytest finds the fixture by parameter name, calls it, and passes the returned
-value into the test. The parameter receives data, not the fixture function.
-By default it is function-scoped. A fixture constructing fresh objects each time
-provides fresh data per requesting test. Reusing setup need not share an instance.
+**Parametrization runs the same test definition with multiple input values.** The parameter named by `@pytest.mark.parametrize` must be accepted by the test. Fixtures reuse setup across tests; parametrization varies cases for a test. Both can be combined.
 
-**Parametrization: one test definition → run with many input values.**
+### Where should fixtures live?
 
-```python
-@pytest.mark.parametrize("month", [0, 13])
-def test_invalid_month(month):
-    with pytest.raises(ValueError):
-        validate_month(month)
-```
+**Keep local fixtures in their test module; place shared fixtures in `conftest.py` for automatic discovery in that directory and below.** Do not import conftest manually. Same names in separate modules are possible; redefining a function in the same namespace replaces the earlier binding. A fixture that raises during setup produces a setup error, not a caught test-body exception.
 
-The decorator names the parameter and supplies cases. The function must accept
-that named parameter or collection fails. A list returned by a fixture doesn't
-automatically create a separate test run for every item. These mechanisms can
-be used together; parametrized fixtures and broader scopes remain future study.
+## Code organization and dependency injection
 
-### Location and setup errors
+### What is separation of concerns?
 
-- Use a local fixture when only one test module needs it.
-- tests/conftest.py supplies fixtures to tests there and below without explicit
-  conftest imports; a sibling directory does not automatically see them.
-- Redefining a fixture function name in one module replaces the earlier definition.
-  Separate modules can have same-name local fixtures.
-- Constructing an invalid object inside a fixture fails during setup, before the
-  test's pytest.raises runs. Supply raw inputs or construct inside the checker.
-- Merely defining an unused fixture does not run its body.
+**Give each component a clear responsibility so changes do not spread unnecessarily.** Models represent data/rules, calculations perform arithmetic, storage executes SQL/conversion, and CLI/API adapters handle input/output. Folder count and service classes are not standards by themselves; introduce layers when responsibilities justify them.
 
-## Code organization and refactoring
+### What is a refactor?
 
-```text
-mybudget/   → application models and calculations
-tests/      → application behavior tests and their fixtures
-exercises/  → learning experiments and demonstrations
-```
+**A refactor changes internal structure while preserving behavior.** Moving shared calculations into a module is a refactor. General helpers can live in focused modules rather than an unrelated catch-all helpers class/module. Modules are not automatically separate processes or services.
 
-A **refactor** changes organization while preserving behavior. Move reusable
-code to its application home rather than maintaining independent copies.
+### What is dependency injection?
 
-Calculate the full summary once, then present its entries:
+**Dependency injection supplies a dependency from outside rather than creating it inside the code that uses it.** Passing `sqlite3.Connection` into save/load functions is DI without a framework. Callers can supply a file-backed or in-memory connection.
 
-```python
-remaining = calculate_monthly_remaining(budgets, transactions, year, month)
-for budget in budgets:
-    print(budget.category, remaining[budget.category])
-```
+### Who should own commits and connection cleanup?
 
-Calling the whole-summary calculation inside the printing loop recalculates every
-category repeatedly. Correct output can still do unnecessary work.
+**The caller that owns the connection/workflow controls its lifetime and transaction boundary.** Storage functions execute operations without silently committing each one, allowing several saves to succeed or roll back together. This is our chosen boundary, not a universal requirement for every design.
 
-Keep configuration separate from calculation rules. Prefer focused module names
-such as models or calculations; introduce validation.py when it becomes a useful
-boundary. Avoid a generic helpers.py collecting unrelated responsibilities.
-Separate modules do not imply separate processes or services.
+### Will FastAPI replace the CLI's business logic?
 
-### Dependency injection and connection ownership
-
-Dependency injection means supplying a dependency to code that needs it rather
-than constructing it inside that code. No framework or special decorator is
-required. Our storage functions receive a sqlite3.Connection argument:
-
-```python
-def save_transaction(
-    connection: sqlite3.Connection,
-    transaction: Transaction,
-) -> None:
-    connection.execute(
-        """INSERT INTO transactions (category, amount, transaction_date)
-           VALUES (?, ?, ?)""",
-        (transaction.category, str(transaction.amount),
-         transaction.transaction_date.isoformat()),
-    )
-```
-
-The caller creates the connection, passes it in, decides when to commit or roll
-back, and closes it. Storage functions execute SQL without owning the connection
-lifetime. This permits multiple operations to share one transaction and lets
-callers use file-backed or in-memory connections without changing those functions.
-
-A storage boundary isolates database access and object conversion from arithmetic
-and presentation. load_transactions returns a list of domain objects; save_transaction
-accepts one domain object. Neither prints. The CLI and a future API can reuse
-this boundary, while calculations remain unaware of SQL. These functions do not
-require a repository class merely to establish that separation.
-
-Each module has its own namespace: imports in a demo do not supply names inside
-the imported storage module. Import sqlite3 and Transaction where their names
-are used in annotations. Connection is the capitalized type name. Python 3.14's
-deferred annotation evaluation can let execution succeed despite unresolved
-annotation names; runtime success alone does not prove type hints resolve.
-
-When reconstructing stored dates, date(year, month, day) expects integers;
-date.fromisoformat(text) parses our saved ISO date string. Constructor conversion
-and model validation still run when loading; storing a row does not make it an
-already-valid Python object automatically.
-
-Revision checks: What is injected? Who commits and closes the connection? Why
-avoid committing inside every save operation? Why are caller imports insufficient
-for the storage module's names? Could the same functions use a temporary database?
+**No. CLI and API are separate input/output adapters that can reuse the same application logic.** FastAPI endpoints will receive HTTP input rather than run CLI commands. The CLI can remain optional for development or administrative workflows.
 
 ## Environments, dependencies, and uv
 
-A virtual environment isolates a project's installed Python packages. A package
-manager installs/resolves packages. uv manages both; the environment is still needed.
+### What is a virtual environment versus a package manager?
 
-| Artifact | Purpose | Commit? |
+**A virtual environment isolates installed packages; a package manager installs/resolves them.** uv can manage both, but using uv does not eliminate the environment. A virtual environment is not a full virtual machine.
+
+| Artifact | Purpose | Track in Git? |
 | --- | --- | --- |
-| pyproject.toml | Metadata, supported Python, declared dependencies | Yes |
-| uv.lock | Resolved versions/artifacts, including transitive dependencies | Yes |
-| .venv/ | Installed local environment | No |
+| `pyproject.toml` | Project metadata, supported Python, dependencies | Yes |
+| `uv.lock` | Resolved dependency versions/artifacts | Yes |
+| `.venv/` | Local installed environment | No |
 
-A direct dependency is requested by our project. A transitive dependency is
-needed by a dependency. Runtime dependencies support running the app; development
-dependencies support development/testing. Pinning pytest alone doesn't pin all
-supporting packages. Lockfiles record resolution, not the entire OS environment.
+### What are direct, transitive, runtime, and development dependencies?
 
-```sh
-uv init --bare --name mybudget --python 3.14  # One-time setup, already done
-uv add --dev "pytest==9.2.0"                  # Record a dev dependency
-uv sync --locked                            # Synchronize from existing lock
-uv run --locked python -m pytest tests -v    # Run in project environment
-```
+**Direct dependencies are requested by the project; transitive ones are required by those dependencies.** Runtime dependencies support running the app; development dependencies support tasks such as testing. A lockfile records a resolution, not an entire OS environment.
 
-The project Python requirement describes supported versions, not the app's own
-version. --locked requires an up-to-date lockfile rather than updating it implicitly.
+### What does uv run do, and is activation required?
 
-Activation is optional with uv run:
+**`uv run` executes in the project's environment, so manual activation is optional.** `--locked` requires an up-to-date lockfile instead of silently updating it. Activation changes the shell's PATH; deactivation does not delete the environment.
 
 ```sh
+uv sync --locked
+uv run --locked python -m mybudget.cli --help
 source .venv/bin/activate
-python -m pytest tests -v
 deactivate
 ```
 
-Activation changes the current shell's PATH. Deactivation doesn't delete .venv.
-`python -m pip` selects pip through that interpreter. `sys.executable` helps verify
-the selected interpreter. A virtual environment is not a complete virtual machine.
+`python -m pip` chooses pip through that interpreter; `sys.executable` identifies the running Python.
 
 ## Command-line interfaces and argparse
 
-A command-line interface (CLI) accepts inputs when a program is launched and
-displays results in the terminal. Python's standard-library argparse module
-parses command-line text into named values and supplies usage/help output.
+### What does argparse provide?
+
+**argparse turns command-line text into named values and provides usage/help/error handling.** Define options with add_argument, then call the main parser's parse_args. Values default to strings unless a converter is supplied.
+
+### How does a custom argument converter work?
+
+**Pass a function object as `type=parse_amount`; argparse calls it with text and stores its returned value.** Raise ArgumentTypeError for a readable input message. Catch the specific conversion error rather than bare except. Invalid CLI input normally exits with status 2; successful calculation exits with 0.
 
 ```python
-import argparse
-from decimal import Decimal
-from mybudget.calculations import calculate_remaining
-
-def main():
-    parser = argparse.ArgumentParser(description="MyBudget calculations")
-    parser.add_argument("--budget", required=True)
-    parser.add_argument("--spent", required=True)
-    args = parser.parse_args()
-    return calculate_remaining(Decimal(args.budget), Decimal(args.spent))
-
-if __name__ == "__main__":
-    print(main())
-```
-
-From the project root:
-
-```sh
-uv run python -m mybudget.cli --budget 500.00 --spent 75.25
-uv run python -m mybudget.cli --help
-```
-
-ArgumentParser configures the interface. add_argument declares each named option;
-required=True means it must be provided. parse_args normally reads the process's
-command-line arguments and returns a Namespace, accessed here as args.budget and
-args.spent. Without an explicit type conversion, these values are strings.
-Decimal converts them for the existing arithmetic function. --help displays
-generated help and exits without performing the calculation.
-
-The CLI handles input/output; calculations.py retains the arithmetic. A main
-function provides a callable entry point, and the main guard runs it only when
-the module is executed as the program rather than normally imported.
-
-return passes a value to the caller; it does not display that value. main()
-alone discards this returned Decimal when run as a module. print(main()) both
-calls main and displays its result. An interactive Python prompt may display
-expression results automatically; ordinary module execution does not.
-
-The module name mybudget.cli maps to mybudget/cli.py in this project. Create and
-save that file before running it; running from the right directory cannot make
-a missing module exist. Commands and file paths are separate: the root is
-Mybudget, while the package directory inside it is mybudget.
-
-### Custom argument conversion and readable errors
-
-argparse accepts a conversion callback through type=. Pass the function object
-without parentheses; argparse calls it with argument text and stores its return
-value in the parsed Namespace:
-
-```python
-from decimal import Decimal, InvalidOperation
-
-def parse_amount(text: str) -> Decimal:
-    try:
-        return Decimal(text)
-    except InvalidOperation:
-        raise argparse.ArgumentTypeError(
-            "Enter a numeric amount, for example 500.00"
-        )
-
 parser.add_argument("--budget", required=True, type=parse_amount)
-parser.add_argument("--spent", required=True, type=parse_amount)
 ```
 
-args.budget and args.spent are now Decimal values; main need not convert them
-again. This connects function objects to library callbacks: the library controls
-when the supplied function is called.
+### What is a subparser?
 
-Catch InvalidOperation specifically rather than using bare except, which also
-catches unrelated failures and interruption exceptions. Translate the conversion
-failure to ArgumentTypeError to expose a useful input message at the CLI boundary.
-argparse also catches TypeError and ValueError from a converter, but normally
-supplies its own generic invalid-value message for those. ArgumentTypeError lets
-our message appear with the offending argument's name.
-
-For invalid text, argparse prints usage and its error message to standard error
-and exits with status 2 instead of showing a traceback. Normal calculation exits
-with status 0. The reusable calculation function remains independent of CLI
-error presentation.
-
-This converter checks parseability, not the complete policy for money:
-Decimal("NaN") and Decimal("Infinity") parse successfully. Finite-value checks
-and budget/spending sign policy remain deferred, not implemented by this handler.
-CLI-specific automated tests are also not yet added.
-
-Revision checks: What type is args.budget without a converter? What does argparse
-provide for --help? Why separate main from the guard? Why is return alone silent
-in a module? Which directory should contain cli.py? Why pass type=parse_amount
-instead of calling it? How does ArgumentTypeError affect error presentation?
-
-### Subcommands and subparsers
-
-A subcommand selects an operation within one command-line program. Git's status,
-commit, and push and uv's run, add, and sync illustrate this command pattern;
-these examples do not imply those tools use Python's argparse internally.
-
-A subparser defines a subcommand and the arguments belonging to it. It does not
-automatically call an application function with a matching name.
+**A subparser defines a subcommand and that command's own arguments.** Examples: calculate has budget/spent, report has year/month. Registration does not automatically connect a name to an application function; the program must dispatch the selected operation.
 
 ```python
-parser = argparse.ArgumentParser(description="MyBudget")
 commands = parser.add_subparsers(dest="command", required=True)
-calculate_parser = commands.add_parser(
-    "calculate", help="Calculate the remaining budget"
-)
-calculate_parser.add_argument("--budget", required=True, type=parse_amount)
-calculate_parser.add_argument("--spent", required=True, type=parse_amount)
-
-args = parser.parse_args()
+report_parser = commands.add_parser("report")
+report_parser.add_argument("--year", type=int, required=True)
+args = parser.parse_args()  # args.command contains the selected name
 ```
 
-- add_subparsers creates the object used to register commands.
-- dest="command" stores the selected name in args.command.
-- required=True requires a command to be selected.
-- add_parser("calculate") registers the command and returns its argument parser.
-- Arguments added to calculate_parser belong to that command.
-- The main parser's parse_args() reads input and uses the selected subparser.
+`report_parser` is a local variable, not a method automatically added to parser. Keep parsing inside main and use the main guard for entry-point execution.
 
-For `python -m mybudget.cli calculate --budget 500.00 --spent 75.25`,
-args.command is "calculate" and the amount fields are Decimals through our
-converter. The program still explicitly calls calculate_remaining afterward.
-With multiple operations it will need dispatch logic; registering a command alone
-does not implement its behavior.
+## SQLite and relational databases
 
-Each future subcommand can have different inputs: calculate uses budget/spent,
-add could use category/amount/date, and report could use year/month. Only
-calculate is currently implemented. Top-level --help describes commands;
-calculate --help describes that command's inputs.
+### What is SQLite, and where does its data live?
 
-Common mistake: parser.calculate_parser() is not the parsing call. The name
-calculate_parser is a local variable containing an object, not an attribute or
-method automatically created on the main parser. Use parser.parse_args().
-Parser configuration describes allowed input; parse_args actually reads it.
+**SQLite is an embedded relational database engine, accessed through Python's standard-library sqlite3 module without a separate server.** A file-backed database persists on disk; reopening the same path accesses its committed data. Each ordinary `":memory:"` connection creates its own temporary database.
 
-Revision checks: What is the difference between a command and its subparser?
-Where does the selected name appear? Why call parse_args on the main parser?
-Does naming a command calculate connect it to calculate_remaining automatically?
+### What are tables, rows, columns, and a schema?
 
-## SQLite and relational database basics
+**A table groups records, a row is one record, a column is a field, and the schema defines their structure and rules.** SQL defines structures and reads/changes records. A table lives inside the database, not as a separate file.
 
-A relational database stores records in tables. A table groups related records,
-a row represents one record, and a column represents one field. A primary key
-uniquely identifies rows. SQL is the language used to define structures and work
-with data. SQLite is an embedded database engine; Python's sqlite3 module lets
-our program use it without running a separate database server.
+### What do connection, cursor, execute, and fetch do?
 
-```python
-import sqlite3
+**A connection manages access and transaction state; a cursor executes statements and exposes results.** Connection.execute returns a cursor. fetchone returns one row or None; fetchall returns the remaining rows, normally as a list of tuples. `fetchone()[0]` extracts the first column of one result row. A cursor is also iterable.
 
-connection = sqlite3.connect("learning_budget.db")
-try:
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS transactions (
-            id INTEGER PRIMARY KEY,
-            category TEXT NOT NULL,
-            amount TEXT NOT NULL,
-            transaction_date TEXT NOT NULL
-        )
-    """)
-    connection.commit()
-finally:
-    connection.close()
-```
+### What are the basic SQL operations?
 
-connect opens the database file, creating it if necessary. A relative path uses
-the process's working directory. The table lives inside that database file; it
-is not a separate file or folder. execute sends SQL to SQLite. IF NOT EXISTS
-skips creation when the named table already exists; it does not migrate or
-verify the existing table's structure. NOT NULL disallows SQL NULL, not empty
-strings or all other invalid data.
+| SQL | Purpose |
+| --- | --- |
+| `CREATE TABLE` | Define structure |
+| `INSERT` | Create records |
+| `SELECT` | Read records |
+| `UPDATE ... SET ...` | Change records |
+| `DELETE` | Remove records |
+| `WHERE` | Filter matching records |
+| `ORDER BY` | Request explicit result order |
 
-commit commits any pending transaction. close releases the connection. Our try/finally ensures it
-is closed when control leaves the block. A successful schema-only script need
-not print output.
+**CRUD means Create, Read, Update, Delete of records.** Without WHERE, UPDATE/DELETE targets every row. No match in SELECT is an empty result, not an exception. Use separate execute calls for separate statements; a comma does not combine CREATE TABLE and INSERT.
 
-The learning schema stores amounts as decimal strings and dates as ISO strings,
-preserving the explicit conversion approach from JSON. Numeric database querying
-and the eventual money storage strategy require further design; text storage
-does not automatically supply Decimal arithmetic in SQL.
+### Why use parameterized queries?
 
-Inspect table names using SQLite's schema catalog:
-
-```python
-tables = connection.execute(
-    "SELECT name FROM sqlite_master WHERE type='table'"
-).fetchall()
-print(tables)  # [('transactions',)]
-```
-
-SELECT retrieves data; here it reads schema metadata rather than transaction
-records. execute returns a cursor, and fetchall retrieves its remaining result
-rows as a list of tuples under the default row configuration. ('transactions',)
-is a one-element tuple; its trailing comma is significant. The query result
-confirms table existence, not that transaction rows have been inserted.
-
-### Parameterized inserts and reading rows
-
-CREATE TABLE defines structure; INSERT adds records. Use separate execute calls
-for these statements. A comma between CREATE TABLE and INSERT inside one SQL
-string is invalid SQL; execute expects a single statement.
-
-```python
-connection.execute(
-    """
-    INSERT INTO transactions (category, amount, transaction_date)
-    VALUES (?, ?, ?)
-    """,
-    ("Groceries", "40.00", "2026-11-14"),
-)
-connection.commit()
-
-cursor = connection.execute(
-    "SELECT id, category, amount, transaction_date FROM transactions"
-)
-rows = cursor.fetchall()
-for row in rows:
-    print(row)
-```
-
-Each ? is a value placeholder. Pass a tuple of values separately in matching
-order rather than interpolating values with an f-string. Parameter binding treats
-input as data, handles quotes, and helps prevent SQL injection. It does not
-replace table names or SQL keywords.
-
-The returned cursor provides access to query results. fetchall retrieves the
-remaining rows as a list, normally containing tuples in selected-column order:
-(1, 'Groceries', '40.00', '2026-11-14'). Stored amounts/dates are still strings;
-querying does not automatically reconstruct Decimal, date, or Transaction.
-SELECT without ORDER BY does not guarantee row order.
-
-Each execution of this INSERT creates another row, even with identical values.
-IF NOT EXISTS applies to creating the table, not deduplicating inserted records.
-
-### Filtering and ordering query results
-
-WHERE limits returned rows to those matching a condition. Bind filter values
-separately just as with INSERT. ORDER BY requests explicit ordering; without it,
-result order is not guaranteed.
-
-```python
-cursor = connection.execute(
-    """
-    SELECT id, category, amount, transaction_date
-    FROM transactions
-    WHERE category = ?
-    ORDER BY id
-    """,
-    ("Groceries",),
-)
-rows = cursor.fetchall()
-```
-
-ORDER BY id defaults to ascending order. The comma in ("Groceries",) creates a
-one-item tuple; ("Groceries") alone is a string. With no matching records,
-fetchall returns an empty list and a for loop prints nothing; no-match is not an
-exception. This read-only query does not insert another row. SQLite applies
-the filter before returning the result to Python, avoiding loading every row
-and then filtering in application code. This does not itself guarantee an
-efficient database access plan; indexes are a future topic.
-
-Revision checks: Where is filtering performed? What happens with no matches?
-Why include ORDER BY? Why does the parameter tuple need its trailing comma?
-
-### Updating and deleting rows: CRUD
-
-CRUD names four basic operations: Create (INSERT), Read (SELECT), Update
-(UPDATE), and Delete (DELETE). CREATE TABLE defines structure rather than
-creating a transaction record.
-
-```python
-connection.execute(
-    "UPDATE transactions SET amount = ? WHERE id = ?",
-    ("55.00", 1),
-)
-connection.commit()
-
-connection.execute(
-    "DELETE FROM transactions WHERE id = ?",
-    (2,),
-)
-connection.commit()
-```
-
-SET specifies the field/value to change. WHERE identifies matching rows; using
-the primary key targets at most one row. Without WHERE, UPDATE or DELETE applies
-to every row. Bind values separately, including the ID, instead of interpolating
-SQL strings. A one-value parameter tuple needs its comma: (2,).
-
-Commit makes each change part of the database's committed state. If multiple
-operations must succeed together, use one transaction and commit after the group
-instead of committing each independently. SELECT after a change lets you inspect
-the result; ORDER BY provides a predictable display order.
-
-An in-memory database can be recreated by rerunning setup and inserts. Its data
-disappears when the connection closes; it is not a disk file that must be kept
-between runs. A mistakenly created :memory file from a missing trailing colon
-is different from the special :memory: connection name.
-
-Revision checks: What does SET do? Why include WHERE on updates and deletes?
-What does CRUD's Create mean? How would committing after each operation differ
-from committing the pair together?
-
-### CHECK constraints versus NOT NULL and model validation
-
-NOT NULL rejects SQL NULL but does not reject empty or space-only strings. CHECK
-adds a condition enforced by the database when rows are written:
-
-```sql
-category TEXT NOT NULL CHECK(length(trim(category)) > 0)
-```
-
-trim removes ordinary spaces from both ends by default, and length measures the
-remaining text. This condition rejects an empty string and strings containing
-only ordinary spaces. Unlike Python's str.strip(), SQLite's default trim does
-not remove every whitespace character. Do not assume these two rules are identical.
-Keep NOT NULL too: a CHECK expression evaluating to NULL does not itself reject
-the row in SQLite.
-
-Model validation runs when Python constructs a Transaction. Database constraints
-also protect direct SQL inserts and updates that bypass that model. A violation
-raises sqlite3.IntegrityError. The caller still owns rollback/transaction policy;
-constraints do not automatically impose the application's whole-unit rollback.
-
-Changing the CREATE TABLE IF NOT EXISTS declaration does not update an existing
-table. A fresh in-memory database exercises the new definition; existing files
-need a deliberate schema migration. Do not delete persisted data as a substitute
-for migration in the application.
-
-Revision checks: Can NOT NULL alone reject ""? Which layer protects direct SQL?
-What exception signals a failed CHECK? Why test an edited schema on a fresh
-database? Are SQLite trim and Python strip equivalent for all whitespace?
-
-### UNIQUE constraints and business uniqueness
-
-A primary key uniquely identifies a row, while UNIQUE can enforce a business
-rule on another field, such as allowing each category name only once:
-
-```sql
-CREATE TABLE category (
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE
-)
-```
-
-Two different IDs do not allow duplicate names under this rule. The second
-INSERT of "Groceries" raises sqlite3.IntegrityError. A handler can catch and
-print that error without a traceback:
-
-```python
-except sqlite3.IntegrityError as error:
-    connection.rollback()
-    print(error)
-```
-
-Catch the exception class without parentheses; as error binds the exception
-instance. Catching/printing a failure does not mean the rejected write succeeded.
-If the first insert was committed before attempting the duplicate, rollback
-after the duplicate leaves that first row intact. A uniqueness experiment needs
-two inserts with the same value, not just one successful insert.
-
-With this default text comparison, "Groceries" and "groceries" are distinct.
-Case handling and multi-column uniqueness are separate policies not yet
-practiced. SQLite UNIQUE by itself also allows multiple NULL values; NOT NULL
-provides the separate missing-value restriction for this name column.
-
-Choose uniqueness according to domain meaning. Repeated expense records can
-legitimately share category, amount, and date, so do not blindly make those
-fields unique. A category catalog has different rules from transaction history.
-
-Revision checks: How does UNIQUE differ from a primary key? Why does the first
-row survive our rejected duplicate? Why is a printed error without a traceback
-still a failed insert? Which repeated values are legitimate in expense history?
-
-### Foreign keys, relationships, and referential integrity
-
-A primary key identifies a row in its own table. A foreign key references a key
-in another table, connecting records and enforcing referential integrity: a
-transaction cannot reference a nonexistent category.
-
-```sql
-CREATE TABLE categories (
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE
-);
-
-CREATE TABLE transactions (
-    id INTEGER PRIMARY KEY,
-    category_id INTEGER NOT NULL,
-    amount TEXT NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES categories(id)
-);
-```
-
-One category can be referenced by many transactions: a one-to-many relationship.
-The transaction stores category_id rather than duplicating the category name.
-The foreign key does not automatically include the category name in query results;
-combining related records requires a join, which is the next proposed topic.
-
-For our SQLite connections, explicitly enable enforcement immediately after
-connecting and before beginning a transaction:
-
-```python
-connection.execute("PRAGMA foreign_keys = ON")
-```
-
-This setting is per connection; changing it inside an active transaction does
-not take effect as intended. Declaring a foreign key without ensuring enforcement
-is enabled does not establish the protection demonstrated by this exercise.
-
-Insert the category first, then reference its ID. With only category 1 present,
-inserting a transaction with category_id 999 raises sqlite3.IntegrityError.
-If a valid transaction was committed before that attempt, rolling back the
-rejected insert leaves the committed transaction in place. Deletion policies
-and cascading behavior have not yet been practiced.
-
-Column names in INSERT must match the schema: categories has name, not category.
-Bind ("Groceries",) as a one-item tuple. Catching/printing the expected constraint
-error demonstrates a rejected write; lack of a traceback does not mean success.
-
-Revision checks: What does each key identify/reference? Why is this one-to-many?
-When and where must enforcement be enabled? What happens for category 999?
-Does a foreign key automatically return the category name with each transaction?
-
-### INNER JOIN and table aliases
-
-A join combines related rows in a query result. A transaction stores a category
-ID; joining to categories retrieves the corresponding name without duplicating
-that name in every stored transaction.
-
-```sql
-SELECT t.id, c.name, t.amount
-FROM transactions AS t
-INNER JOIN categories AS c
-    ON t.category_id = c.id
-ORDER BY t.id
-```
-
-FROM names the starting table, INNER JOIN introduces the related table, and ON
-specifies the matching condition. SELECT chooses result columns. AS t and AS c
-define temporary aliases within the query; they do not create or rename tables.
-Qualified names such as t.id identify which table supplies a column.
-
-INNER JOIN returns matched row combinations. A category with no transactions
-does not appear in this query; other join types are future topics. Several
-transactions can match the same category row in this one-to-many relationship.
-Joining reads data and does not change the stored records.
-
-A foreign key enforces referential integrity; a join retrieves related data.
-SQL can join tables without a declared foreign key, but the join itself does
-not prevent invalid references from being stored.
-
-For a multiline SQL statement in Python, use a triple-quoted string. Ordinary
-single/double quotes cannot directly span physical lines; a resulting
-unterminated-string SyntaxError occurs before SQL execution.
-
-Revision checks: What does ON match? What are aliases? Does joining change the
-tables? Can one category appear in several joined rows? Why is a foreign key
-different from a join?
-
-### LEFT JOIN and unmatched rows
-
-LEFT JOIN preserves every row from the left table. Matching right-side rows
-produce matching combinations; when none match, the result still includes the
-left row with SQL NULL values for the right-side columns.
-
-```sql
-SELECT c.name, t.id, t.amount
-FROM categories AS c
-LEFT JOIN transactions AS t
-    ON t.category_id = c.id
-ORDER BY c.id, t.id
-```
-
-With Groceries and Gas categories but only a Groceries transaction, the result
-can contain ('Groceries', 1, '20.00') and ('Gas', None, None). Python's sqlite3
-maps returned SQL NULL to None. The join has not inserted a Gas transaction;
-the missing right-side values exist in the query result only.
-
-INNER JOIN returns matching combinations; LEFT JOIN also keeps unmatched
-left-side rows. Put categories on the left when a report must include categories
-with no spending. Putting transactions on the left would preserve transactions,
-not all categories.
-
-Preserving left rows does not guarantee one result row per category: a category
-with three matching transactions produces three combinations. A category with
-no matches produces one result row with missing transaction values. Grouping
-these combinations into category summaries is a separate aggregation step.
-
-Revision checks: Which table must go on the left to include unused categories?
-What does None represent here? Does the join create a missing transaction?
-How many result rows can one category with several matches produce?
-
-### GROUP BY and counting related records
-
-Aggregation summarizes several rows. GROUP BY forms groups, and an aggregate
-such as COUNT produces a result for each group:
-
-```sql
-SELECT c.name, COUNT(t.id) AS transaction_count
-FROM categories AS c
-LEFT JOIN transactions AS t
-    ON t.category_id = c.id
-GROUP BY c.id, c.name
-ORDER BY c.id
-```
-
-This returns one summary per category. Group by its ID and displayed name;
-AS transaction_count labels the calculated result column. LEFT JOIN preserves
-categories with no transactions so their summary can report zero.
-
-COUNT(*) counts every joined row. COUNT(t.id) counts non-NULL transaction IDs.
-An unmatched category still produces one joined row with NULL transaction
-columns, so COUNT(*) would report 1 there, while COUNT(t.id) reports 0.
-
-A category-name UNIQUE constraint does not prohibit several transactions from
-referencing the same category ID. Insert one Groceries category and multiple
-transactions referencing it to increase its transaction count. Creating a category
-named Grocery instead creates a different group: those are distinct strings,
-not duplicate Groceries records. This connects uniqueness to a one-to-many
-relationship rather than imposing uniqueness on the foreign-key column.
-
-Money sums are not yet covered by this count exercise. Our current amount
-column contains text; choose the intended money representation before relying
-on SQL arithmetic for financial totals.
-
-Revision checks: What does GROUP BY combine? Why use COUNT(t.id) with LEFT JOIN?
-How can a unique category name still have many transactions? Does inserting a
-similar but different category name increase the original category's count?
-
-### Exact money units and SQL SUM
-
-For a chosen two-decimal currency, integer minor units represent money exactly:
-20.00 dollars is 2000 cents. An amount_cents INTEGER column permits integer SQL
-arithmetic instead of converting stored decimal text to approximate floating
-point. This is a representation choice, not a universal rule for all currencies.
-
-```sql
-SELECT SUM(amount_cents) FROM transactions
-```
-
-SUM aggregates the values into one result row. With inserted amounts 2000 and
-2500, the result is 4500 cents. execute returns a cursor, fetchone retrieves one
-row tuple, and [0] extracts its first column:
-
-```python
-total_cents = cursor.fetchone()[0]
-total_amount = Decimal(total_cents) / 100
-print(f"{total_amount:.2f}")  # 45.00
-```
-
-Sum in integer units first, then convert the result to Decimal dollars. Avoid
-dividing Python integers directly into a float when the intended result is
-Decimal. Formatting :.2f controls display; it does not define a validation or
-rounding policy for stored amounts. SUM with no non-NULL input values returns
-SQL NULL, not zero; that empty-input behavior still needs handling in app code.
-
-Converting a Decimal to cents via int(amount * 100) is only appropriate after
-checking the allowed precision: int truncates a fractional result, so 15.257
-must not silently become 1525. Explicit currency scale, reject/round policy,
-and bounds remain pending. Negative integer amounts can represent refunds.
-SQLite integer sums have a finite range, so this is exact within range rather
-than arbitrary-precision arithmetic. Ordinary non-STRICT SQLite type declarations
-also do not by themselves guarantee only integers can be stored.
-
-Do not reinterpret existing text amounts as cents without a deliberate schema
-and data migration. The application still uses text amount storage; the integer
-representation has only been explored in a separate exercise.
-
-Debugging distinction: a trailing comma after the final CREATE TABLE column is
-invalid SQL. If a query in finally runs after setup fails, its no-such-table error
-can obscure that earlier failure. Put normal query work inside try and reserve
-finally for reliable resource cleanup; a failure before close in finally can
-otherwise prevent the close call too.
-
-Revision checks: In which unit does SUM operate? Why construct Decimal before
-division? What does fetchone()[0] select? Why is int(amount * 100) insufficient
-without a precision policy? What does SUM return for an empty set?
-
-### COALESCE and empty aggregate results
-
-SQL SUM returns NULL when there are no non-NULL values to sum, unlike Python's
-sum([]), which returns 0. sqlite3 presents SQL NULL as None, so attempting
-Decimal(None) fails. Choose the report's intended fallback explicitly:
-
-```sql
-SELECT COALESCE(SUM(amount_cents), 0) FROM transactions
-```
-
-COALESCE returns its first non-NULL argument. A real sum such as 4500 is retained;
-a missing sum becomes integer 0. This is a query-result expression, not a change
-to stored rows. It checks NULL, not truthiness: a genuine numeric zero remains
-zero. It can also supply fallbacks in joined/grouped summaries when missing
-aggregate results should mean no spending.
-
-```python
-total_cents = cursor.fetchone()[0]
-total_amount = Decimal(total_cents) / 100
-print(f"{total_amount:.2f}")
-```
-
-With an empty table the safe aggregate displays 0.00; after inserting 2000 and
-2500 cents it displays 45.00. Using the same safe expression for both cases
-avoids having separate assumptions about whether records exist.
-
-Revision checks: How does SQL SUM on no rows differ from Python sum([])? Does
-COALESCE replace a genuine zero? Does it update stored data? Why is None not
-automatically a suitable amount for a budget calculation?
-
-### Indexes, query plans, and read/write trade-offs
-
-An index is an additional search structure maintained alongside a table. A
-suitable index can help locate matching rows without scanning the entire table,
-especially as data grows. It does not change the query's logical result or
-guarantee every query becomes faster.
-
-```sql
-CREATE INDEX idx_transactions_category ON transactions(category);
-
-EXPLAIN QUERY PLAN
-SELECT id, category FROM transactions WHERE category = ?;
-```
-
-EXPLAIN QUERY PLAN describes the chosen access strategy rather than retrieving
-the SELECT's data or measuring its execution time. The experiment's descriptions
-changed from SCAN transactions to SEARCH transactions USING COVERING INDEX
-idx_transactions_category (category=?). A covering index supplies all the values
-needed by the query without a separate table lookup.
-
-Raw result rows describe plan steps: node ID, parent ID, an internal auxiliary
-value, and descriptive text. The IDs organize a plan tree; they are not record
-IDs. Current SQLite implementation uses an encoded estimated loop cost in that
-third position for these scans. Values such as 216 and 56 are not milliseconds,
-actual rows, or evidence of a measured speedup. This debug output is not a stable
-application interface; focus on the strategy description.
-
-An index consumes extra storage (disk space in a file database). SQLite must
-also maintain it during writes: insert adds index entries, delete removes them,
-and updating an indexed value adjusts the entries. Updating unrelated columns
-generally does not require changing that index. This can increase write time;
-the overhead depends on the workload and number of indexes. SQLite maintains
-the index automatically, not through extra manual application updates.
-
-Choose indexes for useful query patterns instead of indexing every column.
-The planner may choose another access path. Inspecting a simple plan on an empty
-table demonstrates the mechanism but does not benchmark real workload performance.
-
-Sources: [SQLite query-plan guide](https://www.sqlite.org/eqp.html),
-[plan-generation implementation](https://github.com/sqlite/sqlite/blob/master/src/wherecode.c),
-[internal cost fields](https://github.com/sqlite/sqlite/blob/master/src/whereInt.h).
-
-Revision checks: What extra structure is maintained? Why can reads improve while
-writes get slower? Does EXPLAIN execute the SELECT for its records? What makes
-an index covering? Why are the numeric plan fields not timing measurements?
-
-### Composite indexes and column order
-
-A composite index includes multiple columns, ordered first by the first column,
-then by the next column within equal first-column values:
-
-```sql
-CREATE INDEX idx_category_date
-ON transactions(category, transaction_date);
-```
-
-For WHERE category = ? AND transaction_date >= ?, SQLite can seek into the
-matching category near the requested date and then read forward through the
-matching range. It does not need to scan each category first. Think of a phone
-book ordered by surname and then first name: the ordering supports a direct
-search near a complete pair of values.
-
-This index generally supports category-only lookups and category-plus-date
-lookups. A date-only query lacks the leading category filter, so it generally
-cannot use the same simple narrow seek: dates are not globally ordered across
-all categories. Planner alternatives such as skip-scan exist, so inspect actual
-plans rather than treating missing-leading-column use as absolutely impossible.
-Choose index column order for the workload; index order is not a promise of
-query result ordering without ORDER BY.
-
-The exercise's first plan reported SEARCH USING COVERING INDEX idx_category_date
-(category=? AND transaction_date>?), demonstrating both columns participate.
-The abbreviated plan's >? wording does not change the original SQL >= condition;
-the boundary date remains included. EXPLAIN still describes strategy, not speed.
-
-Revision checks: How are dates ordered within the index? Does searching one
-category require scanning every category? Why is date-only filtering different?
-Does index ordering remove the need for ORDER BY when result order matters?
-
-### Schema migrations and preserving existing records
-
-A schema migration explicitly changes an existing database structure as the
-application evolves. Editing CREATE TABLE IF NOT EXISTS does not change an
-already-present table; use an appropriate migration instead.
-
-```sql
-ALTER TABLE transactions ADD COLUMN merchant TEXT;
-```
-
-This adds a nullable merchant column while preserving existing rows. Their new
-field initially contains SQL NULL, returned as None by sqlite3. Supplying values
-afterward is a separate data change:
+**Parameters bind values as data rather than SQL code, handling quotes and helping prevent injection.** Use placeholders rather than f-string interpolation. Values follow placeholder order; table names and SQL keywords cannot be supplied as value parameters.
 
 ```python
 connection.execute(
     "UPDATE transactions SET merchant = ? WHERE id = ?",
     ("Costco", 1),
 )
-connection.commit()
 ```
 
-Parameter order follows placeholder order: merchant first, ID second. execute
-returns a cursor; fetchall retrieves records to display. Schema changes and
-data backfills are different steps that may be coordinated in a migration.
+A one-item parameter tuple needs a comma: `(1,)`, not `(1)`.
 
-An in-memory experiment restarts with a fresh schema each run. A persistent
-application instead needs migration tracking to avoid trying to add the same
-column repeatedly. Version tracking is the next lesson; migration of the actual
-application database has not been implemented by this example.
+### What do database constraints enforce?
 
-Revision checks: Why doesn't IF NOT EXISTS update the table? What happens to
-existing rows when this nullable column is added? How is ALTER TABLE different
-from UPDATE? Why must persistent applications track applied schema changes?
+| Constraint | Rule |
+| --- | --- |
+| `PRIMARY KEY` | Row identity |
+| `NOT NULL` | No SQL NULL in the field |
+| `UNIQUE` | No duplicate non-NULL key values under the comparison rules |
+| `CHECK` | Reject a false condition; in SQLite NULL does not itself fail it |
+| `FOREIGN KEY` | References must resolve according to the relationship rule |
 
-### Tracking schema versions
+**Database constraints protect writes that bypass Python model construction.** Model validation protects its construction path; neither automatically supplies every business rule. Constraint violations typically raise sqlite3.IntegrityError; malformed SQL can raise OperationalError.
 
-SQLite's PRAGMA user_version stores an application-controlled integer in the
-database file. A new database starts at 0; the application defines what each
-version means and which migrations advance it.
+### Why is NOT NULL insufficient for a category name?
 
-```python
-version = connection.execute("PRAGMA user_version").fetchone()[0]
-if version == 0:
-    connection.execute("BEGIN")
-    try:
-        connection.execute(
-            "ALTER TABLE transactions ADD COLUMN merchant TEXT"
-        )
-        connection.execute("PRAGMA user_version = 1")
-        connection.commit()
-        print("Applied migration 1")
-    except sqlite3.Error:
-        connection.rollback()
-        raise
-else:
-    print(f"Already at version {version}")
+**It rejects NULL but allows empty and space-only strings.** `CHECK(length(trim(category)) > 0)` rejects empty/ordinary-space-only values. SQLite's default trim and Python's strip do not remove exactly the same whitespace. Keep NOT NULL because CHECK alone can accept a NULL condition result.
+
+### How do UNIQUE and generated IDs differ?
+
+**A primary key identifies each row; another UNIQUE key expresses business uniqueness, such as a category name.** Different IDs do not permit duplicate names when names are unique. Default text comparison distinguishes Groceries, Grocery, and groceries. Repeated expenses can be legitimate and should not be rejected just because their values coincide.
+
+### How does SQLite generate an omitted integer primary key?
+
+**In our ordinary tables, INTEGER PRIMARY KEY aliases rowid and SQLite assigns an omitted value, normally one above the largest existing ID.** AUTOINCREMENT is unnecessary for that basic behavior. Deleted IDs can sometimes be reused; IDs are not gap-free counts. The exact INTEGER spelling matters; ordinary non-STRICT SQLite type declarations are otherwise permissive.
+
+### What is a foreign key and a one-to-many relationship?
+
+**A foreign key references another row's key; one-to-many means many child rows can reference one parent.** Multiple transactions can reference one unique category. Enable SQLite enforcement on each connection with `PRAGMA foreign_keys = ON` before starting a transaction; changing that setting inside an active transaction does not enable it there.
+
+### How does a join differ from a foreign key?
+
+**A foreign key enforces a relationship; a join retrieves combined data using a matching condition.** A join does not change stored rows and does not require a declared foreign key. Table aliases such as t/c are query-local names, not new tables.
+
+```sql
+SELECT t.id, c.name, t.amount
+FROM transactions AS t
+INNER JOIN categories AS c ON t.category_id = c.id
+ORDER BY t.id;
 ```
 
-This example assumes the original version-0 table has already been created and
-setup committed. BEGIN explicitly groups the schema change and version marker
-so they succeed or roll back together. Do not commit between those two steps.
-The example supports only version 0 to 1; a larger runner needs ordered steps
-and handling for unsupported versions, not just a generic else branch.
+### What is INNER JOIN versus LEFT JOIN?
 
-On a later process run, the same file retains version 1, so this migration is
-skipped. Messages require explicit print statements; neither PRAGMA nor ALTER
-TABLE automatically prints them in Python. A database already migrated will
-not display the first-run message again merely because the program restarts.
+**INNER JOIN returns matching combinations; LEFT JOIN also preserves unmatched left rows with NULL right-side values.** Python receives those NULLs as None. Put categories on the left to include unused categories. A category with three matches produces three rows; one without matches produces one NULL-extended row. The join does not insert missing transactions.
 
-user_version is bookkeeping, not automatic migration or a schema history store.
-It does not infer which columns exist, define version meaning, or repair
-inconsistent schemas. The application owns those decisions. An application
-release version and a database schema version are separate concepts.
+### What does GROUP BY do?
 
-Revision checks: Who assigns version meaning? Why update schema and marker in
-one transaction? Why does a second run skip ALTER TABLE? Does the marker itself
-verify the actual schema? What must a multi-step runner do beyond this example?
+**GROUP BY forms groups so aggregate functions can produce a summary for each group.** One unique category can have many transactions, summarized as one category count or total.
 
-### Named rows and domain-object reconstruction
-
-Set connection.row_factory = sqlite3.Row before creating query cursors to obtain
-rows supporting column-name access, such as row["category"], instead of relying
-on positional indexes. This changes Python's presentation of returned rows, not
-the database schema or stored data. A Row is not a Transaction and does not
-automatically convert our stored decimal/date strings.
-
-```python
-connection.row_factory = sqlite3.Row
-# Execute the query and fetch rows using this connection.
-transactions = []
-for row in rows:
-    transactions.append(Transaction(
-        category=row["category"],
-        amount=Decimal(row["amount"]),
-        transaction_date=date.fromisoformat(row["transaction_date"]),
-    ))
+```sql
+SELECT c.name, COUNT(t.id) AS transaction_count
+FROM categories AS c
+LEFT JOIN transactions AS t ON t.category_id = c.id
+GROUP BY c.id, c.name
+ORDER BY c.id;
 ```
 
-The explicit conversions reconstruct application types. Calling Transaction
-also runs its existing initialization/validation. These objects can then feed
-the same calculations as in-memory sample transactions, without SQL code leaking
-into the arithmetic functions. Merely printing named columns leaves strings as
-strings; it is not model reconstruction.
+### What is COUNT(*) versus COUNT(column)?
 
-Revision checks: What does row_factory change? Which step restores Decimal?
-When does domain validation run? Can the calculation functions use these objects?
+**COUNT(*) counts rows; COUNT(column) counts non-NULL values in that column.** An unmatched category still has one LEFT JOIN result row, so COUNT(*) gives 1 while COUNT(t.id) correctly reports 0 transactions.
 
-### Transactions, commit, rollback, and atomicity
+### What does SUM return on an empty set, and why use COALESCE?
 
-A database transaction groups changes so they can be committed or rolled back
-together. Atomicity means the grouped changes take effect together or not at all.
-For example, an import may reject an entire batch rather than retain a partial
-batch when one record is invalid.
+**SUM returns NULL when there are no non-NULL inputs; COALESCE supplies the first non-NULL alternative.** `COALESCE(SUM(amount_cents), 0)` produces zero spending for an empty set. It does not replace a real zero or modify stored data. Integer SUM remains bounded by SQLite's integer range.
 
-```python
-try:
-    connection.execute(
-        "INSERT INTO transactions (category, amount) VALUES (?, ?)",
-        ("Groceries", "40.00"),
-    )
-    connection.execute(
-        "INSERT INTO transactions (category, amount) VALUES (?, ?)",
-        (None, "20.00"),
-    )
-    connection.commit()
-except sqlite3.IntegrityError:
-    connection.rollback()
-```
+### What is sqlite3.Row?
 
-In our Python sqlite3 exercise with its default transaction behavior, the first
-INSERT starts a pending write transaction. The second violates category TEXT
-NOT NULL and raises IntegrityError. The commit line is skipped; rollback undoes
-the first pending insert too. A subsequent SELECT finds no rows. The failing
-statement alone does not automatically roll back all earlier statements in this
-example; the handler explicitly requests that rollback.
+**It is a row representation supporting column-name access as well as positional access.** Set `connection.row_factory = sqlite3.Row` before creating query cursors. It changes Python result access, not stored values. Decimal/date fields still need explicit conversion before constructing a Transaction.
 
-Do not commit between the inserts if they must succeed together. A later rollback
-cannot undo a change already committed. Testing only an invalid insert returning
-an empty table does not demonstrate undoing an earlier successful operation;
-the experiment needs both inserts in order.
+### What is a database transaction?
 
-sqlite3.connect(":memory:") creates a temporary in-memory database. The exact
-spelling matters: ":memory" without the final colon is treated as a filename.
-Use an in-memory database for an isolated experiment; its contents do not survive
-closing that connection. Transaction-control modes and concurrency are future
-topics, so do not assume every connection configuration groups writes identically.
+**A transaction groups changes that can be committed or rolled back together.** commit accepts pending changes; rollback undoes pending changes, not earlier commits. In our default sqlite3 exercises, the first write starts the write transaction; connection modes can change transaction behavior.
 
-SQL errors also have different causes: OperationalError can indicate malformed
-SQL, while IntegrityError covers a constraint violation such as NOT NULL.
-TRANSACTION is a SQL keyword; use transactions as our unquoted table name.
-Spell INTEGER correctly: SQLite's permissive type declarations can accept a
-misspelling such as INTERGER, but it loses the special INTEGER PRIMARY KEY behavior.
+### Does one failed insert undo every earlier insert automatically?
 
-Revision checks: What happens if the second insert fails? What explicitly undoes
-the first? Why must commit follow both inserts? Can rollback undo earlier commits?
-How does ":memory:" differ from a file path? What does an empty final table prove
-when there was only an invalid insert versus a valid insert followed by failure?
+**Not in our constraint-failure experiment: the handler explicitly rolls back the transaction.** A valid first insert followed by a rejected second insert demonstrates atomicity only when the first was still pending. Committing between them makes the first survive the later rollback. Closing is not a substitute for committing pending writes.
 
-### Generated integer IDs and durable data
+### What does ACID mean?
 
-In our ordinary SQLite table, id INTEGER PRIMARY KEY aliases the rowid. Omitting
-id from the insert lets SQLite assign it, normally one greater than the largest
-existing ID, starting at 1 for an empty table. AUTOINCREMENT is not required for
-this basic behavior. Deleted IDs can sometimes be reused; IDs are record
-identifiers, not a guaranteed gap-free count.
+| Property | Direct answer |
+| --- | --- |
+| Atomicity | Grouped changes take effect together or are undone together |
+| Consistency | Transactions preserve the database's declared rules |
+| Isolation | Concurrent transactions have controlled visibility and interaction |
+| Durability | Committed changes persist beyond the transaction/process |
 
-Our file-based database remains on disk after the application ends. Reopening
-the same path makes previously committed records available to a new process.
-Python objects in memory disappear, but the file persists. Relative paths depend
-on the working directory, so the same filename from another directory may refer
-to a different database. sqlite3.connect(":memory:") instead creates a database
-in memory; that is not the persistence behavior of our file-based example.
+**Consistency does not mean the database knows undeclared business rules.** Durability depends on database configuration and storage; surviving a normal restart does not prove every crash scenario.
 
-Commit changes that should persist; closing is not a substitute for committing
-pending writes. Uncommitted changes may be rolled back. Crash recovery and
-transaction guarantees will be explored separately rather than assuming every
-in-progress operation survives a failure.
+### What did the two-connection isolation experiment show?
 
-Revision checks: How are values bound to placeholders? Why use separate execute
-calls? What does a cursor provide? Why does rerunning the script add another row?
-What assigns the omitted id? What survives an application restart?
+**A separate connection could not see an uncommitted update; its fresh read after commit saw the new value.** With a committed 100, first updated to 300; second read 100 before commit and 300 afterward. This assumes ordinary separate connections and no explicit long-running read transaction on second. It does not establish all snapshot, locking, or journal-mode behavior.
 
-Revision checks: Where is the table stored? Why might creating it print nothing?
-What does a row represent? What does NOT NULL prohibit? What exactly does the
-table-name query prove? Does IF NOT EXISTS update a changed schema?
+### What is an index, and what is its cost?
+
+**An index is an extra search structure that can locate matching records without a full table scan.** It consumes storage and adds maintenance to inserts, deletes, and updates of indexed values. SQLite maintains it automatically. Index useful query patterns rather than every column; not every query benefits.
+
+### What does EXPLAIN QUERY PLAN tell you?
+
+**It describes SQLite's chosen access strategy, not measured execution time or returned data.** SCAN indicates scanning; SEARCH describes a subset lookup. A covering index contains everything needed for the query, avoiding a separate table lookup. An index can also be scanned, so SCAN alone does not mean no index exists.
+
+Raw fields are node ID, parent ID, internal auxiliary value, and description. Current implementation uses an encoded estimated loop cost in that third field for these scans. Values such as 216 and 56 are not milliseconds, actual rows, or a measured speedup; this debug format can change. [SQLite plan guide](https://www.sqlite.org/eqp.html), [plan implementation](https://github.com/sqlite/sqlite/blob/master/src/wherecode.c), [cost definition](https://github.com/sqlite/sqlite/blob/master/src/whereInt.h).
+
+### Why does column order matter in a composite index?
+
+**A composite index is ordered by its first column, then subsequent columns within equal preceding values.** `(category, transaction_date)` can seek to a category/date range without scanning every category. It generally supports category alone and category-plus-date; date alone lacks the leading filter and may need a different strategy. Optimizer exceptions exist; inspect the plan. Index order is not guaranteed result order without ORDER BY.
+
+### What is a schema migration?
+
+**A migration explicitly evolves an existing schema while preserving or transforming data.** `ALTER TABLE transactions ADD COLUMN merchant TEXT` adds a nullable column and keeps existing rows, initially with NULL merchants. UPDATE afterward changes data. Editing CREATE TABLE IF NOT EXISTS does not update a table already present.
+
+### How do you track applied migrations?
+
+**Store a schema version and apply only the ordered changes still needed.** SQLite's `PRAGMA user_version` is a persisted application-controlled integer starting at 0. It does not infer or perform migrations; code defines version meaning and updates it.
+
+Group the schema change and version-marker update in one explicit transaction so they succeed together. A later run skips completed changes. Larger runners must handle ordered steps and unsupported versions; a marker alone does not verify the actual schema. Schema version and application release version are separate.
 
 ## Git and GitHub
 
-Git stores local version history; GitHub hosts a remote copy. Saving, staging,
-committing, and pushing are distinct operations.
+### How do saving, staging, committing, and pushing differ?
+
+**Saving changes files; staging selects the next snapshot; committing records local history; pushing uploads commits to a remote.** Git is the version-control system; GitHub hosts remote repositories. A clean working tree does not prove the remote is current.
 
 ```text
-Edit/save → git add → staged changes → git commit → local history → git push → remote
+Edit/save → git add → git commit → git push
 ```
 
-| Command | Purpose |
-| --- | --- |
-| `git init -b main` | Initialize local history |
-| `git status` | Inspect pending changes |
-| `git add <paths>` | Select changes for a snapshot |
-| `git diff --cached` | Review staged changes |
-| `git commit -m "message"` | Save staged snapshot locally |
-| `git log --oneline` | Inspect history |
-| `git remote add origin <url>` | Save another repository's address |
-| `git push -u origin main` | Upload and configure upstream tracking |
+### What are origin, HEAD, and a branch?
 
-You can add origin after git init, before staging/committing. It doesn't upload.
-HEAD identifies the current checkout; a branch name points to a commit. A clean
-working tree doesn't itself establish that the remote has the latest commit.
+**origin is a conventional remote name; HEAD identifies the current checkout; a branch name points to a commit.** Adding a remote does not upload anything and can happen before the first commit.
 
-.gitignore excludes matching untracked files from normal staging; it doesn't
-remove secrets already committed. Keep .venv, local secrets, and real financial
-records out of this repository, regardless of visibility.
+### Does .gitignore stop tracking an existing file?
 
-## Quick revision questions
-
-Try answering without looking above:
-
-1. What happens between entering python3 budget.py and seeing output?
-2. How do source code, executable, process, bytecode, and object differ?
-3. Why does assignment alias rather than necessarily copy an object?
-4. When is a class useful instead of a function? What does self refer to?
-5. What does dataclass generate, and what do type hints not enforce?
-6. Why construct Decimal from strings? Why can a Decimal still be invalid money?
-7. How do return and print differ? Where should a loop's accumulator and return go?
-8. Why can += on a missing dictionary key fail while = succeeds?
-9. What executes when importing one function? Why use the main guard?
-10. How do TypeError, ValueError, and fixture setup errors differ?
-11. Who defines the behavior of with? Does it create a variable scope?
-12. Why does pytest.raises fail when no exception occurs?
-13. How do fixtures and parametrization differ? When does fixture code execute?
-14. Could an incorrect filter pass a test containing only matching items?
-15. Why validate a report month even with no configured budgets?
-16. Why can a refund-only month have remaining funds above its budget?
-17. What belongs in pyproject.toml, uv.lock, and .venv? Which go to Git?
-18. Why does looping over an exhausted iterator print nothing, while a list can be traversed again?
-
-### Coming next, not yet covered in depth
-
-Iterator and generator basics are covered above. General decorator implementation,
-advanced OOP/composition/protocols, deeper algorithms, databases, HTTP, frontend,
-processes/threads/async, the GIL, distributed systems, security, and operations
-remain on the roadmap. Mentioning a subject doesn't mean it has been mastered.
+**No. It excludes matching untracked files from normal staging.** `git rm --cached path` stops tracking while preserving the local file; it does not erase previous history. Keep local databases, journals, environments, and secrets out of ordinary commits while tracking source, schema/migration code, pyproject.toml, and uv.lock.
