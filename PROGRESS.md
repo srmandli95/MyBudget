@@ -4,6 +4,13 @@ Last updated: 2026-11-19.
 
 ## Current milestone
 
+Learning-order change (2026-11-19): after finishing SQLite (2) and FastAPI (3),
+cover simulated synchronization/concurrency (6) before React (4). Full order:
+1 → 2 → 3 → 6 → 4 → 5 → 7 → 8 → 9 → 10 → 11. Numbers remain stable IDs.
+Use simulated providers through CLI/API experiments without a frontend or CSV
+dependency. Current SQLite lesson remains unchanged; this does not jump to
+concurrency now. ROADMAP.md and the master prompt reflect the reordered plan.
+
 Latest teaching direction (2026-11-18): prioritize new concepts and fast forward
 progress, with depth when unfamiliar. One focused example/exercise per new idea;
 skip repeated validation/conversion drills and defer routine standards/hardening

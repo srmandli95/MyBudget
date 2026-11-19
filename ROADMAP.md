@@ -3,6 +3,14 @@
 Every milestone requires working code, relevant tests, and an explanation by the learner.
 Introduce fundamentals progressively; pause after exercises for review.
 
+## Learning order — updated 2026-11-19
+
+Follow 1 → 2 → 3 → 6 → 4 → 5 → 7 → 8 → 9 → 10 → 11.
+Milestone numbers remain stable identifiers, not execution order. At the learner's
+request, simulated synchronization/concurrency comes after FastAPI and before
+the React frontend. Use fictional providers and CLI/API experiments; neither
+React nor CSV importing is a prerequisite for those concurrency lessons.
+
 ## Current checkpoint — 2026-11-13
 
 Milestone 1 functional criteria met: shared in-memory models/calculations,
@@ -51,14 +59,16 @@ negative limits. Valid construction and negative-limit tests pass; full suite is
 model into the report. Milestone 1 remains in progress.
 An integrated engine and broader tests remain before milestone 1 is complete.
 
+## Milestones in planned learning order
+
 | Milestone | Completion criterion |
 | --- | --- |
 | 1. Python engine | In-memory fictional transactions, configurable budgets, tested category totals and remaining amounts |
 | 2. SQLite | Persist records and verify monthly reports and constraints |
 | 3. FastAPI | Validated transaction and budget endpoints with API tests |
+| 6. Simulated synchronization | Compare sequential, threaded, and async fetching with measurements |
 | 4. React | Dashboard and forms connected to the API, including error states |
 | 5. Categorization and CSV | Deterministic rules and validated, repeatable imports |
-| 6. Simulated synchronization | Compare sequential, threaded, and async fetching with measurements |
 | 7. Background processing | Test retries, duplicate events, and recovery |
 | 8. Bank integration | Evaluate current providers; obtain explicit approval before real connections |
 | 9. Hardening and deployment | Verify isolation, security, observability, and recovery; approval before public or paid deployment |

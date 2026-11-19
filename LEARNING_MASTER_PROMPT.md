@@ -849,11 +849,14 @@ Milestone 2: Persist transactions using SQLite
 Then:
 Milestone 3: Expose functionality through FastAPI
 Then:
+Milestone 6: Simulated asynchronous bank synchronization
+Teach concurrency, threading, async, process/CPU distinctions, and relevant OS
+fundamentals here, before frontend work. Use simulated providers and CLI/API
+experiments; React and CSV imports are not prerequisites.
+Then:
 Milestone 4: Build the React frontend
 Then:
 Milestone 5: Automatic categorization and CSV import
-Then:
-Milestone 6: Simulated asynchronous bank synchronization
 Then:
 Milestone 7: Event-driven background processing
 Then:
@@ -864,6 +867,9 @@ Then:
 Milestone 10: Scaling experiments and distributed-system architecture
 Then:
 Milestone 11: AI functionality
+Milestone numbers are stable identifiers rather than chronological order.
+The learner requested this sequence on 2026-11-19: 1, 2, 3, 6, 4, 5, 7, 8, 9, 10, 11.
+Curriculum phase headings group topics; they do not override this agreed learning order.
 Each milestone must include working code, relevant tests, conceptual learning, and a clear completion criterion.
 
 12. What I Want to Achieve
@@ -951,4 +957,7 @@ Remember: My goal is not merely to finish MyBudget. My goal is to learn how to e
 How to use this prompt
 Paste the entire prompt into your agent as the project's initial instructions. I'd also recommend saving it in your project as LEARNING_MASTER_PROMPT.md, so the agent can reference it in future sessions.
 One additional recommendation: Use the agent as a mentor first and an autonomous programmer second. Ask it to let you write the core code, review your approach, and challenge your reasoning. That will make this project substantially more valuable than simply generating a working expense tracker.
-Start with Python and a command-line application. Once you understand the logic, move to FastAPI, React, and then distributed systems. This sequence will give you a much stronger foundation for learning advanced topics such as event loops, concurrency, multithreading, queues, and scalability.
+Start with Python and a command-line application, then persistence and FastAPI.
+As requested on 2026-11-19, study simulated synchronization and concurrency before
+React, then continue through categorization, background processing, and later
+distributed-system topics in the milestone order above.
