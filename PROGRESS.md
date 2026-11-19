@@ -11,7 +11,8 @@ to application work. Learner identified money conversion as familiar validation,
 not a new topic. Next new lesson: database indexes and EXPLAIN QUERY PLAN.
 Do not require bounds/rounding helpers or more money-validation drills first.
 Index/query-plan, composite-index, and basic schema-migration lessons covered.
-Next new concept: migration version tracking with PRAGMA user_version. Avoid
+Migration-version tracking now discussed; next new concept: ACID guarantees,
+with atomicity already practiced and isolation to deepen later. Avoid
 repeated CRUD or cleanup drills as prerequisites to learning the mechanism.
 
 Milestone 2: SQLite persistence, beginning. Milestone 1's functional criteria are
@@ -54,6 +55,17 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Migration-version lesson: inspected exercises/sqlite_migration_versions.py at
+the troubleshooting stage; it had no version branch or printed messages and
+attempted ALTER on every run. Explained reading PRAGMA user_version, conditional
+migration, and explicit BEGIN grouping schema change with marker update. Learner
+subsequently reported "Already at version 1" and correctly summarized schema
+versions for alterations. Final edited script was not independently inspected
+or run by the mentor; do not claim a verified two-run sequence. Concept guide
+updated. No application suite run or actual app migration implementation done.
+Next lesson introduced: ACID overview, without repetitive implementation drills;
+isolation/concurrent-connection experiments remain pending.
 
 Reviewed exercises/sqlite_migrations.py and ran it with the project interpreter:
 exit 0, printed [(1, 'Groceries', 2000, None)] followed by

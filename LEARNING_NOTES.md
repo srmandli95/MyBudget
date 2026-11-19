@@ -2822,6 +2822,50 @@ Revision checks: Why doesn't IF NOT EXISTS update the table? What happens to
 existing rows when this nullable column is added? How is ALTER TABLE different
 from UPDATE? Why must persistent applications track applied schema changes?
 
+### Tracking schema versions
+
+SQLite's PRAGMA user_version stores an application-controlled integer in the
+database file. A new database starts at 0; the application defines what each
+version means and which migrations advance it.
+
+```python
+version = connection.execute("PRAGMA user_version").fetchone()[0]
+if version == 0:
+    connection.execute("BEGIN")
+    try:
+        connection.execute(
+            "ALTER TABLE transactions ADD COLUMN merchant TEXT"
+        )
+        connection.execute("PRAGMA user_version = 1")
+        connection.commit()
+        print("Applied migration 1")
+    except sqlite3.Error:
+        connection.rollback()
+        raise
+else:
+    print(f"Already at version {version}")
+```
+
+This example assumes the original version-0 table has already been created and
+setup committed. BEGIN explicitly groups the schema change and version marker
+so they succeed or roll back together. Do not commit between those two steps.
+The example supports only version 0 to 1; a larger runner needs ordered steps
+and handling for unsupported versions, not just a generic else branch.
+
+On a later process run, the same file retains version 1, so this migration is
+skipped. Messages require explicit print statements; neither PRAGMA nor ALTER
+TABLE automatically prints them in Python. A database already migrated will
+not display the first-run message again merely because the program restarts.
+
+user_version is bookkeeping, not automatic migration or a schema history store.
+It does not infer which columns exist, define version meaning, or repair
+inconsistent schemas. The application owns those decisions. An application
+release version and a database schema version are separate concepts.
+
+Revision checks: Who assigns version meaning? Why update schema and marker in
+one transaction? Why does a second run skip ALTER TABLE? Does the marker itself
+verify the actual schema? What must a multi-step runner do beyond this example?
+
 ### Named rows and domain-object reconstruction
 
 Set connection.row_factory = sqlite3.Row before creating query cursors to obtain
