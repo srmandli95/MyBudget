@@ -793,6 +793,14 @@ ORDER BY c.id;
 
 **A separate connection could not see an uncommitted update; its fresh read after commit saw the new value.** With a committed 100, first updated to 300; second read 100 before commit and 300 afterward. This assumes ordinary separate connections and no explicit long-running read transaction on second. It does not establish all snapshot, locking, or journal-mode behavior.
 
+### When does SQLite acquire a write lock?
+
+**In our default connection setup, executing an UPDATE starts a write transaction and acquires its write lock automatically.** SQLite allows one active writer per database, even for different rows. The lock remains until the transaction ends; commit or rollback releases it. Merely opening a connection does not lock the database for writing.
+
+### Can another connection read or write while that transaction is open?
+
+**In our experiment, another connection could read previously committed data but could not become a second writer.** `timeout=0` makes the second writer fail immediately with a busy/locked error instead of waiting for access. Read availability depends on journal mode and transaction phase; it is not guaranteed in every situation. Ending the first write transaction allows a later write attempt to proceed.
+
 ### What is an index, and what is its cost?
 
 **An index is an extra search structure that can locate matching records without a full table scan.** It consumes storage and adds maintenance to inserts, deletes, and updates of indexed values. SQLite maintains it automatically. Index useful query patterns rather than every column; not every query benefits.

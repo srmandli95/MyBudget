@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-11-19.
+Last updated: 2026-11-20.
 
 ## Current milestone
 
@@ -19,8 +19,8 @@ not a new topic. Index/query-plan lessons have since been covered.
 Do not require bounds/rounding helpers or more money-validation drills first.
 Index/query-plan, composite-index, and basic schema-migration lessons covered.
 Migration-version tracking, ACID overview, and basic two-connection isolation
-now covered. Next proposed new concept: SQLite write locking and contention,
-followed by journal modes/snapshots as useful. Avoid repeated CRUD or cleanup
+now covered along with basic write locking/contention. Next new concept:
+journal modes (rollback journal versus WAL) and read snapshots. Avoid repeated CRUD or cleanup
 drills as prerequisites to learning the mechanism.
 
 Milestone 2: SQLite persistence, beginning. Milestone 1's functional criteria are
@@ -63,6 +63,16 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Write-locking lesson: learner reported exercises/sqlite_locking works after
+adding the counters table/starting row. Explained automatic lock acquisition on
+UPDATE in our default transaction setup, one active writer, timeout=0, and release
+when the transaction ends. Clarified that another connection can read the old
+committed value in this experiment; read blocking depends on journal mode/phase.
+Added two concise Q&A entries to the revision guide. Exercise file exists but
+mentor has not inspected or executed it in this notes-only update; successful
+outcome is learner-reported, not independently verified. No tests run or app code
+changed. Next: WAL/journal modes and snapshots; avoid another write-lock drill.
 
 Revision-guide rewrite requested on 2026-11-19. Reorganized LEARNING_NOTES.md
 from 3,086 lines into concise question-and-answer entries grouped by concept.
