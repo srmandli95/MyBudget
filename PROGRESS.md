@@ -20,8 +20,8 @@ Do not require bounds/rounding helpers or more money-validation drills first.
 Index/query-plan, composite-index, and basic schema-migration lessons covered.
 Migration-version tracking, ACID overview, and basic two-connection isolation
 now covered along with basic write locking/contention and WAL read snapshots.
-Next new concept: normalization and data anomalies, then Milestone 2 application
-integration. Avoid repeated CRUD or cleanup
+Normalization, anomalies, and practical 1NF/2NF/3NF examples now discussed.
+Next: remaining Milestone 2 application integration. Avoid repeated CRUD or cleanup
 drills as prerequisites to learning the mechanism.
 
 Milestone 2: SQLite persistence, beginning. Milestone 1's functional criteria are
@@ -64,6 +64,16 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Normalization lesson discussed without another coding drill. Recorded update,
+insertion, and deletion anomalies; practical 1NF repeating-group, 2NF partial-key,
+and 3NF transitive-dependency examples. Learner initially inferred that dependence
+on a single column requires extraction; clarified whole single-column key is
+fine, while dependence on only a proper subset of a composite key is the 2NF
+problem. Learner confirmed understanding. Added concise Q&A with a dependency
+table to the guide. No new code executed or tests run for this discussion.
+Next step is application integration rather than more normalization drills;
+Milestone 2 persistence/reporting workflow is still incomplete.
 
 Reviewed exercises/sqlite_wal.py and ran with the project interpreter: exit 0,
 printed 100, 100, 300. Setup enables WAL on a dedicated database and resets the

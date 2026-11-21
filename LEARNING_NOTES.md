@@ -731,6 +731,34 @@ A one-item parameter tuple needs a comma: `(1,)`, not `(1)`.
 
 **A foreign key references another row's key; one-to-many means many child rows can reference one parent.** Multiple transactions can reference one unique category. Enable SQLite enforcement on each connection with `PRAGMA foreign_keys = ON` before starting a transaction; changing that setting inside an active transaction does not enable it there.
 
+### What is normalization, and why use it?
+
+**Normalization organizes facts according to their keys to reduce unnecessary duplication and data anomalies.** Repeating category_name in every transaction makes renaming inconsistent (update anomaly), representing a category without a purchase awkward (insertion anomaly), and deleting its last purchase lose category information (deletion anomaly). Store category details once and reference them; repeating the category ID is an appropriate relationship, not duplication to eliminate.
+
+### What are 1NF, 2NF, and 3NF?
+
+**They are progressively stronger dependency rules; each requires the preceding normal forms.** These are practical explanations of common cases:
+
+| Form | Rule | Example correction |
+| --- | --- | --- |
+| 1NF | No repeating groups; one value per field for the chosen model | Receipt 101 with items "Milk, Bread" → separate receipt-item rows |
+| 2NF | Non-key attributes depend on the whole candidate key, not a proper subset | Budget keyed by category_id + month: move category_name, which depends only on category_id |
+| 3NF | Remove inappropriate transitive dependencies of non-key attributes on keys | transaction_id → category_id → category_name: keep the name in categories |
+
+The normalized budget example has categories(category_id, category_name) and monthly_budgets(category_id, month, budget_limit). The category/month combination identifies the limit; a join retrieves category details when needed. More tables are not a goal by themselves.
+
+### Does depending on one key column mean an attribute must move?
+
+**No: depending on the entire single-column key is fine; depending on only part of a composite key is the 2NF issue.** A composite key is one key made of multiple columns, not several independent keys.
+
+| Whole key | Attribute dependency | 2NF assessment |
+| --- | --- | --- |
+| category_id | category_id → category_name | Fine: the whole key |
+| category_id + month | category_id → category_name | Partial dependency: move name to categories |
+| category_id + month | category_id + month → budget_limit | Fine: the whole key |
+
+This checks 2NF only; satisfying it does not automatically prove 3NF or every other design rule.
+
 ### How does a join differ from a foreign key?
 
 **A foreign key enforces a relationship; a join retrieves combined data using a matching condition.** A join does not change stored rows and does not require a declared foreign key. Table aliases such as t/c are query-local names, not new tables.
