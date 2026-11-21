@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-11-20.
+Last updated: 2026-11-21.
 
 ## Current milestone
 
@@ -19,8 +19,9 @@ not a new topic. Index/query-plan lessons have since been covered.
 Do not require bounds/rounding helpers or more money-validation drills first.
 Index/query-plan, composite-index, and basic schema-migration lessons covered.
 Migration-version tracking, ACID overview, and basic two-connection isolation
-now covered along with basic write locking/contention. Next new concept:
-journal modes (rollback journal versus WAL) and read snapshots. Avoid repeated CRUD or cleanup
+now covered along with basic write locking/contention and WAL read snapshots.
+Next new concept: normalization and data anomalies, then Milestone 2 application
+integration. Avoid repeated CRUD or cleanup
 drills as prerequisites to learning the mechanism.
 
 Milestone 2: SQLite persistence, beginning. Milestone 1's functional criteria are
@@ -63,6 +64,16 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Reviewed exercises/sqlite_wal.py and ran with the project interpreter: exit 0,
+printed 100, 100, 300. Setup enables WAL on a dedicated database and resets the
+counter. Reader BEGIN plus first SELECT establishes a snapshot; writer commits
+300 while reader stays open; reader sees 100 until ending its transaction, then
+fresh read sees 300. Initial 100/300/300 output lacked BEGIN; learner corrected
+it. Final reviewed script lacks explicit reader/writer close; tracked as routine
+cleanup, not a learning blocker. Added concise Q&A on WAL/checkpointing, snapshot,
+and BEGIN. No app suite run or app journal mode changed. Next: normalization;
+no extra snapshot drills are needed after demonstrated understanding.
 
 Write-locking lesson: learner reported exercises/sqlite_locking works after
 adding the counters table/starting row. Explained automatic lock acquisition on

@@ -801,6 +801,18 @@ ORDER BY c.id;
 
 **In our experiment, another connection could read previously committed data but could not become a second writer.** `timeout=0` makes the second writer fail immediately with a busy/locked error instead of waiting for access. Read availability depends on journal mode and transaction phase; it is not guaranteed in every situation. Ending the first write transaction allows a later write attempt to proceed.
 
+### What is rollback journaling versus WAL?
+
+**Rollback journaling preserves original pages before modifying the main database; WAL appends changes to a separate write-ahead log.** A checkpoint later transfers committed WAL changes into the main database file. WAL supports overlapping readers and a writer more effectively, but still permits only one active writer. Readers can obtain visible data from both the database and log; the log is not merely uncommitted scratch space. [SQLite WAL guide](https://www.sqlite.org/wal.html).
+
+### What is a read snapshot in WAL mode?
+
+**A read transaction keeps a consistent view established by its first read, even if another connection commits newer data.** In our experiment the reader saw 100, still saw 100 after a writer committed 300, then saw 300 after ending its read transaction and reading again. A commit makes data available to new reads; it does not replace an existing transaction's snapshot. [SQLite isolation guide](https://www.sqlite.org/isolation.html).
+
+### What does BEGIN do in the reader experiment?
+
+**BEGIN explicitly starts a transaction; the first SELECT establishes its read snapshot.** Subsequent SELECTs remain in that transaction until commit or rollback. Without explicit BEGIN in our default setup, completed reads did not remain in one long-running transaction, so the next read saw newly committed data. BEGIN alone does not read or copy the entire database.
+
 ### What is an index, and what is its cost?
 
 **An index is an extra search structure that can locate matching records without a full table scan.** It consumes storage and adds maintenance to inserts, deletes, and updates of indexed values. SQLite maintains it automatically. Index useful query patterns rather than every column; not every query benefits.
