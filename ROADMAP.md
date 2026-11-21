@@ -1,7 +1,21 @@
 # Roadmap
 
-Every milestone requires working code, relevant tests, and an explanation by the learner.
-Introduce fundamentals progressively; pause after exercises for review.
+Milestones define eventual application deliverables. Concept learning can advance
+before their implementation is finished; track those states separately. Relevant
+verification is required before marking a deliverable complete. Introduce concepts
+progressively and pause at unfamiliar mechanisms.
+
+## Learning first, development afterward — updated 2026-11-21
+
+The learner wants to cover backend concepts before building the integrated backend.
+Use MyBudget examples and small isolated experiments only when they teach something
+new. HTTP/FastAPI, backend architecture/security, concurrency, and background-work
+concepts can be studied without wiring each corresponding feature into the app.
+Return to integration and implementation after that backend-learning pass; frontend
+comes after the agreed backend/concurrency sequence. Existing code stays available
+as reference. Deferred SQLite/report/budget integration is not complete and does
+not block conceptual progress. The milestone list remains the eventual build map,
+not a demand for immediate implementation at each lesson.
 
 ## Learning order — updated 2026-11-19
 

@@ -4,6 +4,22 @@ Last updated: 2026-11-21.
 
 ## Current milestone
 
+Learning/build split confirmed (2026-11-21): cover backend concepts first, then
+build the integrated backend. Use concise explanations and isolated experiments
+for new mechanisms, with MyBudget examples for context. Do not resume routine
+application integration simply because a concept chapter finishes. Current
+conceptual track is HTTP → FastAPI/backend fundamentals → relevant concurrency,
+background processing, security, and architecture, before frontend. Exact next
+lessons can adapt to unfamiliar concepts. Application deliverables remain a
+separate incomplete build track. AGENTS/master prompt/roadmap reflect this choice.
+
+Latest direction (2026-11-21): learner wants new concepts now and application
+development/integration later. Defer the remaining SQLite/report/budget wiring;
+do not assign more integration tasks as prerequisites to HTTP/FastAPI learning.
+Begin Milestone 3's conceptual material while keeping Milestone 2's application
+deliverable explicitly incomplete. This does not change the agreed order of
+concurrency before frontend. Next lesson: HTTP request/response fundamentals.
+
 Learning-order change (2026-11-19): after finishing SQLite (2) and FastAPI (3),
 cover simulated synchronization/concurrency (6) before React (4). Full order:
 1 → 2 → 3 → 6 → 4 → 5 → 7 → 8 → 9 → 10 → 11. Numbers remain stable IDs.
@@ -64,6 +80,17 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+CLI add integration checkpoint before deferring development: reviewed main's
+add branch, then tested the actual CLI in an isolated temporary working directory
+using project imports. It saved a fictional Groceries/40.00/2026-11-21 transaction;
+after the subprocess exited, a separate read-only connection retrieved that row.
+Initial missing commit parentheses lost pending writes; learner corrected it.
+Final inspection confirms finally only closes the connection, with diagnostic
+query removed. Full suite not rerun for these changes. Working user database was
+not modified by mentor's isolated checks. Report still uses demo data; persisted
+budget configuration, storage/report workflow integration, and related checks
+remain deferred. No new concept-note entry needed for this integration practice.
 
 Normalization lesson discussed without another coding drill. Recorded update,
 insertion, and deletion anomalies; practical 1NF repeating-group, 2NF partial-key,

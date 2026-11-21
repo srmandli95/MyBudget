@@ -1,8 +1,13 @@
 import argparse
+import sqlite3
 from mybudget.calculations import calculate_remaining
 from decimal import Decimal, InvalidOperation
 from mybudget.demo_data import demo_data
 from mybudget.reports import format_monthly_report
+from datetime import date
+from mybudget.models import Transaction
+from mybudget.storage import initialize_database, save_transaction, load_transactions
+
 
 def parse_amount(text: str) -> Decimal:
     try: 
@@ -32,6 +37,15 @@ def main():
     report_parser.add_argument("--year", required=True, type=int)
     report_parser.add_argument("--month", required=True, type=int)
 
+    add_parsers = commands.add_parser(
+        "add",
+        help="Adds amounts"
+    )
+
+    add_parsers.add_argument("--category", required=True, type=str)
+    add_parsers.add_argument("--amount", required=True, type=parse_amount)
+    add_parsers.add_argument("--date", required=True, type=date.fromisoformat)
+
     args = parser.parse_args()
 
     if args.command == "calculate":
@@ -42,6 +56,22 @@ def main():
         return format_monthly_report(
             budgets, transactions, args.year, args.month
         )
+
+    elif args.command == "add":
+        transaction = Transaction(args.category, args.amount, args.date)
+        connector = sqlite3.connect("mybudget.db")
+        try:
+            _ = initialize_database(connector)
+            _ = save_transaction(connector, transaction)
+            connector.commit()
+            return "Transaction saved"
+        except sqlite3.Error as error:
+            connector.rollback()
+            raise
+        
+        finally:
+            connector.close()
+
 
 if __name__== "__main__":
     print(main())

@@ -67,6 +67,16 @@ These must be configurable rather than hardcoded into application logic.
 Use fictional test transactions instead of real bank data during early development.
 
 4. Our Learning Philosophy
+Latest sequencing clarification (2026-11-21): learn the backend concepts first,
+then develop the integrated MyBudget backend with that understanding. This takes
+precedence over earlier requirements to implement application features at every
+learning stage or finish each milestone's code before studying the next topic.
+Use MyBudget examples and brief isolated experiments when they expose a new
+mechanism. Defer feature integration, architectural polish, and repeated familiar
+testing to the development pass. Track conceptual coverage separately from
+unfinished implementation; do not call unbuilt deliverables complete. Continue
+backend/concurrency learning before frontend work.
+
 Current pacing clarification (2026-11-18; takes precedence over earlier drill or
 hardening expectations): prioritize learning new concepts quickly, while pausing
 for depth at genuinely unfamiliar ideas. Use one focused example or small

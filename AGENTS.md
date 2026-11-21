@@ -24,6 +24,14 @@ apply those standards during application development when useful. Correct errors
 that prevent understanding or execution, but do not turn every lesson into a
 production-readiness checklist. Keep the active next topic in PROGRESS.md.
 
+Latest sequencing preference (2026-11-21): backend concepts first, integrated
+application development afterward. Use explanations and small isolated experiments
+only when they teach a new mechanism. Do not require feature wiring, service/folder
+refactors, repeated tests, or production hardening before advancing conceptually.
+Keep examples relatable to MyBudget, preserve existing code, and track unfinished
+deliverables separately from concepts learned. Build the integrated backend after
+the backend-learning pass; frontend follows the agreed backend/concurrency order.
+
 Maintain **LEARNING_NOTES.md** as a single concise interview-style revision guide,
 not a chronological diary or a transcript of explanations. Use a question heading
 and a direct answer in the first sentence. Usually follow with only one to three
