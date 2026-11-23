@@ -23,9 +23,11 @@ now discussed along with GET/POST/PUT/PATCH/DELETE and safe/idempotent semantics
 Status-code families and common responses now covered, including 401 versus 403.
 Request data locations (path/query parameters, headers, and body) now covered.
 HTTP statelessness, basic cookies/server-side sessions, and cookie versus bearer
-delivery now discussed. Next: consolidate the simple session lifecycle before
-introducing JWT internals; learner became lost when several auth dimensions
-were introduced together. Use one mechanism at a time, no mandatory recap quiz.
+delivery now discussed, followed by session lifecycle, sliding/absolute expiry,
+separate browser sessions, and basic access-versus-refresh-token roles. Next:
+JWT structure and validation as one focused concept, avoiding a simultaneous
+OAuth/refresh-flow deep dive. Learner previously became lost when several auth
+dimensions were introduced together; use one mechanism at a time, no recap quiz.
 No feature wiring is required first.
 
 Learning-order change (2026-11-19): after finishing SQLite (2) and FastAPI (3),
@@ -88,6 +90,17 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Session lifecycle discussion recorded: login creates a server-side session;
+requests present its ID; expiry/logout invalidate access. Covered server-controlled
+sliding expiry, absolute timeout, separate cookie versus server deadlines, and
+separate browser sessions. Explained individual logout versus logout-everywhere
+and that session-cookie presence alone cannot revive an expired server session.
+Learner asked about returning after hours; introduced only basic access-token
+versus refresh-token roles and the need for a still-valid credential. Detailed
+refresh flows, rotation, OAuth, and JWT internals remain untaught/unimplemented.
+Concept guide updated in short Q&A format. No authentication code, experiment,
+or tests run. Next: a narrowly scoped JWT lesson; preserve concepts-first pacing.
 
 Recorded stateless HTTP versus stateful applications, cookie storage and
 Set-Cookie/Cookie headers, common server-side session lookup, and automatic

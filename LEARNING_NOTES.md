@@ -990,6 +990,30 @@ Cookie: session_id=example123
 
 **A server-side session stores application context on the server and gives the client an identifier used to find it.** In the common login design discussed, the browser stores the session ID in a cookie and the server stores associated user/session information. The cookie and the session information are not the same thing; the identifier is not the user's password.
 
+### How do login, expiry, and logout affect a session?
+
+**Login establishes a session, expiry makes it invalid, and logout should invalidate it on the server as well as remove the browser cookie.** A later request presents the ID, which the server checks before associating it with a user. Deleting only the browser cookie leaves another copy of a still-valid identifier potentially usable; authentication also does not replace permission checks.
+
+### How is a session renewed?
+
+**The server may extend a still-valid session under its policy; the browser does not renew it by itself.** With sliding inactivity expiry, a valid request updates last-active time or the idle deadline. An absolute timeout caps the session lifetime regardless of activity, and an expired session ID alone cannot revive the session. [OWASP expiration guidance](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html#session-expiration).
+
+### Are cookie expiry and server-session expiry the same?
+
+**No: cookie expiry controls when the browser stops sending it; server expiry controls when the server stops accepting the session.** Extending one does not automatically extend the other. The server may send an updated Set-Cookie when browser-cookie expiry also needs extending.
+
+### What happens when the same user logs in through two browsers?
+
+**Separate browsers normally receive separate session cookies through their own login responses, even for the same account.** Each sends its own identifier; the server does not broadcast or automatically share cookies between browsers. Logging out of one session typically leaves the other active; logout-everywhere requires invalidating the other sessions too.
+
+### Does returning after a few hours require logging in again?
+
+**It depends on the expiration policy and whether any valid renewal credential remains.** If the session expired and no other accepted credential exists, re-login is normally required. A cookie still being stored does not prove the session is valid, and elapsed hours alone do not specify the application's timeout.
+
+### What is an access token versus a refresh token?
+
+**An access token authorizes API access; a refresh token can obtain a new access token under the server's policy.** An expired access token may be replaced if a separate refresh token remains valid; an expired or revoked refresh credential normally requires reauthentication absent another accepted credential. A session cookie is not automatically a refresh token, and detailed refresh flows are a later topic.
+
 ### How do cookie delivery and a bearer header differ?
 
 **Cookies are normally attached by the browser automatically; an Authorization bearer header is normally attached explicitly by client application code.** Both carry values the server validates. A token can be stored in a cookie, so cookies and tokens are not opposing categories.
