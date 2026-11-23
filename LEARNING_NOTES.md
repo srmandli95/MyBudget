@@ -881,6 +881,29 @@ Group the schema change and version-marker update in one explicit transaction so
 | Request | Method, target, headers, optional body | GET /transactions asks for transaction data |
 | Response | Status code, headers, optional body | 200 OK with a JSON list |
 
+### Where can a client put request data?
+
+**Clients commonly use path parameters for resource identity, query parameters for filtering/options, headers for metadata, and the body for submitted content.** These are API design conventions, not automatic validation or permission rules, and one request can combine all four.
+
+| Location | Example | Typical meaning |
+| --- | --- | --- |
+| Path | /transactions/42 | Transaction identifier 42 |
+| Query | /transactions?category=Gas&month=11 | Filter the collection |
+| Header | Authorization: Bearer example-token | Supply credentials |
+| Body | JSON containing category, amount, and date | Submit transaction data |
+
+A route pattern such as /transactions/{transaction_id} declares a variable; the actual URL contains its value. A query string begins with ? and separates parameters with &, and is part of the URL. Headers and the body are separate message components, not query parameters.
+
+### What are HTTP headers?
+
+**Headers are name–value fields carrying metadata about a request or response, its content, or how it should be handled.** They are part of the message, not additional requests. Responses also use headers.
+
+| Header | Meaning |
+| --- | --- |
+| Content-Type: application/json | This message's body is JSON |
+| Accept: application/json | The client can receive JSON in the response |
+| Authorization: Bearer example-token | Credentials supplied with the request |
+
 ### What do the common HTTP methods mean?
 
 **A method expresses the operation intended for the target resource; method and path together identify the request's meaning.** Backend code must honor those semantics; the method name does not enforce correct implementation.

@@ -21,7 +21,8 @@ deliverable explicitly incomplete. This does not change the agreed order of
 concurrency before frontend. HTTP request/response and client-to-server flow
 now discussed along with GET/POST/PUT/PATCH/DELETE and safe/idempotent semantics.
 Status-code families and common responses now covered, including 401 versus 403.
-Next lesson: request data locations (path/query parameters, headers, and body).
+Request data locations (path/query parameters, headers, and body) now covered.
+Next concept: HTTP statelessness, introducing cookies/sessions only as needed.
 No feature wiring is required first.
 
 Learning-order change (2026-11-19): after finishing SQLite (2) and FastAPI (3),
@@ -84,6 +85,14 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Request-input lesson recorded: explained path identity, query filtering/options,
+header metadata/credentials, and submitted body content. Covered route patterns
+versus concrete URLs, query ?/& syntax, and combining input locations. Learner
+confirmed headers as extra request metadata; clarified they are fields within
+one message, not extra requests, and responses also have headers. Added concise
+Q&A with Content-Type/Accept/Authorization comparison to the guide. No code or
+tests run. Next: stateless HTTP and how authentication context accompanies requests.
 
 HTTP status lesson recorded: explained 1xx–5xx families and common 200/201/204,
 400/401/403/404/409, and 500 responses. Learner correctly distinguished 4xx/5xx,
