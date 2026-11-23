@@ -22,7 +22,10 @@ concurrency before frontend. HTTP request/response and client-to-server flow
 now discussed along with GET/POST/PUT/PATCH/DELETE and safe/idempotent semantics.
 Status-code families and common responses now covered, including 401 versus 403.
 Request data locations (path/query parameters, headers, and body) now covered.
-Next concept: HTTP statelessness, introducing cookies/sessions only as needed.
+HTTP statelessness, basic cookies/server-side sessions, and cookie versus bearer
+delivery now discussed. Next: consolidate the simple session lifecycle before
+introducing JWT internals; learner became lost when several auth dimensions
+were introduced together. Use one mechanism at a time, no mandatory recap quiz.
 No feature wiring is required first.
 
 Learning-order change (2026-11-19): after finishing SQLite (2) and FastAPI (3),
@@ -85,6 +88,19 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+Recorded stateless HTTP versus stateful applications, cookie storage and
+Set-Cookie/Cookie headers, common server-side session lookup, and automatic
+browser cookie sending versus explicit Authorization bearer headers. Explained
+client-type guidance is not a rule, bearer tokens need not be JWTs, and token
+format is separate from delivery. Learner became confused by combined JWT/opaque/
+transport distinctions; reduced explanation to the two delivery mechanisms and
+deferred JWT internals. Learner confirmed understanding of the simplified version.
+Briefly introduced HttpOnly/CSRF/script-theft trade-offs using MDN/OWASP sources;
+these security topics are not yet studied in depth or implemented. No auth code,
+browser experiment, or tests run. Added concise answers to the guide, no diary
+entries. MyBudget authentication design remains undecided; cookie sessions were
+a provisional suggestion, not an implemented or approved final architecture.
 
 Request-input lesson recorded: explained path identity, query filtering/options,
 header metadata/credentials, and submitted body content. Covered route patterns

@@ -970,6 +970,43 @@ Source: [HTTP status semantics](https://www.rfc-editor.org/rfc/rfc9110.html#sect
 
 **An existing collection can return 200 with an empty list; absence of matching records does not mean its resource is missing.** GET /transactions can return [] when there are none, while GET /transactions/42 can return 404 if that individual resource is unavailable. A 204 response has no body, not an empty JSON array.
 
+### What does HTTP being stateless mean?
+
+**HTTP does not automatically carry context from earlier requests into later ones; each request must supply what is needed to interpret it.** A previous login or reused network connection does not by itself identify a later request's user. Applications can still store state in databases or sessions; stateless HTTP does not mean a stateless application.
+
+### What is a cookie?
+
+**A cookie is a small name–value item stored by the browser and automatically included with later requests when its scope and rules allow.** The server can set one through a response's Set-Cookie header; the browser sends it back in a request's Cookie header. Cookies can carry session identifiers or preferences, not just authentication data. [MDN cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies).
+
+```http
+Set-Cookie: session_id=example123; Path=/
+```
+
+```http
+Cookie: session_id=example123
+```
+
+### What is a server-side session?
+
+**A server-side session stores application context on the server and gives the client an identifier used to find it.** In the common login design discussed, the browser stores the session ID in a cookie and the server stores associated user/session information. The cookie and the session information are not the same thing; the identifier is not the user's password.
+
+### How do cookie delivery and a bearer header differ?
+
+**Cookies are normally attached by the browser automatically; an Authorization bearer header is normally attached explicitly by client application code.** Both carry values the server validates. A token can be stored in a cookie, so cookies and tokens are not opposing categories.
+
+| Delivery | Example request header | Who normally attaches it? |
+| --- | --- | --- |
+| Cookie | Cookie: session_id=example123 | Browser, when applicable |
+| Bearer header | Authorization: Bearer example123 | Client application |
+
+### When might you choose cookies versus bearer headers?
+
+**Cookie sessions commonly suit an application's own browser website; bearer headers commonly suit mobile apps, CLI tools, or external API clients.** This is a design guideline, not a restriction: browser applications can use bearer headers too. Both need HTTPS and server-side checks; cookie auto-sending requires CSRF defenses, while JavaScript-readable browser tokens can be exposed to injected scripts. [OWASP session guidance](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html), [API guidance](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html).
+
+### Is every bearer token a JWT?
+
+**No: bearer describes presenting a credential through possession, while JWT is one possible structured token format.** A bearer token may instead be an opaque value that the server looks up. JWT internals are deferred; keep the delivery distinction clear before learning token formats.
+
 ### What is HTTPS?
 
 **HTTPS is HTTP protected by TLS, providing encryption, integrity protection, and server authentication through certificate validation.** HTTP defines what the messages mean; TLS protects their transport. HTTPS does not replace application authentication or authorization.
