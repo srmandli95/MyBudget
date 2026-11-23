@@ -881,6 +881,46 @@ Group the schema change and version-marker update in one explicit transaction so
 | Request | Method, target, headers, optional body | GET /transactions asks for transaction data |
 | Response | Status code, headers, optional body | 200 OK with a JSON list |
 
+### What do the common HTTP methods mean?
+
+**A method expresses the operation intended for the target resource; method and path together identify the request's meaning.** Backend code must honor those semantics; the method name does not enforce correct implementation.
+
+| Method | Meaning | Example |
+| --- | --- | --- |
+| GET | Retrieve a representation | GET /transactions/42 |
+| POST | Submit data for resource-specific processing, commonly creation | POST /transactions |
+| PUT | Create or replace state at a known resource URL | PUT /budgets/10 |
+| PATCH | Apply modifications described by a patch document | PATCH /budgets/10 |
+| DELETE | Remove the resource's association with its URL | DELETE /transactions/42 |
+
+A resource is not necessarily one database row. DELETE does not require physical erasure, and POST is not limited to creation. [HTTP method semantics](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.3).
+
+### How do PUT and PATCH differ?
+
+**PUT requests replacement with the supplied representation; PATCH requests application of specified modifications.** PUT supplies the complete replacement representation defined by the API, whereas PATCH can modify selected fields. Do not assume omitted PUT fields remain unchanged; PATCH behavior also depends on its document format and content type. [PATCH specification](https://www.rfc-editor.org/rfc/rfc5789.html#section-2).
+
+### What is a safe method versus an idempotent method?
+
+**Safe means the client requests no resource-state change; idempotent means repeating an identical request has the same intended effect as performing it once.** Logging may still occur for a safe request. Idempotency concerns intended effects, not identical responses: a repeated DELETE may return not-found while leaving the resource removed.
+
+| Method | Safe? | Idempotent by defined semantics? |
+| --- | --- | --- |
+| GET | Yes | Yes |
+| POST | No | Not guaranteed |
+| PUT | No | Yes |
+| PATCH | No | Not guaranteed; depends on the operation |
+| DELETE | No | Yes |
+
+These properties matter when retrying after a timeout: the server may have completed the operation even though the response was lost. [HTTP method properties](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2).
+
+### Why can PATCH be non-idempotent while PUT is idempotent?
+
+**PUT describes a desired replacement state; PATCH describes changes that may or may not accumulate.** Setting a limit to 600 repeatedly leaves it at 600; increasing it by 100 repeatedly produces 600, 700, 800. A PATCH that sets a field can be idempotent; it does not inherently mean increment or non-idempotency.
+
+### What if a PUT implementation increments by 100 on every call?
+
+**That implementation violates PUT's replacement/idempotency contract, even if the server technically allows it.** An increment operation can be expressed through an appropriately defined PATCH or POST. Choosing a method does not automatically make the backend honor its guarantees.
+
 ### What is HTTPS?
 
 **HTTPS is HTTP protected by TLS, providing encryption, integrity protection, and server authentication through certificate validation.** HTTP defines what the messages mean; TLS protects their transport. HTTPS does not replace application authentication or authorization.

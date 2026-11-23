@@ -19,8 +19,8 @@ do not assign more integration tasks as prerequisites to HTTP/FastAPI learning.
 Begin Milestone 3's conceptual material while keeping Milestone 2's application
 deliverable explicitly incomplete. This does not change the agreed order of
 concurrency before frontend. HTTP request/response and client-to-server flow
-now discussed. Next lesson: HTTP methods (GET/POST/PUT/PATCH/DELETE), then safe
-and idempotent semantics when useful. No feature wiring is required first.
+now discussed along with GET/POST/PUT/PATCH/DELETE and safe/idempotent semantics.
+Next lesson: HTTP response status codes. No feature wiring is required first.
 
 Learning-order change (2026-11-19): after finishing SQLite (2) and FastAPI (3),
 cover simulated synchronization/concurrency (6) before React (4). Full order:
@@ -82,6 +82,15 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+HTTP methods lesson recorded: covered method/path combinations, resource versus
+database row, PUT replacement versus PATCH modifications, safety, idempotency,
+and retry-after-timeout motivation. Learner questioned why an increment through
+PUT would differ; clarified method contracts versus arbitrary backend behavior,
+and that PATCH can be idempotent when setting a fixed value. Learner confirmed
+understanding. Added concise Q&A/tables and RFC 9110/5789 sources to the guide.
+Conceptual discussion only: no API implementation, HTTP experiment, or tests run.
+Next topic is response status codes; keep backend-learning-first preference.
 
 HTTP foundation lesson recorded on 2026-11-23. Covered HTTP/HTTPS, client request
 and server response, method/target/headers/body/status, and new TCP-based HTTPS
