@@ -20,7 +20,9 @@ Begin Milestone 3's conceptual material while keeping Milestone 2's application
 deliverable explicitly incomplete. This does not change the agreed order of
 concurrency before frontend. HTTP request/response and client-to-server flow
 now discussed along with GET/POST/PUT/PATCH/DELETE and safe/idempotent semantics.
-Next lesson: HTTP response status codes. No feature wiring is required first.
+Status-code families and common responses now covered, including 401 versus 403.
+Next lesson: request data locations (path/query parameters, headers, and body).
+No feature wiring is required first.
 
 Learning-order change (2026-11-19): after finishing SQLite (2) and FastAPI (3),
 cover simulated synchronization/concurrency (6) before React (4). Full order:
@@ -82,6 +84,15 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+HTTP status lesson recorded: explained 1xx–5xx families and common 200/201/204,
+400/401/403/404/409, and 500 responses. Learner correctly distinguished 4xx/5xx,
+then asked about token errors; clarified missing/invalid/expired authentication
+normally produces 401, while authenticated lack of permission is a typical 403.
+Corrected ambiguous mnemonic: 401 does not mean authentication succeeded.
+Also covered empty collection 200/[] versus missing item 404 and status versus
+body. Concept guide updated with concise Q&A and HTTP-spec source. No API
+implementation, experiment, or automated tests performed. Next: request inputs.
 
 HTTP methods lesson recorded: covered method/path combinations, resource versus
 database row, PUT replacement versus PATCH modifications, safety, idempotency,

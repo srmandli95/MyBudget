@@ -921,6 +921,32 @@ These properties matter when retrying after a timeout: the server may have compl
 
 **That implementation violates PUT's replacement/idempotency contract, even if the server technically allows it.** An increment operation can be expressed through an appropriately defined PATCH or POST. Choosing a method does not automatically make the backend honor its guarantees.
 
+### What do HTTP status-code families mean?
+
+**The first digit classifies the response: 1xx informational, 2xx success, 3xx redirection, 4xx client-error, and 5xx server-error.** A status summarizes the outcome; the body can provide data or a more specific explanation. Client-error is a protocol category, not necessarily blame on the person using the app.
+
+| Code | Meaning | Typical example |
+| --- | --- | --- |
+| 200 | OK | Return transaction data |
+| 201 | Created | A transaction was created |
+| 204 | No Content | Successful operation with no response body |
+| 400 | Bad Request | Malformed or otherwise invalid request |
+| 401 | Unauthorized | Valid authentication credentials are missing |
+| 403 | Forbidden | Server understands but refuses the operation |
+| 404 | Not Found | Requested resource not found |
+| 409 | Conflict | Conflict with current resource state |
+| 500 | Internal Server Error | Unexpected server-side failure |
+
+Source: [HTTP status semantics](https://www.rfc-editor.org/rfc/rfc9110.html#section-15).
+
+### What is 401 versus 403?
+
+**401 means valid authentication is missing; 403 means the server refuses to fulfill the request.** In a typical token API, a missing, invalid, or expired token produces 401; an authenticated user lacking the required permission receives 403. Do not say 401 means authentication succeeded, or that an invalid token normally means 403.
+
+### Should an empty collection return 404?
+
+**An existing collection can return 200 with an empty list; absence of matching records does not mean its resource is missing.** GET /transactions can return [] when there are none, while GET /transactions/42 can return 404 if that individual resource is unavailable. A 204 response has no body, not an empty JSON array.
+
 ### What is HTTPS?
 
 **HTTPS is HTTP protected by TLS, providing encryption, integrity protection, and server authentication through certificate validation.** HTTP defines what the messages mean; TLS protects their transport. HTTPS does not replace application authentication or authorization.
