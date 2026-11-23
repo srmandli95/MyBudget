@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-11-21.
+Last updated: 2026-11-23.
 
 ## Current milestone
 
@@ -18,14 +18,16 @@ development/integration later. Defer the remaining SQLite/report/budget wiring;
 do not assign more integration tasks as prerequisites to HTTP/FastAPI learning.
 Begin Milestone 3's conceptual material while keeping Milestone 2's application
 deliverable explicitly incomplete. This does not change the agreed order of
-concurrency before frontend. Next lesson: HTTP request/response fundamentals.
+concurrency before frontend. HTTP request/response and client-to-server flow
+now discussed. Next lesson: HTTP methods (GET/POST/PUT/PATCH/DELETE), then safe
+and idempotent semantics when useful. No feature wiring is required first.
 
 Learning-order change (2026-11-19): after finishing SQLite (2) and FastAPI (3),
 cover simulated synchronization/concurrency (6) before React (4). Full order:
 1 → 2 → 3 → 6 → 4 → 5 → 7 → 8 → 9 → 10 → 11. Numbers remain stable IDs.
 Use simulated providers through CLI/API experiments without a frontend or CSV
-dependency. Current SQLite lesson remains unchanged; this does not jump to
-concurrency now. ROADMAP.md and the master prompt reflect the reordered plan.
+dependency. The active conceptual track is now HTTP/backend fundamentals, not
+the later concurrency milestone. ROADMAP.md and the master prompt reflect the plan.
 
 Latest teaching direction (2026-11-18): prioritize new concepts and fast forward
 progress, with depth when unfamiliar. One focused example/exercise per new idea;
@@ -80,6 +82,15 @@ topics and deferred hardening continue alongside the application.
 - Static methods, no implicit first argument, and choosing module functions versus class grouping.
 
 ## Latest verification
+
+HTTP foundation lesson recorded on 2026-11-23. Covered HTTP/HTTPS, client request
+and server response, method/target/headers/body/status, and new TCP-based HTTPS
+flow through DNS, ports, TCP, TLS, packet transport, and server application routing.
+Clarified HTTP message semantics versus underlying delivery and server software
+versus business logic. Learner confirmed understanding; no network experiment,
+FastAPI implementation, or automated test was performed. Added concise Q&A and
+contents link to LEARNING_NOTES.md using previously consulted MDN sources.
+Next: HTTP methods; retain concepts-first/development-later preference.
 
 CLI add integration checkpoint before deferring development: reviewed main's
 add branch, then tested the actual CLI in an isolated temporary working directory

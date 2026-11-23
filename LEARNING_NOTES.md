@@ -24,7 +24,8 @@ Direct answers to concepts covered so far. Read the first sentence for quick rev
 18. [Environments, dependencies, and uv](#environments-dependencies-and-uv)
 19. [Command-line interfaces and argparse](#command-line-interfaces-and-argparse)
 20. [SQLite and relational databases](#sqlite-and-relational-databases)
-21. [Git and GitHub](#git-and-github)
+21. [HTTP and client-server communication](#http-and-client-server-communication)
+22. [Git and GitHub](#git-and-github)
 
 ## Python and execution
 
@@ -864,6 +865,46 @@ Raw fields are node ID, parent ID, internal auxiliary value, and description. Cu
 **Store a schema version and apply only the ordered changes still needed.** SQLite's `PRAGMA user_version` is a persisted application-controlled integer starting at 0. It does not infer or perform migrations; code defines version meaning and updates it.
 
 Group the schema change and version-marker update in one explicit transaction so they succeed together. A later run skips completed changes. Larger runners must handle ordered steps and unsupported versions; a marker alone does not verify the actual schema. Schema version and application release version are separate.
+
+## HTTP and client-server communication
+
+### What is HTTP?
+
+**HTTP (Hypertext Transfer Protocol) defines how clients request resources and how servers respond.** It is an application-layer protocol: it defines message semantics, while lower networking layers carry the data. Browsers, mobile apps, command-line tools, and other servers can all be HTTP clients.
+
+### What are the parts of an HTTP request and response?
+
+**A request identifies an operation and target; a response reports the outcome and may return data.** Headers carry metadata, and a body carries optional content such as JSON. The client initiates the exchange; the server responds.
+
+| Message | Main parts | Example |
+| --- | --- | --- |
+| Request | Method, target, headers, optional body | GET /transactions asks for transaction data |
+| Response | Status code, headers, optional body | 200 OK with a JSON list |
+
+### What is HTTPS?
+
+**HTTPS is HTTP protected by TLS, providing encryption, integrity protection, and server authentication through certificate validation.** HTTP defines what the messages mean; TLS protects their transport. HTTPS does not replace application authentication or authorization.
+
+### How does an HTTP request travel from client to server?
+
+**The client sends HTTP data through networking layers to a listening server, which processes it and sends a response back.** For a new TCP-based HTTPS connection, the simplified flow is DNS lookup → TCP connection → TLS handshake → HTTP exchange. DNS results and connections may be reused, so not every request repeats setup.
+
+| Component | Role |
+| --- | --- |
+| DNS | Resolve a domain name to a destination address |
+| IP address | Identify the network destination |
+| Port | Help direct traffic to the appropriate service; HTTPS normally uses 443 |
+| TCP | Provide reliable, ordered byte delivery for HTTP/1.1 and HTTP/2 |
+| TLS | Protect the connection |
+| OS/network infrastructure | Carry data in packets through network interfaces and routers |
+
+This is a TCP-based example, not a claim that every HTTP version uses TCP. Your application function does not manually send individual network packets.
+
+### How do the HTTP server and FastAPI fit together?
+
+**Server software such as Uvicorn receives HTTP traffic and passes requests to the FastAPI application, which routes them to handlers.** Application code performs the requested operation, and the server sends the resulting HTTP response. Calculation and storage functions can remain independent of HTTP.
+
+Sources: [MDN HTTP overview](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview), [MDN Internet overview](https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Web_mechanics/How_does_the_Internet_work).
 
 ## Git and GitHub
 
