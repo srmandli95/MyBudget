@@ -32,6 +32,15 @@ Keep examples relatable to MyBudget, preserve existing code, and track unfinishe
 deliverables separately from concepts learned. Build the integrated backend after
 the backend-learning pass; frontend follows the agreed backend/concurrency order.
 
+Authentication-specific preference (2026-11-23): the learner wants hands-on
+exercises across mainstream authentication/authorization patterns, not theory
+alone. Start with server-side sessions before JWT/refresh/OAuth; teach one flow
+at a time and review actual results and relevant failures. Use small local
+exercises and a minimal HTTP harness, not full MyBudget integration. Use maintained
+libraries for hashing/signing/protocols rather than home-grown cryptography.
+Track the auth exercise sequence in PROGRESS.md. Do not claim unbuilt exercises
+are complete or that this curriculum exhausts every industry variant.
+
 Maintain **LEARNING_NOTES.md** as a single concise interview-style revision guide,
 not a chronological diary or a transcript of explanations. Use a question heading
 and a direct answer in the first sentence. Usually follow with only one to three

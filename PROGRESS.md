@@ -4,6 +4,30 @@ Last updated: 2026-11-23.
 
 ## Current milestone
 
+Authentication exercise track requested (2026-11-23): learner wants hands-on
+coverage of mainstream industry auth, overriding explanations-only pacing for
+this subject. Start with a small opaque server-side session store, then demonstrate
+actual cookies/headers in a minimal HTTP harness after framework prerequisites.
+Keep integrated app development deferred.
+
+Planned exercises (not implemented or verified):
+1. Opaque sessions: creation, lookup, logout, expiry, separate browser sessions.
+2. Password hashing/verification, salts, login failures and recovery flows.
+3. Bearer/JWT: signing, trusted verification, expiry/issuer/audience checks.
+4. Access/refresh tokens: rotation, reuse detection, revocation and logout.
+5. Authorization: roles and per-record ownership, 401/403 behavior.
+6. Browser protections: cookie attributes, CSRF, CORS, script-exposure distinctions.
+7. OAuth authorization code with PKCE; OIDC identity/sign-in distinction.
+8. Service clients: API keys versus OAuth client credentials and scopes.
+9. MFA/passkeys; enterprise SAML/SSO as a later separate comparison/experiment.
+10. Minimal protected HTTP endpoints and focused auth regression exercises,
+    using libraries and fictional/local identities.
+
+Adapt order for prerequisites; these are planned topics, not completed lessons.
+JWT was introduced conceptually, but no JWT exercise has been completed. Sources
+consulted: OWASP authentication/session guidance and RFC 9700 for OAuth security.
+No code/dependencies changed or auth tests run while recording this plan.
+
 Learning/build split confirmed (2026-11-21): cover backend concepts first, then
 build the integrated backend. Use concise explanations and isolated experiments
 for new mechanisms, with MyBudget examples for context. Do not resume routine

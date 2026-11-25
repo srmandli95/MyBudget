@@ -67,6 +67,15 @@ These must be configurable rather than hardcoded into application logic.
 Use fictional test transactions instead of real bank data during early development.
 
 4. Our Learning Philosophy
+Authentication-specific clarification (2026-11-23): the learner wants practical
+exercises for mainstream auth patterns, including sessions/cookies, password
+hashing, bearer/JWT validation, refresh/revocation, authorization, browser
+protections, OAuth/OIDC, service credentials, and MFA/passkeys. Teach one mechanism
+at a time through local exercises and a small HTTP harness, with relevant failure
+cases. Use maintained libraries instead of implementing cryptography. This is
+authorized learning practice, not a return to full application integration.
+Track enterprise variants separately rather than claiming one example covers all auth.
+
 Latest sequencing clarification (2026-11-21): learn the backend concepts first,
 then develop the integrated MyBudget backend with that understanding. This takes
 precedence over earlier requirements to implement application features at every
