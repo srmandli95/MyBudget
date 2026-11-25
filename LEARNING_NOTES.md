@@ -990,6 +990,14 @@ Cookie: session_id=example123
 
 **A server-side session stores application context on the server and gives the client an identifier used to find it.** In the common login design discussed, the browser stores the session ID in a cookie and the server stores associated user/session information. The cookie and the session information are not the same thing; the identifier is not the user's password.
 
+### How does the in-memory session mechanism work?
+
+**Store an unpredictable session ID as the key and its user/expiry information as the value; later requests present that ID for lookup.** secrets.token_urlsafe generates the random identifier, dict.get returns None for unknown IDs, and logout removes the entry. This process-local dictionary disappears on restart and is not shared between server processes; session storage alone does not verify passwords or implement HTTP transport.
+
+### Does session expiry require a background timer?
+
+**No: check the stored deadline whenever the session is accessed and reject it if the current time is at or beyond expiry.** First handle a missing session, then compare time.time() with its expires_at value, remove expired entries, and otherwise return the user ID. A cleanup task can separately remove never-accessed expired entries; it is not required to reject them on lookup.
+
 ### How do login, expiry, and logout affect a session?
 
 **Login establishes a session, expiry makes it invalid, and logout should invalidate it on the server as well as remove the browser cookie.** A later request presents the ID, which the server checks before associating it with a user. Deleting only the browser cookie leaves another copy of a still-valid identifier potentially usable; authentication also does not replace permission checks.
@@ -1053,6 +1061,10 @@ This is a TCP-based example, not a claim that every HTTP version uses TCP. Your 
 ### How do the HTTP server and FastAPI fit together?
 
 **Server software such as Uvicorn receives HTTP traffic and passes requests to the FastAPI application, which routes them to handlers.** Application code performs the requested operation, and the server sends the resulting HTTP response. Calculation and storage functions can remain independent of HTTP.
+
+### What does a FastAPI route decorator do?
+
+**A decorator such as @app.get("/me") registers a function to handle a method/path combination.** A Request parameter exposes the incoming request, including cookies; a Response parameter lets the handler set outgoing cookies while returning data. Registration is not a function call for each incoming request made by the learner; server/framework code invokes the handler when a matching request arrives.
 
 Sources: [MDN HTTP overview](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview), [MDN Internet overview](https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Web_mechanics/How_does_the_Internet_work).
 

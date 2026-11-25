@@ -1,8 +1,43 @@
 # Progress
 
-Last updated: 2026-11-23.
+Last updated: 2026-11-25.
 
 ## Current milestone
+
+Conceptual track: backend HTTP/authentication, with isolated hands-on auth
+exercises. Integrated MyBudget development remains deferred.
+
+## Resume checkpoint — 2026-11-25
+
+Learner stopped for today and plans to continue tomorrow. Resume the HTTP-cookie
+exercise below, not JWT or full application development.
+
+Verified: exercises/auth_sessions.py implements random ID → user/expiry mapping,
+lookup, missing-session rejection, fixed-expiry rejection/removal, and logout.
+Mentor ran .venv/bin/python -m exercises.auth_sessions: exit 0, printed 7, None,
+None. Dictionary is process-local; no passwords, HTTP cookies, sliding renewal,
+ID rotation, shared persistence, or multi-browser tests implemented yet.
+
+Next exercise introduced but NOT implemented/verified:
+1. Learner runs uv add --dev fastapi uvicorn from project root.
+2. Put auth_sessions.py demonstration calls under a main guard before importing.
+3. Create exercises/auth_cookies.py with FastAPI app and two learner-written routes:
+   POST /demo-login creates a 300-second session for fictional User 7 and sets
+   session_id cookie (HttpOnly, SameSite=lax, Path=/), returning a message.
+   GET /me reads request.cookies, calls get_user, returns user_id or raises 401.
+   Demo login assumes identity is already verified; it is not password auth.
+4. Run uv run uvicorn exercises.auth_cookies:app --host 127.0.0.1 --port 8000.
+5. At http://127.0.0.1:8000/docs, verify GET /me gives 401 before demo login,
+   then execute POST /demo-login and GET /me again to observe user_id 7 using
+   browser-managed cookies. Local HTTP is an isolated learning setup; production
+   HTTPS cookie settings and protections remain later topics.
+
+Current inspection: auth_cookies.py absent; pyproject still declares only pytest
+as a dev dependency. Do not assume FastAPI/Uvicorn installed or HTTP flow tested.
+No installation, server launch, application tests, commit, or push performed in
+this checkpoint update. Next session should inspect for any learner changes.
+
+## Auth learning plan
 
 Authentication exercise track requested (2026-11-23): learner wants hands-on
 coverage of mainstream industry auth, overriding explanations-only pacing for
@@ -10,8 +45,9 @@ this subject. Start with a small opaque server-side session store, then demonstr
 actual cookies/headers in a minimal HTTP harness after framework prerequisites.
 Keep integrated app development deferred.
 
-Planned exercises (not implemented or verified):
-1. Opaque sessions: creation, lookup, logout, expiry, separate browser sessions.
+Auth exercise status (only verified substeps below are complete):
+1. Opaque sessions: create/lookup/logout/fixed-expiry verified; separate browser
+   sessions, renewal and HTTP cookie delivery still pending.
 2. Password hashing/verification, salts, login failures and recovery flows.
 3. Bearer/JWT: signing, trusted verification, expiry/issuer/audience checks.
 4. Access/refresh tokens: rotation, reuse detection, revocation and logout.
@@ -23,7 +59,7 @@ Planned exercises (not implemented or verified):
 10. Minimal protected HTTP endpoints and focused auth regression exercises,
     using libraries and fictional/local identities.
 
-Adapt order for prerequisites; these are planned topics, not completed lessons.
+Adapt order for prerequisites; items 2–10 remain planned, not completed exercises.
 JWT was introduced conceptually, but no JWT exercise has been completed. Sources
 consulted: OWASP authentication/session guidance and RFC 9700 for OAuth security.
 No code/dependencies changed or auth tests run while recording this plan.
